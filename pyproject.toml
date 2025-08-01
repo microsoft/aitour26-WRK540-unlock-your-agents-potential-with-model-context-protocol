@@ -1,0 +1,36 @@
+[tool.black]
+line-length = 120
+
+[tool.ruff]
+line-length = 120
+
+# Enable import sorting
+select = ["I"]
+
+[tool.ruff.lint]
+extend-select = [
+  "B",
+  "C4",
+  "PT",
+  "RET",
+  "SIM",
+  "ARG",
+  "PTH",
+  "RUF",
+  "PLE",
+  "ANN",
+  "RUF",
+  "I"  # Add 'I' to extend-select to activate import sorting
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"*.ipynb" = [
+  "PLE1142", # await-outside-async: Jupyter Notebooks support top level await
+  "E402", # module-import-not-at-top-of-file: It's relatively common to have to import "just in time"
+  "E501", # line-too-long: Let black handle this
+]
+
+# isort configuration
+[tool.isort]
+profile = "black"  # Use the same line length and styling as Black
+line_length = 120  # Consistent line length with Ruff and Black

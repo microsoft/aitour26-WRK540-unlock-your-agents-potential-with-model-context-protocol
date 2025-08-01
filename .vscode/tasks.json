@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Agent Web Chat (Legacy)",
+			"type": "shell",
+			"command": "cd src/python/workshop && python app.py",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Run Agent Service",
+			"type": "shell",
+			"command": "cd src/python/workshop && python agent_service.py",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Run Web App",
+			"type": "shell",
+			"command": "cd src/python/web_app && python web_app.py",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Run MCP Server",
+			"type": "shell",
+			"command": "cd src/python/mcp_server && python mcp_server_sales_analysis.py",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		}
+	]
+}

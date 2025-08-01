@@ -1,0 +1,92 @@
+site_name: Unlock your agents potential with Model Context Protocol and PostgreSQL Workshop
+
+nav:
+  - Workshop Introduction: index.md
+  - Overview of MCP: mcp-overview.md
+  - Solution Architecture: architecture.md
+  - Security Considerations: security.md
+  - Getting Started: 
+    - Open the Workshop: getting-started.md
+    - Deploy Azure Resources: getting-started-azure.md
+    - Select Workspace: getting-started-workspace.md
+  # - Workshop Setup:
+  #   - BUILD Attendees: introduction-event.md
+  #   - Self-Guided Learners: introduction-self-guided.md
+
+  # - Lab 1 Grounding LLMs with MCP: lab-1-mcp_intro.md
+  - Lab 1 Ground your Agent: lab-2-visualize-data.md
+  - Lab 2 Extending the MCP Service: lab-3-mcp-time-service.md
+  # - Lab 3 Visual Product Search: lab-3-visual-search.md
+  - Lab 3 Service Monitoring: lab-4-monitoring.md
+  - Lab 4 Continuous Evaluation: lab-5-continuous-evaluation.md
+  - Lab 5 Trace & Observe Agents: lab-5-tracing.md
+  - Lab 6 Finishing Up: lab-6-finishing-up.md
+  - Home Work:
+    - Debugging with Dev Tunnel: lab-1-start-mcp-server.md
+  - Summary: summary.md
+  - Resources: resources.md
+  - About: about.md
+  # - Deployment: deployment.md
+  # - Troubleshooting: troubleshooting.md
+
+
+plugins:
+  - glightbox
+  - include-markdown
+  - timetoread:
+      wpm: 190
+
+theme:
+  name: material
+  logo: media/favicon.png
+  favicon: media/favicon.png
+  features:
+    - navigation.instant
+    - navigation.footer
+    - content.code.copy
+    - navigation.tabs.sticky 
+    - content.tabs.link
+
+  # Change Font: https://squidfunk.github.io/mkdocs-material/setup/changing-the-fonts/?h=fonts
+  # Google Fonts Supported By Default: https://fonts.google.com/
+  font:
+    code: Roboto Mono #Monospaced
+    text: Roboto #Regular
+  # logo: docs/media/azure-ai-studio.svg
+  palette:
+    - scheme: default  # Light Mode
+      primary: black
+      accent: pink
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    - scheme: slate # Dark Mode
+      primary: amber
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      toc_depth: 2
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+        alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  # - pymdownx.emoji:
+      # emoji_index: !!python/name:material.extensions.emoji.twemoji
+      # emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+
+extra_css:
+  - css/custom.css
+
+
