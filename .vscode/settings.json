@@ -12,16 +12,16 @@
     "remote.portsAttributes": {
         "8005": {
             "label": "Web App",
-            "onAutoForward": "notify"
+            "onAutoForward": "notify",
+            "visibility": "public",
         },
         "8006": {
             "label": "Agent Service",
-            "onAutoForward": "silent"
-        }
-        ,
+            "onAutoForward": "ignore",
+        }        ,
         "8000": {
             "label": "Agent Service",
-            "onAutoForward": "silent"
+            "onAutoForward": "ignore"
         }
     },
     "peacock.remoteColor": "#dd0531",
