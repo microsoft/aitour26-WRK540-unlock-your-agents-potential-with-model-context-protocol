@@ -60,48 +60,23 @@ class ChatManager:
         if session_id not in self.session_threads:
             if not self.agent_manager.agents_client:
                 raise ValueError("AgentsClient is not initialized")
-            
+
             # Create new thread for this session
             thread = await self.agent_manager.agents_client.threads.create()
             self.session_threads[session_id] = thread
             print(f"Created new thread {thread.id} for session {session_id}")
-        
+
         return self.session_threads[session_id]
-
-    async def delete_thread_resource(self, thread: AgentThread, agents_client: AgentsClient) -> None:
-        """Cleanup the Azure AI thread resource."""
-        try:
-            # Clean up files associated with the thread
-            existing_files = await agents_client.files.list()
-            for f in existing_files.data:
-                await agents_client.files.delete(f.id)
-
-            # Clean up thread
-            await agents_client.threads.delete(thread.id)
-
-        except Exception as e:
-            print(f"⚠️  Warning: Error during Azure thread cleanup: {e}")
 
     async def clear_session_thread(self, session_id: str) -> None:
         """Clear thread for a specific session."""
         if session_id in self.session_threads:
             thread = self.session_threads[session_id]
             if self.agent_manager.agents_client and self.agent_manager.agent:
-                await self.delete_thread_resource(
-                    thread, 
-                    self.agent_manager.agents_client
-                )
+                await self.agent_manager.agents_client.threads.delete(thread.id)
             del self.session_threads[session_id]
-            
-        print(f"Cleared thread for session {session_id}")
 
-    async def clear_all_sessions(self) -> None:
-        """Clear all sessions and their associated threads."""
-        # Clear all threads
-        for session_id in list(self.session_threads.keys()):
-            await self.clear_session_thread(session_id)
-        
-        print("Cleared all sessions and threads")
+        print(f"Cleared thread for session {session_id}")
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
         """Process chat message and stream responses."""
@@ -130,10 +105,12 @@ class ChatManager:
 
         try:
             # Create the web streaming event handler
-            web_handler = WebStreamEventHandler(self.utilities, self.agent_manager.agents_client)
+            web_handler = WebStreamEventHandler(
+                self.utilities, self.agent_manager.agents_client)
 
             # Create a span for this chat request
-            message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
+            message_preview = request.message[:50] + \
+                "..." if len(request.message) > 50 else request.message
             span_name = f"Zava Agent Chat Request: {message_preview}"
 
             with tracer.start_as_current_span(span_name) as span:
@@ -158,10 +135,12 @@ class ChatManager:
                     # Start the stream in a background task
                     async def run_stream() -> None:
                         # Capture references with type casts since we've already checked they're not None
-                        agents_client = cast(AgentsClient, self.agent_manager.agents_client)
+                        agents_client = cast(
+                            AgentsClient, self.agent_manager.agents_client)
                         agent = cast(Agent, self.agent_manager.agent)
                         thread = session_thread  # Use the session-specific thread
-                        toolset = cast(AsyncToolSet, self.agent_manager.toolset)
+                        toolset = cast(
+                            AsyncToolSet, self.agent_manager.toolset)
 
                         try:
                             async with await agents_client.runs.stream(
