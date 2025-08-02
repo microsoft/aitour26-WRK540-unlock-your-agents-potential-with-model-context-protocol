@@ -54,10 +54,14 @@ class ChatManager:
         self.agent_manager = agent_manager
         self.utilities = Utilities()
         self.session_threads: Dict[str, AgentThread] = {}
+        self._session_lock = asyncio.Lock()
 
     async def get_or_create_thread(self, session_id: str) -> AgentThread:
         """Get existing thread for session or create a new one."""
-        if session_id not in self.session_threads:
+        async with self._session_lock:
+            if session_id in self.session_threads:
+                return self.session_threads[session_id]
+            
             if not self.agent_manager.agents_client:
                 raise ValueError("AgentsClient is not initialized")
 
@@ -66,15 +70,16 @@ class ChatManager:
             self.session_threads[session_id] = thread
             print(f"Created new thread {thread.id} for session {session_id}")
 
-        return self.session_threads[session_id]
+            return thread
 
     async def clear_session_thread(self, session_id: str) -> None:
         """Clear thread for a specific session."""
-        if session_id in self.session_threads:
-            thread = self.session_threads[session_id]
-            if self.agent_manager.agents_client and self.agent_manager.agent:
-                await self.agent_manager.agents_client.threads.delete(thread.id)
-            del self.session_threads[session_id]
+        async with self._session_lock:
+            if session_id in self.session_threads:
+                thread = self.session_threads[session_id]
+                if self.agent_manager.agents_client and self.agent_manager.agent:
+                    await self.agent_manager.agents_client.threads.delete(thread.id)
+                del self.session_threads[session_id]
 
         print(f"Cleared thread for session {session_id}")
 
