@@ -7,6 +7,7 @@ and streaming responses.
 
 import asyncio
 import contextlib
+from datetime import datetime
 from typing import AsyncGenerator, Dict, Protocol, cast
 
 from azure.ai.agents.aio import AgentsClient
@@ -61,7 +62,7 @@ class ChatManager:
         async with self._session_lock:
             if session_id in self.session_threads:
                 return self.session_threads[session_id]
-            
+
             if not self.agent_manager.agents_client:
                 raise ValueError("AgentsClient is not initialized")
 
@@ -78,7 +79,12 @@ class ChatManager:
             if session_id in self.session_threads:
                 thread = self.session_threads[session_id]
                 if self.agent_manager.agents_client and self.agent_manager.agent:
-                    await self.agent_manager.agents_client.threads.delete(thread.id)
+                    with tracer.start_as_current_span("Zava Agent Chat Thread Deletion") as span:
+                        await self.agent_manager.agents_client.threads.delete(thread.id)
+                        span.set_attribute("thread_id", thread.id)
+                        span.set_attribute("session_id", session_id)
+                        span.set_attribute("agent_id", self.agent_manager.agent.id)
+                        span.set_attribute("date_time", datetime.now().isoformat())
                 del self.session_threads[session_id]
 
         print(f"Cleared thread for session {session_id}")
@@ -100,28 +106,23 @@ class ChatManager:
 
         # Get or create session
         session_id = request.session_id or "default"
-
-        # Get or create thread for this session
         try:
-            session_thread = await self.get_or_create_thread(session_id)
-        except Exception as e:
-            yield ChatResponse(error=f"Failed to create thread for session: {e!s}")
-            return
-
-        web_handler = None
-        stream_task = None
-        
-        try:
-            # Create the web streaming event handler with proper resource management
-            web_handler = WebStreamEventHandler(
-                self.utilities, self.agent_manager.agents_client)
-
             # Create a span for this chat request
             message_preview = request.message[:50] + \
                 "..." if len(request.message) > 50 else request.message
             span_name = f"Zava Agent Chat Request: {message_preview}"
 
             with tracer.start_as_current_span(span_name) as span:
+                # Get or create thread for this session
+                session_thread = await self.get_or_create_thread(session_id)
+
+                web_handler = None
+                stream_task = None
+
+                # Create the web streaming event handler with proper resource management
+                web_handler = WebStreamEventHandler(
+                    self.utilities, self.agent_manager.agents_client)
+
                 # Add some attributes to the span for better observability
                 span.set_attribute("user_message", request.message)
                 span.set_attribute("operation_type", "chat_request")
@@ -130,53 +131,48 @@ class ChatManager:
                 span.set_attribute("session_id", session_id)
 
                 # Create message in thread
-                with tracer.start_as_current_span("create_user_message") as message_span:
-                    await self.agent_manager.agents_client.messages.create(
-                        thread_id=session_thread.id,
-                        role="user",
-                        content=request.message,
-                    )
-                    message_span.set_attribute("thread_id", session_thread.id)
 
-                # Start the agent stream
-                with tracer.start_as_current_span("agent_stream_processing") as stream_span:
-                    # Start the stream in a background task
-                    async def run_stream() -> None:
-                        # Capture references with type casts since we've already checked they're not None
-                        agents_client = cast(
-                            AgentsClient, self.agent_manager.agents_client)
-                        agent = cast(Agent, self.agent_manager.agent)
-                        thread = session_thread  # Use the session-specific thread
-                        toolset = cast(
-                            AsyncToolSet, self.agent_manager.toolset)
+                await self.agent_manager.agents_client.messages.create(
+                    thread_id=session_thread.id,
+                    role="user",
+                    content=request.message,
+                )
 
-                        try:
-                            async with await agents_client.runs.stream(
-                                thread_id=thread.id,
-                                agent_id=agent.id,
-                                event_handler=web_handler,
-                                max_completion_tokens=Config.MAX_COMPLETION_TOKENS,
-                                max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
-                                temperature=Config.TEMPERATURE,
-                                top_p=Config.TOP_P,
-                                tool_resources=toolset.resources,
-                            ) as stream:
-                                await stream.until_done()
+                # Start the stream in a background task
+                async def run_stream() -> None:
+                    # Capture references with type casts since we've already checked they're not None
+                    agents_client = cast(
+                        AgentsClient, self.agent_manager.agents_client)
+                    agent = cast(Agent, self.agent_manager.agent)
+                    thread = session_thread  # Use the session-specific thread
+                    toolset = cast(
+                        AsyncToolSet, self.agent_manager.toolset)
 
-                        except Exception as e:
-                            print(f"❌ Error in agent stream: {e}")
-                            # Send error to client safely
-                            await web_handler.put_safely({"type": "error", "error": str(e)})
-                            span.set_attribute("error", True)
-                            span.set_attribute("error_message", str(e))
-                            stream_span.set_attribute("error", True)
-                            stream_span.set_attribute("error_message", str(e))
-                        finally:
-                            # Signal end of stream safely
-                            await web_handler.put_safely(None)
+                    try:
+                        async with await agents_client.runs.stream(
+                            thread_id=thread.id,
+                            agent_id=agent.id,
+                            event_handler=web_handler,
+                            max_completion_tokens=Config.MAX_COMPLETION_TOKENS,
+                            max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
+                            temperature=Config.TEMPERATURE,
+                            top_p=Config.TOP_P,
+                            tool_resources=toolset.resources,
+                        ) as stream:
+                            await stream.until_done()
 
-                    # Start the stream task
-                    stream_task = asyncio.create_task(run_stream())
+                    except Exception as e:
+                        print(f"❌ Error in agent stream: {e}")
+                        # Send error to client safely
+                        await web_handler.put_safely({"type": "error", "error": str(e)})
+                        span.set_attribute("error", True)
+                        span.set_attribute("error_message", str(e))
+                    finally:
+                        # Signal end of stream safely
+                        await web_handler.put_safely(None)
+
+                # Start the stream task
+                stream_task = asyncio.create_task(run_stream())
 
             # Stream tokens as they arrive
             tokens_processed = 0
@@ -186,8 +182,9 @@ class ChatManager:
                         # Monitor queue health
                         queue_size = web_handler.get_queue_size()
                         if queue_size > 100:  # Warn if queue gets too large
-                            print(f"⚠️ Warning: Token queue size is large: {queue_size}")
-                        
+                            print(
+                                f"⚠️ Warning: Token queue size is large: {queue_size}")
+
                         # Wait for next token with timeout
                         item = await asyncio.wait_for(web_handler.token_queue.get(), timeout=RESPONSE_TIMEOUT_SECONDS)
                         if item is None:  # End of stream signal
@@ -216,12 +213,13 @@ class ChatManager:
                     stream_task.cancel()
                     with contextlib.suppress(asyncio.CancelledError):
                         await stream_task
-                
+
                 # Clean up any remaining items in the queue to prevent memory leaks
                 if web_handler:
                     remaining_items = web_handler.get_queue_size()
                     if remaining_items > 0:
-                        print(f"🧹 Cleaning up {remaining_items} remaining items in token queue")
+                        print(
+                            f"🧹 Cleaning up {remaining_items} remaining items in token queue")
                     await web_handler.cleanup()
 
             # Send completion signal
@@ -236,7 +234,7 @@ class ChatManager:
                 stream_task.cancel()
                 with contextlib.suppress(asyncio.CancelledError):
                     await stream_task
-            
+
             # Additional cleanup to ensure no resource leaks
             if web_handler:
                 await web_handler.cleanup()
