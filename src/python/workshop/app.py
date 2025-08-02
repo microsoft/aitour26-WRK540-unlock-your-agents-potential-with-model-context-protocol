@@ -33,12 +33,12 @@ Utilities.suppress_logs()
 
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
-
+RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
 tracer = trace.get_tracer("zava_agent.tracing")
-mcp_client = MCPClient.create_default()
+mcp_client = MCPClient.create_default(RLS_USER_ID)
 
 
 class AgentManager:
@@ -46,6 +46,11 @@ class AgentManager:
 
     async def _setup_agent_tools(self) -> None:
         """Setup MCP tools and code interpreter."""
+
+        # Add code interpreter tool
+        code_interpreter = CodeInterpreterTool()
+        self.toolset.add(code_interpreter)
+
         print("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
             function_tools = await mcp_client.build_function_tools()
@@ -61,14 +66,11 @@ class AgentManager:
                 ],
             )
             # PostgreSQL Row Level Security (RLS) User ID header
-            mcp_tools.update_headers("x-rls-user-id", Config.RLS_USER_ID)
+            mcp_tools.update_headers(
+                "x-rls-user-id", RLS_USER_ID)
             # Disabled as specified in allowed tools
             mcp_tools.set_approval_mode("never")
             self.toolset.add(mcp_tools)
-
-        # Add code interpreter tool
-        code_interpreter = CodeInterpreterTool()
-        self.toolset.add(code_interpreter)
 
     def __init__(self) -> None:
         self.utilities = Utilities()

@@ -20,9 +20,6 @@ class Config:
     APPLICATIONINSIGHTS_CONNECTION_STRING: str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     DEV_TUNNEL_URL: str = url + \
         "/mcp" if (url := os.getenv("DEV_TUNNEL_URL")) else ""
-    # Default to Group Access ID
-    RLS_USER_ID: str = os.getenv(
-        "RLS_USER_ID", "00000000-0000-0000-0000-000000000000")
 
     # Model parameters
     MAX_COMPLETION_TOKENS = 20480
@@ -36,6 +33,18 @@ class Config:
     # MCP configuration
     MAP_MCP_FUNCTIONS: bool = os.getenv(
         "MAP_MCP_FUNCTIONS", "true").lower() in ("true", "1", "yes")
+
+    class Rls:
+        """RLS configuration for PostgreSQL Row Level Security."""
+        ZAVA_HEADOFFICE_USER_ID: str = "00000000-0000-0000-0000-000000000000"
+        ZAVA_SEATTLE_USER_ID: str = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        ZAVA_BELLEVUE_USER_ID: str = "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+        ZAVA_TACOMA_USER_ID: str = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        ZAVA_SPOKANE_USER_ID: str = "d8e9f0a1-b2c3-4567-8901-234567890abc"
+        ZAVA_EVERETT_USER_ID: str = "3b9ac9fa-cd5e-4b92-a7f2-b8c1d0e9f2a3"
+        ZAVA_REDOND_USER_ID: str = "e7f8a9b0-c1d2-3e4f-5678-90abcdef1234"
+        ZAVA_KIRKLAND_USER_ID: str = "9c8b7a65-4321-fed0-9876-543210fedcba"
+        ZAVA_ONLINE_USER_ID: str = "2f4e6d8c-1a3b-5c7e-9f0a-b2d4f6e8c0a2"
 
     @classmethod
     def validate_required_env_vars(cls) -> None:

@@ -26,10 +26,10 @@ class MCPClient:
         self._session_lock = asyncio.Lock()
 
     @classmethod
-    def create_default(cls) -> "MCPClient":
+    def create_default(cls, rls_user_id: str) -> "MCPClient":
         """Create an MCPClient with default server configuration."""
         server_script_path = Path(__file__).parent.parent / "mcp_server" / "sales_analysis" / "sales_analysis.py"
-        return cls([sys.executable, str(server_script_path), "--stdio"])
+        return cls([sys.executable, str(server_script_path), "--stdio", "--RLS_USER_ID", rls_user_id])
 
     async def __aenter__(self) -> "MCPClient":
         """Async context manager entry."""
@@ -191,7 +191,7 @@ class MCPClient:
 if __name__ == "__main__":
 
     async def test() -> None:
-        client = MCPClient.create_default()
+        client = MCPClient.create_default("00000000-0000-0000-0000-000000000000")  # Example RLS user ID
         async with client:
             tools = await client.fetch_tools_async()
             print(f"Available tools: {[tool['function']['name'] for tool in tools]}")
