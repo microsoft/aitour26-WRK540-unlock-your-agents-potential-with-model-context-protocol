@@ -23,6 +23,7 @@ class MCPClient:
         )
         self._session: Optional[ClientSession] = None
         self._client_context = None
+        self._session_lock = asyncio.Lock()
 
     @classmethod
     def create_default(cls) -> "MCPClient":
@@ -41,29 +42,31 @@ class MCPClient:
 
     async def _ensure_session(self) -> None:
         """Ensure we have an active session, creating one if necessary."""
-        if self._session is None:
-            try:
-                self._client_context = stdio_client(self.server_params)
-                read, write = await self._client_context.__aenter__()
-                self._session = ClientSession(read, write)
-                await self._session.__aenter__()
-                await self._session.initialize()
-            except Exception as e:
-                logging.error(f"Failed to establish MCP session: {e}")
-                await self.close_session()
-                raise
+        async with self._session_lock:
+            if self._session is None:
+                try:
+                    self._client_context = stdio_client(self.server_params)
+                    read, write = await self._client_context.__aenter__()
+                    self._session = ClientSession(read, write)
+                    await self._session.__aenter__()
+                    await self._session.initialize()
+                except Exception as e:
+                    logging.error(f"Failed to establish MCP session: {e}")
+                    await self.close_session()
+                    raise
 
     async def close_session(self) -> None:
         """Close the current session and cleanup resources."""
-        for context, name in [(self._session, "session"), (self._client_context, "client_context")]:
-            if context is not None:
-                try:
-                    await context.__aexit__(None, None, None)
-                except Exception as e:
-                    logging.warning(f"Error closing MCP {name}: {e}")
+        async with self._session_lock:
+            for context, name in [(self._session, "session"), (self._client_context, "client_context")]:
+                if context is not None:
+                    try:
+                        await context.__aexit__(None, None, None)
+                    except Exception as e:
+                        logging.warning(f"Error closing MCP {name}: {e}")
 
-        self._session = None
-        self._client_context = None
+            self._session = None
+            self._client_context = None
 
     def _extract_content(self, result) -> str:
         """Extract text content from MCP result."""
