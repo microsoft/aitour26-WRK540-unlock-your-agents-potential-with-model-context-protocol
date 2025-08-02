@@ -43,9 +43,9 @@ The following resources will be created in the **rg-zava-agent-wks-nnnn** resour
 - An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnn**
 - An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnn**
 - **Serverless (pay-as-you-go) Models**:
-    - GPT-4o Mini model deployment named **gpt-4o-mini**. 
-    - Text-embedding-3-small model named **text-embedding-3-small**.
-    - See pricing details [here](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}.
+  - GPT-4o Mini model deployment named **gpt-4o-mini**.
+  - Text-embedding-3-small model named **text-embedding-3-small**.
+  - See [pricing details](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}.
 
 !!! warning "You will need 120K TPM quota availability for the gpt-4o Global Standard SKU, due to the frequency of calls made by the agent to the model. Review your quota availability in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
 
@@ -85,4 +85,3 @@ cd infra && ./deploy.sh
     ```bash
     dotnet user-secrets list
     ```
-

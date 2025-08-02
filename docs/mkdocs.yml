@@ -14,13 +14,14 @@ nav:
   #   - Self-Guided Learners: introduction-self-guided.md
 
   # - Lab 1 Grounding LLMs with MCP: lab-1-mcp_intro.md
-  - Lab 1 Ground your Agent: lab-2-visualize-data.md
-  - Lab 2 Extending the MCP Service: lab-3-mcp-time-service.md
+  - Lab 1 Agent Instructions: lab-1-agent-instructions.md
+  - Lab 2 Start the Agent: lab-2-start-the-agent.md
+  - Lab 3 Extending the MCP Service: lab-3-mcp-time-service.md
   # - Lab 3 Visual Product Search: lab-3-visual-search.md
-  - Lab 3 Service Monitoring: lab-4-monitoring.md
-  - Lab 4 Continuous Evaluation: lab-5-continuous-evaluation.md
-  - Lab 5 Trace & Observe Agents: lab-5-tracing.md
-  - Lab 6 Finishing Up: lab-6-finishing-up.md
+  - Lab 4 Service Monitoring: lab-4-monitoring.md
+  - Lab 5 Continuous Evaluation: lab-5-continuous-evaluation.md
+  - Lab 6 Trace & Observe Agents: lab-5-tracing.md
+  - Lab 7 Finishing Up: lab-6-finishing-up.md
   - Home Work:
     - Debugging with Dev Tunnel: lab-1-start-mcp-server.md
   - Summary: summary.md
