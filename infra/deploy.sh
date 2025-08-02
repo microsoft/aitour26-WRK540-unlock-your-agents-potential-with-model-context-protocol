@@ -58,6 +58,13 @@ mkdir -p "$(dirname "$ENV_FILE_PATH")"
 
 # Write to the workshop .env file
 {
+  echo "# Resource Information:"
+  echo "# - Resource Group Name: $RESOURCE_GROUP_NAME"
+  echo "# - AI Project Name: $AI_PROJECT_NAME"
+  echo "# - Foundry Resource Name: $AI_FOUNDRY_NAME"
+  echo "# - Application Insights Name: $APPLICATION_INSIGHTS_NAME"
+  echo ""
+  echo ""
   echo "PROJECT_ENDPOINT=$PROJECTS_ENDPOINT"
   echo "GPT_MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\""
   echo "EMBEDDING_MODEL_DEPLOYMENT_NAME=\"text-embedding-3-small\""
