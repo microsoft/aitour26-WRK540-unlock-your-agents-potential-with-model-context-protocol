@@ -58,18 +58,35 @@ if (Test-Path $ENV_FILE_PATH) {
 
 # Create a new workshop .env file and write to it
 @"
-# Resource Information:
-# - Resource Group Name: $resourceGroupName
-# - AI Project Name: $aiProjectName
-# - Foundry Resource Name: $aiFoundryName"
-# - Application Insights Name: $applicationInsightsName
-
-
 PROJECT_ENDPOINT=$projectsEndpoint
 GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
 APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
 "@ | Set-Content -Path $ENV_FILE_PATH
+
+
+# Set the path for the .resources.txt file
+$RESOURCES_FILE_PATH = "../src/python/workshop/resources.txt"
+
+# Create workshop directory if it doesn't exist
+$workshopDir = Split-Path -Parent $RESOURCES_FILE_PATH
+if (-not (Test-Path $workshopDir)) {
+    New-Item -ItemType Directory -Path $workshopDir -Force
+}
+
+# Delete the file if it exists
+if (Test-Path $RESOURCES_FILE_PATH) {
+    Remove-Item -Path $RESOURCES_FILE_PATH -Force
+}
+
+# Create a new workshop .env file and write to it
+@"
+Resource Information:
+- Resource Group Name: $resourceGroupName
+- AI Project Name: $aiProjectName
+- Foundry Resource Name: $aiFoundryName"
+- Application Insights Name: $applicationInsightsName
+"@ | Set-Content -Path $RESOURCES_FILE_PATH
 
 # # Create fresh root .env file (always overwrite)
 # $ROOT_ENV_FILE_PATH = "../.env"

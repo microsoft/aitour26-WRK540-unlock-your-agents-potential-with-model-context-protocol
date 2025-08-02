@@ -58,13 +58,6 @@ mkdir -p "$(dirname "$ENV_FILE_PATH")"
 
 # Write to the workshop .env file
 {
-  echo "# Resource Information:"
-  echo "# - Resource Group Name: $RESOURCE_GROUP_NAME"
-  echo "# - AI Project Name: $AI_PROJECT_NAME"
-  echo "# - Foundry Resource Name: $AI_FOUNDRY_NAME"
-  echo "# - Application Insights Name: $APPLICATION_INSIGHTS_NAME"
-  echo ""
-  echo ""
   echo "PROJECT_ENDPOINT=$PROJECTS_ENDPOINT"
   echo "GPT_MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\""
   echo "EMBEDDING_MODEL_DEPLOYMENT_NAME=\"text-embedding-3-small\""
@@ -72,6 +65,23 @@ mkdir -p "$(dirname "$ENV_FILE_PATH")"
   echo "DEV_TUNNEL_URL=\"\""
   echo "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=\"true\""
 } > "$ENV_FILE_PATH"
+
+RESOURCES_FILE_PATH="../src/python/workshop/resources.txt"
+
+# Delete the file if it exists
+[ -f "$RESOURCES_FILE_PATH" ] && rm "$RESOURCES_FILE_PATH"
+
+# Create workshop directory if it doesn't exist
+mkdir -p "$(dirname "$RESOURCES_FILE_PATH")"
+
+# Write to the workshop .env file
+{
+  echo "Azure AI Foundry Resources:"
+  echo "- Resource Group Name: $RESOURCE_GROUP_NAME"
+  echo "- AI Project Name: $AI_PROJECT_NAME"
+  echo "- Foundry Resource Name: $AI_FOUNDRY_NAME"
+  echo "- Application Insights Name: $APPLICATION_INSIGHTS_NAME"
+} > "$RESOURCES_FILE_PATH"
 
 # Create fresh root .env file (always overwrite)
 # ROOT_ENV_FILE_PATH="../.env"

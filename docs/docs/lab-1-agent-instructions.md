@@ -33,12 +33,12 @@ Copy the text below and paste directly after the rule about not generating unver
 !!! tip "Click the copy icon to the right to copy the text to the clipboard."
 
 ```markdown
-- The financial year starts July 1.
+- The financial year for Zava starts January 1.
 ```
 
 The updated instructions should look like this:
 
 ```markdown
 - Do **not generate unverified content** or make assumptions.
-- The financial year starts July 1.
+- The financial year for Zava starts January 1.
 ```
