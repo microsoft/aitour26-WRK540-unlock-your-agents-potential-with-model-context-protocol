@@ -12,7 +12,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import AsyncGenerator, Dict, List
+from typing import AsyncGenerator, Dict
 
 # Add workshop folder to path to import shared modules
 sys.path.append(str(Path(__file__).parent.parent / "workshop"))
@@ -37,7 +37,6 @@ class WebApp:
         """Initialize the web interface with FastAPI app."""
         self.app = app
         self.utilities = Utilities()
-        self.chat_sessions: Dict[str, List[Dict]] = {}
         
         self._setup_routes()
         self._setup_static_files()
@@ -103,7 +102,7 @@ class WebApp:
         except Exception as e:
             return {"error": f"Error processing file: {e!s}"}
     
-    async def stream_chat(self, message: str = "") -> StreamingResponse:
+    async def stream_chat(self, message: str = "", session_id: str | None = None) -> StreamingResponse:
         """Stream chat responses by proxying to the agent service."""
         if not message.strip():
             return StreamingResponse(
@@ -111,13 +110,8 @@ class WebApp:
                 media_type="text/event-stream",
             )
 
-        # Get or create session (simplified - using a single session)
-        session_id = "default"
-        if session_id not in self.chat_sessions:
-            self.chat_sessions[session_id] = []
-
-        # Add user message to session
-        self.chat_sessions[session_id].append({"role": "user", "content": message})
+        # Get or create session - use provided session_id or default
+        session_id = session_id or "default"
 
         return StreamingResponse(
             self._generate_stream(message, session_id),
@@ -176,13 +170,6 @@ class WebApp:
                                     except json.JSONDecodeError:
                                         # Skip malformed JSON
                                         continue
-                    
-                    # Add complete message to session
-                    if assistant_message:
-                        self.chat_sessions[session_id].append({
-                            "role": "assistant", 
-                            "content": assistant_message
-                        })
 
             # Send completion signal
             yield "data: [DONE]\n\n"
@@ -192,21 +179,21 @@ class WebApp:
         except Exception as e:
             yield f"data: {json.dumps({'error': f'Streaming error: {e!s}'})}\n\n"
     
-    async def clear_chat(self) -> Dict:
-        """Clear chat history and call agent service to delete thread."""
+    async def clear_chat(self, session_id: str = "default") -> Dict:
+        """Clear chat history and call agent service to delete thread for specific session."""
         try:
-            # Clear local chat sessions
-            self.chat_sessions.clear()
-            
-            # Call agent service to clear thread
+            # Call agent service to clear thread for this session
             async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.delete(f"{AGENT_SERVICE_URL}/chat/clear")
+                response = await client.delete(
+                    f"{AGENT_SERVICE_URL}/chat/clear",
+                    params={"session_id": session_id}
+                )
                 
                 if response.status_code == 200:
                     result = response.json()
                     return {
                         "status": "success",
-                        "message": "Chat cleared successfully",
+                        "message": f"Chat session '{session_id}' cleared successfully",
                         "agent_response": result
                     }
                 return {

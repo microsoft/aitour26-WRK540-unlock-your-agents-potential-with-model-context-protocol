@@ -74,7 +74,6 @@ class AgentManager:
         self.utilities = Utilities()
         self.agents_client: AgentsClient | None = None
         self.agent: Agent | None = None
-        self.thread: AgentThread | None = None
         self.toolset = AsyncToolSet()
         self.tracer = trace.get_tracer("zava_agent.tracing")
 
@@ -118,34 +117,16 @@ class AgentManager:
                     self.agents_client.enable_auto_function_calls(
                         tools=self.toolset)
 
-                await self.create_new_thread(tracer=self.tracer, trace_scenario=trace_scenario)
-                # self.thread = await self.agents_client.threads.create()
-                # print(f"Created thread, ID: {self.thread.id}")
-
             return True
 
         except Exception as e:
             logger.error("Agent initialization failed: %s", str(e))
             return False
 
-    async def create_new_thread(self, tracer: trace.Tracer | None = None, trace_scenario: str = "Thread Creation") -> None:
-        """Create a new thread and optionally clean up the old one."""
-        if not self.agents_client:
-            raise ValueError(
-                "AgentsClient is not initialized. Cannot create new thread.")
-
-        # Use passed tracer or fall back to instance tracer
-        active_tracer = tracer or self.tracer
-        
-        with active_tracer.start_as_current_span(trace_scenario):
-            await self.utilities.delete_thread_resource(self.agent, self.thread, self.agents_client)
-            self.thread = await self.agents_client.threads.create()
-            print(f"Created thread, ID: {self.thread.id}")
-
     @property
     def is_initialized(self) -> bool:
         """Check if agent is properly initialized."""
-        return all([self.agents_client, self.agent, self.thread])
+        return all([self.agents_client, self.agent])
 
 
 # Global service instance
@@ -208,26 +189,25 @@ async def stream_chat(request: ChatRequest) -> StreamingResponse:
 
 
 @app.delete("/chat/clear")
-async def clear_chat() -> Dict[str, Any]:
-    """Clear the current chat session and create a new thread."""
+async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
+    """Clear the chat session and thread for a specific session."""
     try:
         if not agent_manager.is_initialized or not agent_manager.agents_client or not agent_manager.agent:
             raise HTTPException(
                 status_code=500, detail="Agent not initialized")
 
-        await agent_manager.create_new_thread(trace_scenario="Zava Agent Chat Thread Reset")
-        # Clear chat sessions in the service
-        agent_service.chat_sessions.clear()
+        # Clear the specific session and its thread
+        await agent_service.clear_session_thread(session_id)
 
         return {
             "status": "success",
-            "message": "Chat cleared and new thread created",
+            "message": f"Chat session '{session_id}' cleared successfully",
         }
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"Error clearing chat: {e}")
+        print(f"Error clearing chat for session {session_id}: {e}")
         raise HTTPException(
             status_code=500, detail=f"Failed to clear chat: {e!s}") from e
 

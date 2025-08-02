@@ -153,23 +153,3 @@ class Utilities:
 
         self.log_msg_purple("Vector store created and files added.")
         return vector_store
-
-    async def delete_thread_resource(
-        self, agent: Optional[Agent], thread: Optional[AgentThread], agents_client_instance: Optional[AgentsClient]
-    ) -> None:
-        """Cleanup the Azure AI resources."""
-        if agent and thread and agents_client_instance:
-            try:
-                # Clean up files
-                existing_files = await agents_client_instance.files.list()
-                for f in existing_files.data:
-                    await agents_client_instance.files.delete(f.id)
-
-                # Clean up thread
-                await agents_client_instance.threads.delete(thread.id)
-
-                # Clean up agent
-                # await agents_client_instance.delete_agent(agent.id)
-
-            except Exception as e:
-                print(f"⚠️  Warning: Error during Azure cleanup: {e}")

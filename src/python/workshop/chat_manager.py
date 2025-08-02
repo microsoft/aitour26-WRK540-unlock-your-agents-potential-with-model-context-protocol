@@ -7,7 +7,7 @@ and streaming responses.
 
 import asyncio
 import contextlib
-from typing import AsyncGenerator, Dict, List, Protocol, cast
+from typing import AsyncGenerator, Dict, Protocol, cast
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet
@@ -28,7 +28,6 @@ class AgentManagerProtocol(Protocol):
 
     agents_client: AgentsClient | None
     agent: Agent | None
-    thread: AgentThread | None
     toolset: AsyncToolSet
 
     @property
@@ -54,7 +53,55 @@ class ChatManager:
     def __init__(self, agent_manager: AgentManagerProtocol) -> None:
         self.agent_manager = agent_manager
         self.utilities = Utilities()
-        self.chat_sessions: Dict[str, List[Dict]] = {}
+        self.session_threads: Dict[str, AgentThread] = {}
+
+    async def get_or_create_thread(self, session_id: str) -> AgentThread:
+        """Get existing thread for session or create a new one."""
+        if session_id not in self.session_threads:
+            if not self.agent_manager.agents_client:
+                raise ValueError("AgentsClient is not initialized")
+            
+            # Create new thread for this session
+            thread = await self.agent_manager.agents_client.threads.create()
+            self.session_threads[session_id] = thread
+            print(f"Created new thread {thread.id} for session {session_id}")
+        
+        return self.session_threads[session_id]
+
+    async def delete_thread_resource(self, thread: AgentThread, agents_client: AgentsClient) -> None:
+        """Cleanup the Azure AI thread resource."""
+        try:
+            # Clean up files associated with the thread
+            existing_files = await agents_client.files.list()
+            for f in existing_files.data:
+                await agents_client.files.delete(f.id)
+
+            # Clean up thread
+            await agents_client.threads.delete(thread.id)
+
+        except Exception as e:
+            print(f"⚠️  Warning: Error during Azure thread cleanup: {e}")
+
+    async def clear_session_thread(self, session_id: str) -> None:
+        """Clear thread for a specific session."""
+        if session_id in self.session_threads:
+            thread = self.session_threads[session_id]
+            if self.agent_manager.agents_client and self.agent_manager.agent:
+                await self.delete_thread_resource(
+                    thread, 
+                    self.agent_manager.agents_client
+                )
+            del self.session_threads[session_id]
+            
+        print(f"Cleared thread for session {session_id}")
+
+    async def clear_all_sessions(self) -> None:
+        """Clear all sessions and their associated threads."""
+        # Clear all threads
+        for session_id in list(self.session_threads.keys()):
+            await self.clear_session_thread(session_id)
+        
+        print("Cleared all sessions and threads")
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
         """Process chat message and stream responses."""
@@ -67,17 +114,19 @@ class ChatManager:
             return
 
         # Type guards - ensure all required components are available
-        if not self.agent_manager.agents_client or not self.agent_manager.agent or not self.agent_manager.thread:
+        if not self.agent_manager.agents_client or not self.agent_manager.agent:
             yield ChatResponse(error="Agent components not properly initialized")
             return
 
         # Get or create session
         session_id = request.session_id or "default"
-        if session_id not in self.chat_sessions:
-            self.chat_sessions[session_id] = []
 
-        # Add user message to session
-        self.chat_sessions[session_id].append({"role": "user", "content": request.message})
+        # Get or create thread for this session
+        try:
+            session_thread = await self.get_or_create_thread(session_id)
+        except Exception as e:
+            yield ChatResponse(error=f"Failed to create thread for session: {e!s}")
+            return
 
         try:
             # Create the web streaming event handler
@@ -92,16 +141,17 @@ class ChatManager:
                 span.set_attribute("user_message", request.message)
                 span.set_attribute("operation_type", "chat_request")
                 span.set_attribute("agent_id", self.agent_manager.agent.id)
-                span.set_attribute("thread_id", self.agent_manager.thread.id)
+                span.set_attribute("thread_id", session_thread.id)
+                span.set_attribute("session_id", session_id)
 
                 # Create message in thread
                 with tracer.start_as_current_span("create_user_message") as message_span:
                     await self.agent_manager.agents_client.messages.create(
-                        thread_id=self.agent_manager.thread.id,
+                        thread_id=session_thread.id,
                         role="user",
                         content=request.message,
                     )
-                    message_span.set_attribute("thread_id", self.agent_manager.thread.id)
+                    message_span.set_attribute("thread_id", session_thread.id)
 
                 # Start the agent stream
                 with tracer.start_as_current_span("agent_stream_processing") as stream_span:
@@ -110,7 +160,7 @@ class ChatManager:
                         # Capture references with type casts since we've already checked they're not None
                         agents_client = cast(AgentsClient, self.agent_manager.agents_client)
                         agent = cast(Agent, self.agent_manager.agent)
-                        thread = cast(AgentThread, self.agent_manager.thread)
+                        thread = session_thread  # Use the session-specific thread
                         toolset = cast(AsyncToolSet, self.agent_manager.toolset)
 
                         try:
@@ -171,10 +221,6 @@ class ChatManager:
                     stream_task.cancel()
                     with contextlib.suppress(asyncio.CancelledError):
                         await stream_task
-
-            # Add complete message to session
-            if web_handler.assistant_message:
-                self.chat_sessions[session_id].append({"role": "assistant", "content": web_handler.assistant_message})
 
             # Send completion signal
             yield ChatResponse(done=True)

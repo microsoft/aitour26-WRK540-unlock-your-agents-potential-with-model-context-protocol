@@ -10,6 +10,18 @@ let uploadedFile = null;
 let serviceReady = false;
 let statusCheckInterval = null;
 
+// Generate or retrieve session ID
+function generateSessionId() {
+    return 'session_' + Math.random().toString(36).substr(2, 16) + '_' + Date.now();
+}
+
+// Get session ID from localStorage or generate new one
+let sessionId = localStorage.getItem('chat_session_id');
+if (!sessionId) {
+    sessionId = generateSessionId();
+    localStorage.setItem('chat_session_id', sessionId);
+}
+
 // Service status checker
 async function checkServiceStatus() {
     try {
@@ -406,7 +418,8 @@ async function sendMessage() {
         
         // Use EventSource for Server-Sent Events
         const eventSource = new EventSource('/chat/stream?' + new URLSearchParams({
-            message: finalMessage
+            message: finalMessage,
+            session_id: sessionId
         }));
         
         let assistantMessage = '';
@@ -665,8 +678,10 @@ async function clearChat() {
         clearBtn.disabled = true;
         clearBtn.textContent = 'Clearing...';
         
-        // Call the clear endpoint
-        const response = await fetch('/chat/clear', {
+        // Call the clear endpoint with session ID
+        const response = await fetch('/chat/clear?' + new URLSearchParams({
+            session_id: sessionId
+        }), {
             method: 'DELETE',
         });
         
@@ -678,6 +693,10 @@ async function clearChat() {
         
         // Clear the messages display
         messagesDiv.innerHTML = '';
+        
+        // Generate new session ID for fresh start
+        sessionId = generateSessionId();
+        localStorage.setItem('chat_session_id', sessionId);
         
         // Clear any uploaded file state
         uploadedFile = null;
