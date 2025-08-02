@@ -58,23 +58,30 @@ if (Test-Path $ENV_FILE_PATH) {
 
 # Create a new workshop .env file and write to it
 @"
+# Resource Information:
+# - Resource Group Name: $resourceGroupName
+# - AI Project Name: $aiProjectName
+# - Foundry Resource Name: $aiFoundryName"
+# - Application Insights Name: $applicationInsightsName
+
+
 PROJECT_ENDPOINT=$projectsEndpoint
 GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
 APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
 "@ | Set-Content -Path $ENV_FILE_PATH
 
-# Create fresh root .env file (always overwrite)
-$ROOT_ENV_FILE_PATH = "../.env"
-@"
-AZURE_OPENAI_ENDPOINT="$azureOpenAIEndpoint"
-PROJECT_ENDPOINT="$projectsEndpoint"
-GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
-EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
-APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
-DEV_TUNNEL_URL=""
-AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED="true"
-"@ | Set-Content -Path $ROOT_ENV_FILE_PATH
+# # Create fresh root .env file (always overwrite)
+# $ROOT_ENV_FILE_PATH = "../.env"
+# @"
+# AZURE_OPENAI_ENDPOINT="$azureOpenAIEndpoint"
+# PROJECT_ENDPOINT="$projectsEndpoint"
+# GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
+# EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
+# APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
+# DEV_TUNNEL_URL=""
+# AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED="true"
+# "@ | Set-Content -Path $ROOT_ENV_FILE_PATH
 
 # Set the C# project path
 $CSHARP_PROJECT_PATH = "../src/csharp/workshop/AgentWorkshop.Client/AgentWorkshop.Client.csproj"
