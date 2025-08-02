@@ -23,13 +23,53 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         self.util = utilities
         self.assistant_message = ""
         self.token_queue: asyncio.Queue = asyncio.Queue()
+        self._is_closed = False
+
+    async def cleanup(self) -> None:
+        """Clean up resources and drain the queue."""
+        if self._is_closed:
+            return
+            
+        self._is_closed = True
+        
+        # Drain any remaining items in the queue
+        try:
+            while not self.token_queue.empty():
+                try:
+                    self.token_queue.get_nowait()
+                except asyncio.QueueEmpty:
+                    break
+        except Exception as e:
+            print(f"⚠️ Warning: Error during WebStreamEventHandler cleanup: {e}")
+
+    async def put_safely(self, item: dict | str | None) -> bool:
+        """Safely put an item in the queue, handling closed state."""
+        if self._is_closed:
+            return False
+        try:
+            await self.token_queue.put(item)
+            return True
+        except Exception as e:
+            print(f"⚠️ Warning: Failed to put item in queue: {e}")
+            return False
+
+    def get_queue_size(self) -> int:
+        """Get the current size of the token queue."""
+        try:
+            return self.token_queue.qsize()
+        except Exception:
+            return 0
+    
+    def is_closed(self) -> bool:
+        """Check if the handler has been closed."""
+        return self._is_closed
 
     async def on_message_delta(self, delta: MessageDeltaChunk) -> None:
         """Override to capture tokens for web streaming instead of terminal output."""
         if delta.text:
             self.assistant_message += delta.text
             # Put token in queue for web streaming
-            await self.token_queue.put({"type": "text", "content": delta.text})
+            await self.put_safely({"type": "text", "content": delta.text})
 
     async def on_thread_message(self, message: ThreadMessage) -> None:
         """Override to capture files and send them to web interface."""
@@ -40,7 +80,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         if files:
             for file_info in files:
                 # print(f"🔍 DEBUG: Sending file info: {file_info}")  # Debug
-                await self.token_queue.put({"type": "file", "file_info": file_info})
+                await self.put_safely({"type": "file", "file_info": file_info})
 
     async def on_thread_run(self, run: ThreadRun) -> None:
         """Handle thread run events"""
@@ -66,4 +106,4 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
 
     async def on_unhandled_event(self, event_type: str, event_data: object) -> None:
         """Handle unhandled events."""
-        print(f"Unhandled Event Type: {event_type}")
+        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")

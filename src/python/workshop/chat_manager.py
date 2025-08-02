@@ -103,8 +103,11 @@ class ChatManager:
             yield ChatResponse(error=f"Failed to create thread for session: {e!s}")
             return
 
+        web_handler = None
+        stream_task = None
+        
         try:
-            # Create the web streaming event handler
+            # Create the web streaming event handler with proper resource management
             web_handler = WebStreamEventHandler(
                 self.utilities, self.agent_manager.agents_client)
 
@@ -157,27 +160,35 @@ class ChatManager:
 
                         except Exception as e:
                             print(f"❌ Error in agent stream: {e}")
-                            # Send error to client
-                            await web_handler.token_queue.put({"type": "error", "error": str(e)})
+                            # Send error to client safely
+                            await web_handler.put_safely({"type": "error", "error": str(e)})
                             span.set_attribute("error", True)
                             span.set_attribute("error_message", str(e))
                             stream_span.set_attribute("error", True)
                             stream_span.set_attribute("error_message", str(e))
                         finally:
-                            # Signal end of stream
-                            await web_handler.token_queue.put(None)
+                            # Signal end of stream safely
+                            await web_handler.put_safely(None)
 
                     # Start the stream task
                     stream_task = asyncio.create_task(run_stream())
 
             # Stream tokens as they arrive
+            tokens_processed = 0
             try:
                 while True:
                     try:
+                        # Monitor queue health
+                        queue_size = web_handler.get_queue_size()
+                        if queue_size > 100:  # Warn if queue gets too large
+                            print(f"⚠️ Warning: Token queue size is large: {queue_size}")
+                        
                         # Wait for next token with timeout
                         item = await asyncio.wait_for(web_handler.token_queue.get(), timeout=RESPONSE_TIMEOUT_SECONDS)
                         if item is None:  # End of stream signal
                             break
+
+                        tokens_processed += 1
 
                         # Yield response based on type
                         if isinstance(item, dict):
@@ -196,13 +207,31 @@ class ChatManager:
                         break
             finally:
                 # Ensure the stream task is properly cleaned up
-                if not stream_task.done():
+                if stream_task and not stream_task.done():
                     stream_task.cancel()
                     with contextlib.suppress(asyncio.CancelledError):
                         await stream_task
+                
+                # Clean up any remaining items in the queue to prevent memory leaks
+                if web_handler:
+                    remaining_items = web_handler.get_queue_size()
+                    if remaining_items > 0:
+                        print(f"🧹 Cleaning up {remaining_items} remaining items in token queue")
+                    await web_handler.cleanup()
 
             # Send completion signal
             yield ChatResponse(done=True)
+            print(f"✅ Processed {tokens_processed} tokens successfully")
 
         except Exception as e:
             yield ChatResponse(error=f"Streaming error: {e!s}")
+        finally:
+            # Final cleanup to ensure no resource leaks
+            if stream_task and not stream_task.done():
+                stream_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await stream_task
+            
+            # Additional cleanup to ensure no resource leaks
+            if web_handler:
+                await web_handler.cleanup()
