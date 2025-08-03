@@ -750,9 +750,10 @@ class PostgreSQLSchemaProvider:
 
             query = f"""
                 SELECT 
-                    pde.product_id,
+                    p.*,
                     (pde.description_embedding <=> $1::vector) as similarity_distance
                 FROM {SCHEMA_NAME}.product_description_embeddings pde
+                JOIN {SCHEMA_NAME}.products p ON pde.product_id = p.product_id
                 WHERE (pde.description_embedding <=> $1::vector) <= $3
                 ORDER BY similarity_distance
                 LIMIT $2

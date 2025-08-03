@@ -101,22 +101,27 @@ def get_app_context() -> AppContext:
 @mcp.tool()
 async def semantic_search_products(
     ctx: Context,
-    query_description: Annotated[str, Field(description="Use Natural language description to find products that Zava sells. waterproof electrical box for outdoor use, 15 amp circuit breaker")],
+    query_description: Annotated[str, Field(
+        description="Describe the product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'.")],
     max_rows: Annotated[int, Field(
-        description="Maximum number of rows to return. Default to 10.")] = 10,
+        description="The maximum number of products to return. Defaults to 10.")] = 10,
     similarity_threshold: Annotated[float, Field(
-        description="Minimum similarity threshold (20-80) to consider a product a match. Default to 30.0")] = 30.0
+        description="A value between 20 and 80 that sets the minimum similarity threshold. Products below this value are excluded. Defaults to 30.0.")] = 30.0
 ) -> str:
-    """If not already retrieved, get the retail.products schema using the get_multiple_table_schemas tool to understand if the question can be answered directly from the products table. If not, then search for products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes and join this results with the retail.products table.
-
-    Args:
-        query_description: Use Natural language description to find products that Zava sells.. 
-                          (e.g., "waterproof electrical box for outdoor use", "15 amp circuit breaker")
-        max_rows: Maximum number of rows to return, default to 10.
-        similarity_threshold: Minimum similarity threshold (20-80) to consider a product a match, default to 30.0.
+    """Search for products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes.
 
     Returns:
-        JSON string containing a list of products that match the semantic search query, with each entry including the product_id, similarity_distance (cosine distance).
+        A JSON-formatted string containing a list of matching products. Each result includes:
+          - `product_id`: The product's unique identifier.
+          - `sku`: The product's stock keeping unit.
+          - `product_name`: The name of the product.
+          - `category_id`: The ID of the product's category.
+          - `type_id`: The ID of the product's type.
+          - `cost`: The cost of the product.
+          - `base_price`: The base price of the product.
+          - `gross_margin_percent`: The gross margin percentage of the product.
+          - `product_description`: The description of the product.
+          - `similarity_distance`: Cosine similarity score between the query and product embedding.
     """
 
     rls_user_id = get_rls_user_id(ctx)
