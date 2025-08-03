@@ -59,6 +59,7 @@ if (Test-Path $ENV_FILE_PATH) {
 # Create a new workshop .env file and write to it
 @"
 PROJECT_ENDPOINT=$projectsEndpoint
+AZURE_OPENAI_ENDPOINT=$azureOpenAIEndpoint
 GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
 APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"

@@ -169,6 +169,22 @@ class MCPClient:
                 get_current_utc_date.__doc__ = self._build_enhanced_docstring(tool_description, tool_parameters)
                 functions_set.add(get_current_utc_date)
 
+            elif tool_name == "semantic_search_products":
+
+                async def semantic_search_products(query_description: str, max_rows: int = 10, similarity_threshold: float = 30.0) -> str:
+                    return await self.call_tool_async(
+                        "semantic_search_products",
+                        {
+                            "query_description": query_description,
+                            "max_rows": max_rows,
+                            "similarity_threshold": similarity_threshold,
+                        },
+                    )
+
+                semantic_search_products.__name__ = tool_name
+                semantic_search_products.__doc__ = self._build_enhanced_docstring(tool_description, tool_parameters)
+                functions_set.add(semantic_search_products)
+
             else:
                 # Fallback for any other tools - use closure to capture tool_name
                 def make_generic_tool(captured_tool_name: str) -> Callable:

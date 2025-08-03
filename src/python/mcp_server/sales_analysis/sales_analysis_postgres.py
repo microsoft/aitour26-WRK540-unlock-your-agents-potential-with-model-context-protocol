@@ -722,6 +722,86 @@ class PostgreSQLSchemaProvider:
                 await self.release_connection(conn)
 
 
+    async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 10, similarity_threshold: float = 30.0) -> str:
+        """Search for products by similarity using pgvector cosine similarity.
+        
+        Args:
+            query_embedding: The embedding vector to search for similar products
+            max_rows: Maximum number of rows to return
+            rls_user_id: Row-level security user ID
+            similarity_threshold: Minimum similarity percentage (0-100) to include in results. Default is 50%.
+        """
+        conn = None
+        try:
+            max_rows = min(max_rows, 100)  # Limit to 100 for performance
+            
+            # Convert similarity percentage threshold to distance threshold
+            # Similarity percentage = (1 - distance) * 100
+            # So distance = 1 - (similarity_percentage / 100)
+            distance_threshold = 1.0 - (similarity_threshold / 100.0)
+            
+            conn = await self.get_connection()
+
+            await conn.execute(
+                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
+
+            # Convert embedding to string format for PostgreSQL
+            embedding_str = '[' + ','.join(map(str, query_embedding)) + ']'
+
+            query = f"""
+                SELECT 
+                    pde.product_id,
+                    (pde.description_embedding <=> $1::vector) as similarity_distance
+                FROM {SCHEMA_NAME}.product_description_embeddings pde
+                WHERE (pde.description_embedding <=> $1::vector) <= $3
+                ORDER BY similarity_distance
+                LIMIT $2
+            """
+
+            rows = await conn.fetch(query, embedding_str, max_rows, distance_threshold)
+
+            if not rows:
+                return json.dumps(
+                    {
+                        "results": [],
+                        "row_count": 0,
+                        "columns": [],
+                        "message": f"No products found with similarity threshold >= {similarity_threshold}%. Try a lower threshold or different search query.",
+                    }
+                )
+
+            # Convert asyncpg Records to list of dictionaries and add similarity percentage
+            results = []
+            for row in rows:
+                row_dict = dict(row)
+                # Convert similarity distance to a percentage (lower distance = higher similarity)
+                similarity_distance = row_dict.get('similarity_distance', 1.0)
+                similarity_percent = max(0, (1 - similarity_distance) * 100)
+                row_dict['similarity_percent'] = round(similarity_percent, 1)
+                results.append(row_dict)
+
+            columns = list(rows[0].keys()) if rows else []
+            columns.append('similarity_percent')
+
+            # Return LLM-friendly format
+            return json.dumps(
+                {"results": results, "row_count": len(results), "columns": columns}, indent=2, default=str
+            )
+
+        except Exception as e:
+            return json.dumps(
+                {
+                    "error": f"PostgreSQL semantic search failed: {e!s}",
+                    "results": [],
+                    "row_count": 0,
+                    "columns": [],
+                }
+            )
+        finally:
+            if conn:
+                await self.release_connection(conn)
+
+
 async def test_connection() -> bool:
     """Test PostgreSQL connection and return success status."""
     try:

@@ -14,6 +14,7 @@ from typing import Annotated, Optional
 from mcp.server.fastmcp import Context, FastMCP
 from pydantic import Field
 from sales_analysis_postgres import PostgreSQLSchemaProvider
+from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 
 RLS_USER_ID = None
 
@@ -23,6 +24,7 @@ class AppContext:
     """Application context containing database connection."""
 
     db: PostgreSQLSchemaProvider
+    semantic_search: SemanticSearchTextEmbedding
 
 
 @asynccontextmanager
@@ -30,11 +32,13 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     """Manage application lifecycle with type-safe context"""
 
     db = PostgreSQLSchemaProvider()
+    semantic_search = SemanticSearchTextEmbedding()
     # Use connection pool instead of single connection for HTTP server
     await db.create_pool()
 
+
     try:
-        yield AppContext(db=db)
+        yield AppContext(db=db, semantic_search=semantic_search)
     finally:
         # Cleanup on shutdown
         try:
@@ -84,6 +88,62 @@ def get_db_provider() -> PostgreSQLSchemaProvider:
     if isinstance(app_context, AppContext):
         return app_context.db
     raise RuntimeError("Invalid lifespan context type")
+
+
+def get_app_context() -> AppContext:
+    """Get the application context from MCP context."""
+    ctx = mcp.get_context()
+    app_context = ctx.request_context.lifespan_context
+    if isinstance(app_context, AppContext):
+        return app_context
+    raise RuntimeError("Invalid lifespan context type")
+
+@mcp.tool()
+async def semantic_search_products(
+    ctx: Context,
+    query_description: Annotated[str, Field(description="Use Natural language description to find products that Zava sells. waterproof electrical box for outdoor use, 15 amp circuit breaker")],
+    max_rows: Annotated[int, Field(
+        description="Maximum number of rows to return. Default to 10.")] = 10,
+    similarity_threshold: Annotated[float, Field(
+        description="Minimum similarity threshold (20-80) to consider a product a match. Default to 30.0")] = 30.0
+) -> str:
+    """If not already retrieved, get the retail.products schema using the get_multiple_table_schemas tool to understand if the question can be answered directly from the products table. If not, then search for products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes and join this results with the retail.products table.
+
+    Args:
+        query_description: Use Natural language description to find products that Zava sells.. 
+                          (e.g., "waterproof electrical box for outdoor use", "15 amp circuit breaker")
+        max_rows: Maximum number of rows to return, default to 10.
+        similarity_threshold: Minimum similarity threshold (20-80) to consider a product a match, default to 30.0.
+
+    Returns:
+        JSON string containing a list of products that match the semantic search query, with each entry including the product_id, similarity_distance (cosine distance).
+    """
+
+    rls_user_id = get_rls_user_id(ctx)
+
+    print(f"Semantic search query: {query_description}")
+    print(f"Manager ID: {rls_user_id}")
+    print(f"Max Rows: {max_rows}")
+
+    try:
+        app_context = get_app_context()
+
+        # Check if semantic search is available
+        if not app_context.semantic_search.is_available():
+            return "Error: Semantic search is not available. Azure OpenAI endpoint not configured."
+
+        # Generate embedding for the query
+        query_embedding = app_context.semantic_search.generate_query_embedding(
+            query_description)
+        if not query_embedding:
+            return "Error: Failed to generate embedding for the query. Please try again."
+
+        # Search for similar products using the embedding
+        result = await app_context.db.search_products_by_similarity(query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold)
+        return f"Semantic Search Results:\n{result}"
+
+    except Exception as e:
+        return f"Error executing semantic search: {e!s}"
 
 
 @mcp.tool()
@@ -141,7 +201,7 @@ async def get_multiple_table_schemas(
 async def execute_sales_query(
     ctx: Context, postgresql_query: Annotated[str, Field(description="A well-formed PostgreSQL query.")]
 ) -> str:
-    """Always fetch and inspect the database schema before generating any SQL; use only exact table and column names, and never invent or infer data, columns, tables, or values—if the information isn’t present in the schema or database, clearly state that it cannot be answered. Join related tables for clarity, aggregate results where appropriate, and limit output to 20 rows with a note that the limit is for readability. To identify store types, use the retail.store.is_online boolean: true indicates an online store, false indicates a physical store.
+    """Always fetch and inspect the database schema before generating any SQL using the get_multiple_table_schemas tool; use only exact table and column names, and never invent or infer data, columns, tables, or values—if the information isn't present in the schema or database, clearly state that it cannot be answered. Join related tables for clarity, aggregate results where appropriate, and limit output to 20 rows with a note that the limit is for readability. To identify store types, use the retail.store.is_online boolean: true indicates an online store, false indicates a physical store.
 
     Args:
         postgresql_query: A well-formed PostgreSQL query.
