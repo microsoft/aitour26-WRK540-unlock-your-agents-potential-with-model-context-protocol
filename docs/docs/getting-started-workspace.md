@@ -1,4 +1,4 @@
-## Selecting the Language Workspace
+## Opening the Language Workspace
 
 There are two workspaces in the workshop, one for Python and one for C#. The workspace contains the source code and all the files needed to complete the labs for each language. Choose the workspace that matches the language you want to work with.
 
@@ -8,10 +8,10 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
     2. Replace the default path with the following:
 
         ```text
-        /workspaces/build-your-first-agent-with-azure-ai-agent-service-workshop/.vscode/
+        /workspace/.vscode/python-workspace.code-workspace
         ```
 
-    3. Choose the file named **python-workspace.code-workspace** to open the workspace.
+    3. Select **OK** to open the workspace.
 
     ## Project Structure
 
@@ -37,10 +37,10 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
     2. Replace the default path with the following:
 
         ```text
-        /workspaces/build-your-first-agent-with-azure-ai-agent-service-workshop/.vscode/
+        /workspace/.vscode/csharp-workspace.code-workspace
         ```
 
-    3. Choose the file named **csharp-workspace.code-workspace** to open the workspace.
+    3. Select **OK** to open the workspace.
 
     ## Project Structure
 

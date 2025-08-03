@@ -8,7 +8,7 @@ nav:
   - Getting Started: 
     - Open the Workshop: getting-started.md
     - Deploy Azure Resources: getting-started-azure.md
-    - Select Workspace: getting-started-workspace.md
+    - Open Workspace: getting-started-workspace.md
   # - Workshop Setup:
   #   - BUILD Attendees: introduction-event.md
   #   - Self-Guided Learners: introduction-self-guided.md
