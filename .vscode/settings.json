@@ -9,21 +9,7 @@
     "python.analysis.extraPaths": [
         "./src/python/workshop"
     ],
-    "remote.portsAttributes": {
-        "8005": {
-            "label": "Web App",
-            "onAutoForward": "notify",
-            "visibility": "public",
-        },
-        "8006": {
-            "label": "Agent Service",
-            "onAutoForward": "ignore",
-        }        ,
-        "8000": {
-            "label": "Agent Service",
-            "onAutoForward": "ignore"
-        }
-    },
+    "remote.autoForwardPortsSource": "none",
     "peacock.remoteColor": "#dd0531",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#fa1b49",
