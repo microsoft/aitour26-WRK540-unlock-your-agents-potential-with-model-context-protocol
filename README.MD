@@ -1,5 +1,9 @@
 # Welcome AI Tour 26 Creators!
 
+## Published Docs
+
+This repo is configured to use mkdocs, and the docs are in the `docs` folder.  The workshop docs are published [here](https://didactic-adventure-mr83k6w.pages.github.io/).
+
 Thanks for creating content for AI Tour 26.
 
 One of our opportunities from FY25 was make a more consistent experience for attendees.  Following this template, and keeping users in these repos, will help us achieve this opportunity for this year's AI Tour.
