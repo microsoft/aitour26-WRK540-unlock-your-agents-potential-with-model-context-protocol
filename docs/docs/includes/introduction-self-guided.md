@@ -35,7 +35,7 @@ The workshop is available in both Python and C#. Use the language selector tabs 
 The **preferred** way to run this workshop is using **GitHub Codespaces**. This option provides a pre-configured environment with all the tools and resources needed to complete the workshop. Alternatively, you can open the workshop locally using a Visual Studio Code Dev Container and Docker. Both options are described below.
 
 !!! Note
-    Building the Codespace or Dev Container will take several minutes. Start the process and then you can continue reading the instructions while it builds.
+    **Building the Codespace or Dev Container will take several minutes. Start the process and then you can continue reading the instructions while it builds.**
 
 === "GitHub Codespaces"
 
