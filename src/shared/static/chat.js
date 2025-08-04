@@ -50,7 +50,7 @@ async function checkServiceStatus() {
                 fileBtn.disabled = false;
                 clearBtn.disabled = false;
                 messageInput.disabled = false;
-                messageInput.placeholder = 'Type your message or upload a file...';
+                messageInput.placeholder = 'Type your message or type help for some suggestions....';
             } else if (!agentReady && chatState.serviceReady) {
                 chatState.serviceReady = false;
                 showServiceNotReadyMessage();
@@ -433,7 +433,7 @@ async function sendMessage() {
                 // Clear file after upload
                 chatState.uploadedFile = null;
                 fileInput.value = '';
-                messageInput.placeholder = 'Type your message or upload a file...';
+                messageInput.placeholder = 'Type your message or type help for some suggestions....';
             }
             
             messageInput.value = '';
@@ -680,7 +680,7 @@ async function clearChat() {
         // Clear any uploaded file state
         chatState.uploadedFile = null;
         fileInput.value = '';
-        messageInput.placeholder = 'Type your message or upload a file...';
+        messageInput.placeholder = 'Type your message or type help for some suggestions....';
         
         // Show success message briefly
         const successDiv = document.createElement('div');
