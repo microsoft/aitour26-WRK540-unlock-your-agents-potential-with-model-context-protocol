@@ -57,7 +57,7 @@ cd infra && ./deploy.sh
 
 === "Python"
 
-    The deploy script generates the **.env** file, which contains the project endpoint, model deployment name, and Bing connection name. 
+    The deploy script generates the **.env** file, which contains the project and model endpoints, model deployment names, and Application Insights connection string. The .env file will automatically be saved in the `src/python/workshop` folder. 
     
     Your **.env** file will look similar to the following, updated with your values:
 

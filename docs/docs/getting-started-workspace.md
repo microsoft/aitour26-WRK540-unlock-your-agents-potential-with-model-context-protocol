@@ -14,7 +14,7 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
     4. Copy and paste the following path into the file picker and press <kbd>Enter</kbd>:
 
         ```text
-        /workspace/.vscode/csharp-workspace.code-workspace
+        /workspace/.vscode/python-workspace.code-workspace
         ```
 
     ## Project Structure
