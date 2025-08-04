@@ -5,10 +5,13 @@ const fileBtn = document.getElementById('fileBtn');
 const fileInput = document.getElementById('fileInput');
 const clearBtn = document.getElementById('clearBtn');
 
-let isStreaming = false;
-let uploadedFile = null;
-let serviceReady = false;
-let statusCheckInterval = null;
+const chatState = {
+    isStreaming: false,
+    uploadedFile: null,
+    serviceReady: false,
+    statusCheckInterval: null,
+    sessionId: null
+};
 
 // Generate or retrieve session ID
 function generateSessionId() {
@@ -16,10 +19,10 @@ function generateSessionId() {
 }
 
 // Get session ID from localStorage or generate new one
-let sessionId = localStorage.getItem('chat_session_id');
-if (!sessionId) {
-    sessionId = generateSessionId();
-    localStorage.setItem('chat_session_id', sessionId);
+chatState.sessionId = localStorage.getItem('chat_session_id');
+if (!chatState.sessionId) {
+    chatState.sessionId = generateSessionId();
+    localStorage.setItem('chat_session_id', chatState.sessionId);
 }
 
 // Service status checker
@@ -36,11 +39,11 @@ async function checkServiceStatus() {
             const health = await response.json();
             const agentReady = health.agent_service?.agent_initialized === true;
             
-            if (agentReady && !serviceReady) {
-                serviceReady = true;
+            if (agentReady && !chatState.serviceReady) {
+                chatState.serviceReady = true;
                 showServiceReadyMessage();
-                clearInterval(statusCheckInterval);
-                statusCheckInterval = null;
+                clearInterval(chatState.statusCheckInterval);
+                chatState.statusCheckInterval = null;
                 
                 // Enable UI controls
                 sendBtn.disabled = false;
@@ -48,8 +51,8 @@ async function checkServiceStatus() {
                 clearBtn.disabled = false;
                 messageInput.disabled = false;
                 messageInput.placeholder = 'Type your message or upload a file...';
-            } else if (!agentReady && serviceReady) {
-                serviceReady = false;
+            } else if (!agentReady && chatState.serviceReady) {
+                chatState.serviceReady = false;
                 showServiceNotReadyMessage();
             }
             
@@ -62,47 +65,49 @@ async function checkServiceStatus() {
     }
 }
 
-// Show service ready message
-function showServiceReadyMessage() {
+// Show service status message
+function showServiceStatusMessage(message, type) {
     // Remove any existing status messages
     const existingStatus = document.querySelector('.service-status');
     if (existingStatus) {
         existingStatus.remove();
     }
-    
+
     const statusDiv = document.createElement('div');
     statusDiv.className = 'message assistant service-status';
-    statusDiv.innerHTML = '✅ <strong>Agent service is ready!</strong> You can now start chatting.';
-    statusDiv.style.background = '#d4edda';
-    statusDiv.style.color = '#155724';
-    statusDiv.style.border = '1px solid #c3e6cb';
+    statusDiv.innerHTML = message;
+
+    if (type === 'ready') {
+        statusDiv.style.background = '#d4edda';
+        statusDiv.style.color = '#155724';
+        statusDiv.style.border = '1px solid #c3e6cb';
+    } else if (type === 'not-ready') {
+        statusDiv.style.background = '#fff3cd';
+        statusDiv.style.color = '#856404';
+        statusDiv.style.border = '1px solid #ffeaa7';
+    }
+
     messagesDiv.appendChild(statusDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    
-    // Remove the message after 3 seconds
-    setTimeout(() => {
-        if (statusDiv.parentNode) {
-            statusDiv.parentNode.removeChild(statusDiv);
-        }
-    }, 3000);
+
+    if (type === 'ready') {
+        // Remove the message after 3 seconds
+        setTimeout(() => {
+            if (statusDiv.parentNode) {
+                statusDiv.parentNode.removeChild(statusDiv);
+            }
+        }, 3000);
+    }
+}
+
+// Show service ready message
+function showServiceReadyMessage() {
+    showServiceStatusMessage('✅ <strong>Agent service is ready!</strong> You can now start chatting.', 'ready');
 }
 
 // Show service not ready message
 function showServiceNotReadyMessage() {
-    // Remove any existing status messages
-    const existingStatus = document.querySelector('.service-status');
-    if (existingStatus) {
-        existingStatus.remove();
-    }
-    
-    const statusDiv = document.createElement('div');
-    statusDiv.className = 'message assistant service-status';
-    statusDiv.innerHTML = '⏳ <strong>Agent service is starting up...</strong> Please wait while the AI agent initializes.';
-    statusDiv.style.background = '#fff3cd';
-    statusDiv.style.color = '#856404';
-    statusDiv.style.border = '1px solid #ffeaa7';
-    messagesDiv.appendChild(statusDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    showServiceStatusMessage('⏳ <strong>Agent service is starting up...</strong> Please wait while the AI agent initializes.', 'not-ready');
     
     // Disable UI controls while not ready
     sendBtn.disabled = true;
@@ -119,9 +124,9 @@ function startServiceMonitoring() {
         if (!ready) {
             showServiceNotReadyMessage();
             // Start polling every 2 seconds
-            statusCheckInterval = setInterval(checkServiceStatus, 2000);
+            chatState.statusCheckInterval = setInterval(checkServiceStatus, 2000);
         } else {
-            serviceReady = true;
+            chatState.serviceReady = true;
             sendBtn.disabled = false;
             fileBtn.disabled = false;
             clearBtn.disabled = false;
@@ -134,7 +139,10 @@ function startServiceMonitoring() {
 function addMessage(content, isUser) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
-    messageDiv.textContent = content;
+    
+    // Use innerHTML to properly render newlines and other HTML content
+    messageDiv.innerHTML = content.replace(/\n/g, '<br>');
+    
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     return messageDiv;
@@ -345,26 +353,23 @@ function handleFileSelection() {
         return;
     }
     
-    uploadedFile = file;
+    chatState.uploadedFile = file;
     addFileInfo(file.name, file.size);
     messageInput.placeholder = `File selected: ${file.name}. Type a message or press Send to analyze the file.`;
 }
 
-// Send message
+// Send message with retry logic
 async function sendMessage() {
     const message = messageInput.value.trim();
-    
-    // Check if service is ready
-    if (!serviceReady) {
-        addMessage('⚠️ Please wait - the agent service is still starting up. Try again in a moment.', false);
-        return;
-    }
+    const maxRetries = 15; // 30 seconds / 2 seconds per retry
+    const retryDelay = 2000; // 2 seconds
+    let attempt = 0;
     
     // Check if we have a message or a file
-    if ((!message && !uploadedFile) || isStreaming) return;
+    if ((!message && !chatState.uploadedFile) || chatState.isStreaming) return;
     
     // Disable input
-    isStreaming = true;
+    chatState.isStreaming = true;
     sendBtn.disabled = true;
     fileBtn.disabled = true;
     clearBtn.disabled = true;
@@ -373,189 +378,183 @@ async function sendMessage() {
     const originalSendText = sendBtn.textContent;
     sendBtn.textContent = 'Sending...';
     
-    try {
-        let finalMessage = message;
-        
-        // Handle file upload
-        if (uploadedFile) {
-            // Add user message showing file upload
-            const fileMessage = message ? 
-                `${message}\n\n📄 Uploaded file: ${uploadedFile.name}` : 
-                `📄 Analyze this file: ${uploadedFile.name}`;
-            addMessage(fileMessage, true);
-            
-            // Upload file first
-            const formData = new FormData();
-            formData.append('file', uploadedFile);
-            if (message) formData.append('message', message);
-            
-            const uploadResponse = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!uploadResponse.ok) {
-                throw new Error('File upload failed');
+    // Add user message to chat
+    let userMessageDiv;
+    if (chatState.uploadedFile) {
+        const fileMessage = message ? 
+            `${message}\n\n📄 Uploaded file: ${chatState.uploadedFile.name}` : 
+            `📄 Analyze this file: ${chatState.uploadedFile.name}`;
+        userMessageDiv = addMessage(fileMessage, true);
+    } else {
+        userMessageDiv = addMessage(message, true);
+    }
+    
+    // Show typing indicator
+    const typingIndicator = addTypingIndicator();
+    
+    while (attempt < maxRetries) {
+        try {
+            // Check service status before each attempt
+            const isReady = await checkServiceStatus();
+            if (!isReady) {
+                if (attempt === 0) {
+                    // Update UI to show connecting status on first attempt
+                    sendBtn.textContent = 'Connecting...';
+                }
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+                attempt++;
+                continue;
             }
             
-            const uploadResult = await uploadResponse.json();
-            finalMessage = uploadResult.content || 'Please analyze this file.';
+            // Service is ready, proceed with sending
+            sendBtn.textContent = 'Sending...';
             
-            // Clear file after upload
-            uploadedFile = null;
-            fileInput.value = '';
-            messageInput.placeholder = 'Type your message or upload a file...';
-        } else {
-            // Regular text message
-            addMessage(message, true);
+            let finalMessage = message;
+            
+            // Handle file upload
+            if (chatState.uploadedFile) {
+                const formData = new FormData();
+                formData.append('file', chatState.uploadedFile);
+                if (message) formData.append('message', message);
+                
+                const uploadResponse = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json().catch(() => ({ detail: 'File upload failed with status ' + uploadResponse.status }));
+                    throw new Error(errorData.detail || 'File upload failed');
+                }
+                
+                const uploadResult = await uploadResponse.json();
+                finalMessage = uploadResult.content || 'Please analyze this file.';
+                
+                // Clear file after upload
+                chatState.uploadedFile = null;
+                fileInput.value = '';
+                messageInput.placeholder = 'Type your message or upload a file...';
+            }
+            
+            messageInput.value = '';
+            
+            // Use EventSource for Server-Sent Events
+            await handleStreamingResponse(finalMessage, originalSendText, typingIndicator);
+            
+            // Success, exit loop
+            return;
+            
+        } catch (error) {
+            console.log(`Attempt ${attempt + 1} failed:`, error.message);
+            
+            // Check for specific, non-retriable errors
+            if (error.message.includes('File upload failed')) {
+                handleSendError(error, originalSendText, typingIndicator, userMessageDiv);
+                return;
+            }
+            
+            attempt++;
+            if (attempt >= maxRetries) {
+                // All retries failed, show final error
+                const finalError = new Error('Connection error: The agent service is not responding after multiple attempts.');
+                handleSendError(finalError, originalSendText, typingIndicator, userMessageDiv);
+                return;
+            }
+            
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
         }
-        
-        messageInput.value = '';
-        
-        // Show typing indicator while waiting for response
-        sendBtn.textContent = 'Waiting';
-        const typingIndicator = addTypingIndicator();
-        
-        // Use EventSource for Server-Sent Events
+    }
+}
+
+// Handle streaming response with optimized rendering
+function handleStreamingResponse(message, originalSendText, typingIndicator) {
+    return new Promise((resolve, reject) => {
         const eventSource = new EventSource('/chat/stream?' + new URLSearchParams({
-            message: finalMessage,
-            session_id: sessionId
+            message: message,
+            session_id: chatState.sessionId
         }));
         
         let assistantMessage = '';
         let renderTimeout = null;
-        let lastRenderLength = 0;
-        let lastRenderTime = 0;
         let assistantDiv = null;
-        
-        // Function to render markdown progressively
-        function renderProgressiveMarkdown() {
-            const now = Date.now();
-            
-            // Skip if we rendered very recently and content hasn't changed much
-            if (now - lastRenderTime < 10 && assistantMessage.length - lastRenderLength < 3) {
-                return;
+
+        // Helper to create the assistant message div once
+        const createAssistantDiv = () => {
+            if (!assistantDiv) {
+                removeTypingIndicator();
+                assistantDiv = document.createElement('div');
+                assistantDiv.className = 'message assistant';
+                messagesDiv.appendChild(assistantDiv);
+                sendBtn.textContent = 'Receiving...';
             }
-            
+        };
+
+        // Renders markdown content, with fallbacks for incomplete streams
+        const renderMarkdown = (final = false) => {
+            if (!assistantDiv) return;
+
             try {
-                // Parse the current markdown content
-                const renderedContent = marked.parse(assistantMessage);
-                assistantDiv.innerHTML = renderedContent + '<span class="cursor">▌</span>';
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                lastRenderLength = assistantMessage.length;
-                lastRenderTime = now;
+                // A simple heuristic to close unclosed code blocks for progressive rendering
+                const contentToRender = final ? assistantMessage : assistantMessage + '\n```\n';
+                // Clean up any empty code blocks that might have been added
+                const cleanedContent = contentToRender.replace(/```\n```/g, '```');
+                const renderedContent = marked.parse(cleanedContent);
+                assistantDiv.innerHTML = renderedContent + (final ? '' : '<span class="cursor">▌</span>');
             } catch (e) {
-                // If markdown parsing fails (incomplete structure), try partial rendering
-                try {
-                    // Attempt to render what we can by adding temporary closing tags for incomplete structures
-                    let tempContent = assistantMessage;
-                    
-                    // Count unclosed code blocks and try to close them temporarily
-                    const codeBlockMatches = tempContent.match(/```/g);
-                    if (codeBlockMatches && codeBlockMatches.length % 2 === 1) {
-                        tempContent += '\n```';
-                    }
-                    
-                    // Count unclosed inline code and try to close them
-                    const inlineCodeMatches = tempContent.match(/(?<!\\)`/g);
-                    if (inlineCodeMatches && inlineCodeMatches.length % 2 === 1) {
-                        tempContent += '`';
-                    }
-                    
-                    const renderedContent = marked.parse(tempContent);
-                    assistantDiv.innerHTML = renderedContent + '<span class="cursor">▌</span>';
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                    lastRenderLength = assistantMessage.length;
-                    lastRenderTime = now;
-                } catch (e2) {
-                    // If all else fails, show raw text with cursor
-                    assistantDiv.innerHTML = assistantMessage.replace(/\n/g, '<br>') + '<span class="cursor">▌</span>';
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                    lastRenderLength = assistantMessage.length;
-                    lastRenderTime = now;
+                // Fallback to safer rendering if markdown parsing fails
+                assistantDiv.textContent = assistantMessage;
+                if (!final) {
+                    assistantDiv.innerHTML += '<span class="cursor">▌</span>';
                 }
             }
-        }
-        
-        // Optimized render scheduling
-        function scheduleRender() {
-            if (renderTimeout) {
-                clearTimeout(renderTimeout);
-            }
-            
-            // Immediate render for significant content changes, word boundaries, or start of content
-            const contentDelta = assistantMessage.length - lastRenderLength;
-            const isWordBoundary = assistantMessage.endsWith(' ') || assistantMessage.endsWith('\n');
-            
-            if (contentDelta > 10 || assistantMessage.length < 20 || isWordBoundary) {
-                renderProgressiveMarkdown();
-                return;
-            }
-            
-            // Use requestAnimationFrame for smooth rendering
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        };
+
+        // Schedules a throttled render to avoid excessive updates
+        const scheduleRender = () => {
+            if (renderTimeout) return; // A render is already scheduled
             renderTimeout = setTimeout(() => {
-                requestAnimationFrame(renderProgressiveMarkdown);
-            }, 8);
-        }
-        
+                requestAnimationFrame(() => {
+                    renderMarkdown();
+                    renderTimeout = null;
+                });
+            }, 50); // Throttle rendering to a reasonable rate
+        };
+
         eventSource.onmessage = function(event) {
             if (event.data === '[DONE]') {
-                // Clear any pending render timeout
                 if (renderTimeout) {
                     clearTimeout(renderTimeout);
                     renderTimeout = null;
                 }
-                // Render final markdown without cursor
-                if (assistantDiv) {
-                    assistantDiv.innerHTML = marked.parse(assistantMessage);
-                }
+                renderMarkdown(true); // Final render without cursor
                 eventSource.close();
-                // Re-enable input
-                isStreaming = false;
+                chatState.isStreaming = false;
                 sendBtn.disabled = false;
                 fileBtn.disabled = false;
                 clearBtn.disabled = false;
                 sendBtn.textContent = originalSendText;
                 messageInput.focus();
+                resolve();
                 return;
             }
             
             try {
                 const parsed = JSON.parse(event.data);
-                if (parsed.content) {
-                    // First content received - replace typing indicator with assistant div
-                    if (!assistantDiv) {
-                        removeTypingIndicator();
-                        assistantDiv = document.createElement('div');
-                        assistantDiv.className = 'message assistant';
-                        messagesDiv.appendChild(assistantDiv);
-                        sendBtn.textContent = 'Receiving...';
-                    }
-                    
-                    // Handle regular text content (backward compatibility)
-                    assistantMessage += parsed.content;
-                    // Schedule progressive markdown rendering
+                
+                // Unified text handling for both old and new formats
+                const textContent = parsed.content;
+                if (typeof textContent === 'string') {
+                    createAssistantDiv();
+                    assistantMessage += textContent;
                     scheduleRender();
-                } else if (parsed.type === 'text' && parsed.content) {
-                    // First content received - replace typing indicator with assistant div
-                    if (!assistantDiv) {
-                        removeTypingIndicator();
-                        assistantDiv = document.createElement('div');
-                        assistantDiv.className = 'message assistant';
-                        messagesDiv.appendChild(assistantDiv);
-                        sendBtn.textContent = 'Receiving...';
-                    }
-                    
-                    // Handle new text format
-                    assistantMessage += parsed.content;
-                    // Schedule progressive markdown rendering
-                    scheduleRender();
-                } else if (parsed.file || (parsed.type === 'file' && parsed.file_info)) {
-                    // Handle file (image) display
-                    const fileInfo = parsed.file || parsed.file_info;
-                    console.log('Received file info:', fileInfo); // Debug log
+                }
+
+                // File handling
+                const fileInfo = parsed.file || (parsed.type === 'file' && parsed.file_info);
+                if (fileInfo) {
                     if (fileInfo.is_image) {
-                        // Add image to the chat
                         const imageDiv = document.createElement('div');
                         imageDiv.className = 'image-container';
                         imageDiv.innerHTML = `
@@ -566,99 +565,79 @@ async function sendMessage() {
                                  onerror="console.error('Image failed to load:', '${fileInfo.relative_path}')" />
                             <p class="image-caption">${fileInfo.attachment_name}</p>
                         `;
+                        // Insert image right above the assistant message div if it exists
                         messagesDiv.appendChild(imageDiv);
                         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        console.log('Added image with src:', fileInfo.relative_path); // Debug log
                     } else {
-                        // Handle non-image files
+                        createAssistantDiv();
                         assistantMessage += `\n\n📎 Generated file: [${fileInfo.file_name}](${fileInfo.relative_path})\n`;
-                        assistantDiv.innerHTML = assistantMessage + '<span class="cursor">▌</span>';
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        scheduleRender();
                     }
-                } else if (parsed.error) {
-                    // Clear any pending render timeout
-                    if (renderTimeout) {
-                        clearTimeout(renderTimeout);
-                        renderTimeout = null;
-                    }
-                    
-                    // Remove typing indicator if still present and create error div
-                    if (!assistantDiv) {
-                        removeTypingIndicator();
-                        assistantDiv = document.createElement('div');
-                        assistantDiv.className = 'message assistant';
-                        messagesDiv.appendChild(assistantDiv);
-                    }
-                    
+                }
+
+                // Error handling
+                if (parsed.error) {
+                    if (renderTimeout) clearTimeout(renderTimeout);
+                    createAssistantDiv();
                     assistantDiv.textContent = `Error: ${parsed.error}`;
                     assistantDiv.style.color = '#dc3545';
                     eventSource.close();
-                    isStreaming = false;
+                    chatState.isStreaming = false;
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
                     clearBtn.disabled = false;
                     sendBtn.textContent = originalSendText;
                     messageInput.focus();
+                    reject(new Error(parsed.error));
                 }
             } catch (e) {
-                console.error('JSON parse error:', e);
+                console.error('Stream processing error:', e);
+                // Don't reject promise here for a single bad message.
+                // The onerror handler will catch a total connection failure.
             }
         };
         
         eventSource.onerror = function(event) {
             console.error('EventSource failed:', event);
-            // Clear any pending render timeout
-            if (renderTimeout) {
-                clearTimeout(renderTimeout);
-                renderTimeout = null;
-            }
-            
-            // Remove typing indicator if still present and create error div
-            if (!assistantDiv) {
-                removeTypingIndicator();
-                assistantDiv = document.createElement('div');
-                assistantDiv.className = 'message assistant';
-                messagesDiv.appendChild(assistantDiv);
-            }
-            
-            assistantDiv.textContent = 'Connection error';
-            assistantDiv.style.color = '#dc3545';
             eventSource.close();
-            isStreaming = false;
-            sendBtn.disabled = false;
-            fileBtn.disabled = false;
-            clearBtn.disabled = false;
-            sendBtn.textContent = originalSendText;
-            messageInput.focus();
+            reject(new Error('Connection to the server was lost.'));
         };
-        
-    } catch (error) {
-        // Handle upload or streaming errors
-        removeTypingIndicator();
-        
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'message assistant';
-        errorDiv.textContent = `Error: ${error.message}`;
-        errorDiv.style.color = '#dc3545';
-        messagesDiv.appendChild(errorDiv);
-        
-        isStreaming = false;
-        sendBtn.disabled = false;
-        fileBtn.disabled = false;
-        clearBtn.disabled = false;
-        sendBtn.textContent = originalSendText;
-        messageInput.focus();
-    }
+    });
+}
+
+// Handle send error
+function handleSendError(error, originalSendText, typingIndicator, userMessageDiv) {
+    // Remove typing indicator
+    if (typingIndicator) removeTypingIndicator();
+    
+    // Remove the optimistic user message
+    if (userMessageDiv) userMessageDiv.remove();
+    
+    // Add a single error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'message assistant';
+    errorDiv.textContent = `Error: ${error.message}`;
+    errorDiv.style.color = '#dc3545';
+    messagesDiv.appendChild(errorDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    // Re-enable UI
+    chatState.isStreaming = false;
+    sendBtn.disabled = false;
+    fileBtn.disabled = false;
+    clearBtn.disabled = false;
+    sendBtn.textContent = originalSendText;
+    messageInput.focus();
 }
 
 // Clear chat function
 async function clearChat() {
-    if (!serviceReady) {
+    if (!chatState.serviceReady) {
         alert('Please wait - the agent service is still starting up.');
         return;
     }
     
-    if (isStreaming) {
+    if (chatState.isStreaming) {
         alert('Please wait for the current response to finish before clearing chat.');
         return;
     }
@@ -680,7 +659,7 @@ async function clearChat() {
         
         // Call the clear endpoint with session ID
         const response = await fetch('/chat/clear?' + new URLSearchParams({
-            session_id: sessionId
+            session_id: chatState.sessionId
         }), {
             method: 'DELETE',
         });
@@ -695,11 +674,11 @@ async function clearChat() {
         messagesDiv.innerHTML = '';
         
         // Generate new session ID for fresh start
-        sessionId = generateSessionId();
-        localStorage.setItem('chat_session_id', sessionId);
+        chatState.sessionId = generateSessionId();
+        localStorage.setItem('chat_session_id', chatState.sessionId);
         
         // Clear any uploaded file state
-        uploadedFile = null;
+        chatState.uploadedFile = null;
         fileInput.value = '';
         messageInput.placeholder = 'Type your message or upload a file...';
         
