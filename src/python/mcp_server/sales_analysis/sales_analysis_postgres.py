@@ -722,7 +722,7 @@ class PostgreSQLSchemaProvider:
                 await self.release_connection(conn)
 
 
-    async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 10, similarity_threshold: float = 30.0) -> str:
+    async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 20, similarity_threshold: float = 30.0) -> str:
         """Search for products by similarity using pgvector cosine similarity.
         
         Args:

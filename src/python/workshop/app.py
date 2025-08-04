@@ -33,6 +33,8 @@ Utilities.suppress_logs()
 
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
+# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
+
 RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
@@ -63,6 +65,7 @@ class AgentManager:
                     "get_multiple_table_schemas",
                     "execute_sales_query",
                     "get_current_utc_date",
+                    "semantic_search_products"
                 ],
             )
             # PostgreSQL Row Level Security (RLS) User ID header

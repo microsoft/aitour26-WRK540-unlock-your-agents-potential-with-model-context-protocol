@@ -98,17 +98,18 @@ def get_app_context() -> AppContext:
         return app_context
     raise RuntimeError("Invalid lifespan context type")
 
-@mcp.tool()
+# @mcp.tool()
 async def semantic_search_products(
     ctx: Context,
     query_description: Annotated[str, Field(
-        description="Describe the product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'.")],
+        description="Describe the Zava product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'.")],
     max_rows: Annotated[int, Field(
-        description="The maximum number of products to return. Defaults to 10.")] = 10,
+        description="The maximum number of products to return. Defaults to 20.")] = 20,
     similarity_threshold: Annotated[float, Field(
         description="A value between 20 and 80 that sets the minimum similarity threshold. Products below this value are excluded. Defaults to 30.0.")] = 30.0
 ) -> str:
-    """Search for products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes.
+    """
+    Search for Zava products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes.
 
     Returns:
         A JSON-formatted string containing a list of matching products. Each result includes:
@@ -144,8 +145,7 @@ async def semantic_search_products(
             return "Error: Failed to generate embedding for the query. Please try again."
 
         # Search for similar products using the embedding
-        result = await app_context.db.search_products_by_similarity(query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold)
-        return f"Semantic Search Results:\n{result}"
+        return await app_context.db.search_products_by_similarity(query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold)
 
     except Exception as e:
         return f"Error executing semantic search: {e!s}"
@@ -206,7 +206,7 @@ async def get_multiple_table_schemas(
 async def execute_sales_query(
     ctx: Context, postgresql_query: Annotated[str, Field(description="A well-formed PostgreSQL query.")]
 ) -> str:
-    """Always fetch and inspect the database schema before generating any SQL using the get_multiple_table_schemas tool; use only exact table and column names, and never invent or infer data, columns, tables, or values—if the information isn't present in the schema or database, clearly state that it cannot be answered. Join related tables for clarity, aggregate results where appropriate, and limit output to 20 rows with a note that the limit is for readability. To identify store types, use the retail.store.is_online boolean: true indicates an online store, false indicates a physical store.
+    """Always fetch and inspect the database schema before generating any SQL using the get_multiple_table_schemas tool; use only exact table and column names, and never invent or infer data, columns, tables, or values—if the information isn't present in the schema or database, clearly state that it cannot be answered. Join related tables for clarity, aggregate results where appropriate, and limit output to 20 rows with a note that the limit is for readability. To identify store types, use the retail.store.is_online boolean: true indicates an online store, false indicates a physical store. **NEVER** return entity IDs or UUIDs in the response, as they are not meaningful to the user. Instead, use descriptive names or values.
 
     Args:
         postgresql_query: A well-formed PostgreSQL query.
