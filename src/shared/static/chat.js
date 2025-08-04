@@ -376,7 +376,7 @@ async function sendMessage() {
     
     // Update send button to show processing state
     const originalSendText = sendBtn.textContent;
-    sendBtn.textContent = 'Sending...';
+    sendBtn.textContent = 'Sent';
     
     // Add user message to chat
     let userMessageDiv;
@@ -407,7 +407,7 @@ async function sendMessage() {
             }
             
             // Service is ready, proceed with sending
-            sendBtn.textContent = 'Sending...';
+            sendBtn.textContent = 'Sent';
             
             let finalMessage = message;
             
