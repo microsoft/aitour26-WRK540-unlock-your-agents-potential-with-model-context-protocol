@@ -4,14 +4,18 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
 
 === "Python"
 
-    1. In Visual Studio Code, go to **File** > **Open Workspace from File**.
-    2. Replace the default path with the following:
+    1. Copy the following command to your clipboard:
 
         ```text
-        /workspace/.vscode/python-workspace.code-workspace
+        File: Open Workspace from File...
         ```
+    2. Switch to Visual Studio Code, press <kbd>F1</kbd> to open the Command Palette.
+    3. Paste the command into the Command Palette and select **Open Workspace from File...**.
+    4. Copy and paste the following path into the file picker and press <kbd>Enter</kbd>:
 
-    3. Select **OK** to open the workspace.
+        ```text
+        /workspace/.vscode/csharp-workspace.code-workspace
+        ```
 
     ## Project Structure
 
@@ -20,13 +24,18 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
     ### The workshop folder
 
     - The **app.py** file: The entry point for the app, containing its main logic.
-    - The **sales_data.py** file: The function logic to execute dynamic SQL queries against the SQLite database.
-    - The **stream_event_handler.py** file: Contains the event handler logic for token streaming.
+  
+    Note the **INSTRUCTIONS_FILE** variable—it sets which instructions file the agent uses. You will update this variable in a later lab.
+
+    - The **resources.txt** file: Contains the resources used by the agent app.
+    - The **.env** file: Contains the environment variables used by the agent app.
+
+    ### The mcp_server folder
+
+    - The **sales_analysis.py** file: The MCP Server with tools for sales analysis.
 
     ### The shared folder
 
-    - The **files** folder: Contains the files created by the agent app.
-    - The **fonts** folder: Contains the multilingual fonts used by Code Interpreter.
     - The **instructions** folder: Contains the instructions passed to the LLM.
 
     ![Lab folder structure](media/project-structure-self-guided-python.png)

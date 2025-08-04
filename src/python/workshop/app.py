@@ -50,8 +50,8 @@ class AgentManager:
         """Setup MCP tools and code interpreter."""
 
         # Add code interpreter tool
-        code_interpreter = CodeInterpreterTool()
-        self.toolset.add(code_interpreter)
+        # code_interpreter = CodeInterpreterTool()
+        # self.toolset.add(code_interpreter)
 
         print("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:

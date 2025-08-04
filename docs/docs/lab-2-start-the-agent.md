@@ -46,8 +46,6 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
                 ...
         ```
 
-     5. **Save** the file. Press <kbd>Ctrl + S</kbd> (Windows/Linux) or <kbd>Cmd + S</kbd> (Mac).
-
 === "C#"
 
     TBD

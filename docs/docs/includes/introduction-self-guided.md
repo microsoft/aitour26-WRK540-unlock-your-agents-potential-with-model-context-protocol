@@ -32,7 +32,10 @@ The workshop is available in both Python and C#. Use the language selector tabs 
 
 ## Open the Workshop
 
-The preferred way to run this workshop is using GitHub Codespaces. This option provides a pre-configured environment with all the tools and resources needed to complete the workshop. Alternatively, you can open the workshop locally using a Visual Studio Code Dev Container.
+The **preferred** way to run this workshop is using **GitHub Codespaces**. This option provides a pre-configured environment with all the tools and resources needed to complete the workshop. Alternatively, you can open the workshop locally using a Visual Studio Code Dev Container and Docker. Both options are described below.
+
+!!! Note
+    Building the Codespace or Dev Container will take several minutes. Start the process and then you can continue reading the instructions while it builds.
 
 === "GitHub Codespaces"
 
@@ -40,7 +43,7 @@ The preferred way to run this workshop is using GitHub Codespaces. This option p
 
     [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol){:target="_blank"}
 
-    !!! Warning "Building the Codespace will take several minutes. You can continue reading the instructions while it builds."
+
 
 === "VS Code Dev Container"
 
@@ -53,7 +56,3 @@ The preferred way to run this workshop is using GitHub Codespaces. This option p
     2. Select **Dev Containers Open** to open the project in a VS Code Dev Container.
 
         [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol)
-
-    !!! Warning "The process of building the Dev Container, which involves downloading and setting it up on your local system, will take several minutes. During this time, you can continue reading the instructions."
-
-

@@ -38,13 +38,47 @@ This lab uses the Streamable HTTP transport interface to integrate with the Azur
     This will output a URL that you'll need for the agent to connect to the MCP server. The output will be similar to:
 
     ```text
-    Hosting port: 8010
-    Connect via browser: https://<tunnel-id>-8010.aue.devtunnels.ms
-    Inspect network activity: https://<tunnel-id>-8010-inspect.aue.devtunnels.ms
+    Hosting port: 8000
+    Connect via browser: https://<tunnel-id>-8000.aue.devtunnels.ms
+    Inspect network activity: https://<tunnel-id>-8000-inspect.aue.devtunnels.ms
     ```
 
+## Update the DevTunnel Environment Variable
+
 1. Copy the **Connect via browser** URL to the clipboard - you'll need it in the next lab to configure the agent.
+2. Open the `.env` file in the workshop folder.
+3. Update the `DEV_TUNNEL_URL` variable with the copied URL.
 
-## Next Steps
+    ```text
+    DEV_TUNNEL_URL=https://<tunnel-id>-8000.aue.devtunnels.ms
+    ```
 
-Once the Dev Tunnel is running, you can proceed to the next lab where you'll configure the agent to use MCP Server and start interacting with the system.
+## Start the Agent App
+
+1. Copy the text below to the clipboard:
+
+    ```text
+    Debug: Select and Start Debugging
+    ```
+
+2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+3. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
+4. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
+
+## Start a conversation with the Agent
+
+Switch to the **Web Chat** tab in your browser. You should see the agent app running and ready to accept questions.
+
+### Debugging with DevTunnel
+
+You can use DevTunnel to debug the MCP server and the agent app. This allows you to inspect network activity and troubleshoot issues in real-time.
+
+1. Select the **Inspect network activity** URL from the DevTunnel output.
+2. This will open a new tab in your browser where you can see the network activity of the MCP server and the agent app.
+3. You can use this to debug any issues that arise during the workshop.
+
+You can also set breakpoints in the MCP server code and the agent app code to debug specific issues. To do this:
+
+1. Open the `sales_analysis.py` file in the `mcp_server` folder.
+2. Set a breakpoint by clicking in the gutter next to the line number where you want to pause execution.
+3. When the execution reaches the breakpoint, you can inspect variables, step through code, and evaluate expressions in the Debug Console.

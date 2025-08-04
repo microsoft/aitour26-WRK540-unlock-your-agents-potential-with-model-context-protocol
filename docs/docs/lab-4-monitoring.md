@@ -1,3 +1,6 @@
+
+**TBC: This lab does not involve making any code changes. It is focused on monitoring the Azure AI Foundry Agent Service from Azure AI Foundry.**
+
 ## Introduction
 
 Monitoring is essential for ensuring the availability, performance, and reliability of your Azure AI Foundry Agent Service. Azure Monitor automatically collects and aggregates metrics and logs from your resources, providing real-time insights and alerting you to potential issues. With built-in dashboards and support for custom alerts, you can track key metrics, analyze trends, and respond proactively to maintain healthy operations. Monitoring is available for agents in a standard agent setup and can be accessed through the Azure portal, CLI, REST API, or client libraries.
