@@ -119,6 +119,24 @@ roleResult=$(az role assignment create \
   --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME/providers/Microsoft.CognitiveServices/accounts/$AI_FOUNDRY_NAME")
 echo "Role assignment result: $roleResult"
 
+echo "Ensuring Azure AI User role assignment..."
+
+# Azure AI User role
+roleResultUser=$(az role assignment create \
+  --assignee "$objectId" \
+  --role "Azure AI User" \
+  --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME")
+  echo "Role assignment result: $roleResultUser"
+
+echo "Ensuring Azure AI Project Manager role assignment..."
+
+# Azure AI Project Manager role
+roleResultManager=$(az role assignment create \
+  --assignee "$objectId" \
+  --role "Azure AI Project Manager" \
+  --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME")
+echo "Role assignment result: $roleResultManager"
+
 exitCode=$?
 
 # Check if it succeeded or if the role assignment already exists
