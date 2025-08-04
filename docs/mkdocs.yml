@@ -3,11 +3,11 @@ site_name: Unlock your agents potential with Model Context Protocol and PostgreS
 nav:
   - Workshop Introduction: index.md
   - Overview of MCP: mcp-overview.md
-  - Solution Architecture: architecture.md
   - Security Considerations: security.md
   - Getting Started: 
     - Open the Workshop: getting-started.md
     - Star the GitHub Repo: getting_started-star-workshop.md
+    - Solution Architecture: architecture.md
     - Deploy Azure Resources: getting-started-azure.md
     - Open Workspace: getting-started-workspace.md
   # - Workshop Setup:
