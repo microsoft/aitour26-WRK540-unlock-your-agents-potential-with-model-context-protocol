@@ -156,6 +156,24 @@ catch {
     }
 }
 
+Write-Host "Ensuring Azure AI User role assignment..."
+
+# Azure AI User role
+$roleResultUser = az role assignment create `
+  --assignee "$objectId" `
+  --role "Azure AI User" `
+  --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName"
+Write-Host "Role assignment result: $roleResultUser"
+
+Write-Host "Ensuring Azure AI Project Manager role assignment..."
+
+# Azure AI Project Manager role
+$roleResultManager = az role assignment create `
+  --assignee "$objectId" `
+  --role "Azure AI Project Manager" `
+  --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName"
+Write-Host "Role assignment result: $roleResultManager"
+
 Write-Host ""
 Write-Host "🎉 Deployment completed successfully!" -ForegroundColor Green
 Write-Host ""
