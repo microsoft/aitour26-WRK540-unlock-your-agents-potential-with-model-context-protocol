@@ -24,6 +24,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         self.assistant_message = ""
         self.token_queue: asyncio.Queue = asyncio.Queue()
         self._is_closed = False
+        self.run_id: str | None = None
 
     async def cleanup(self) -> None:
         """Clean up resources and drain the queue."""
@@ -84,7 +85,9 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
 
     async def on_thread_run(self, run: ThreadRun) -> None:
         """Handle thread run events"""
-
+        # Store the run ID for later access
+        self.run_id = run.id
+        
         print(f"Run status: {run.status}, ID: {run.id}")
         if run.status == RunStatus.FAILED:
             print(f"Run failed. Error: {run.last_error}")

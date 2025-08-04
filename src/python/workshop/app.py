@@ -78,9 +78,11 @@ class AgentManager:
     def __init__(self) -> None:
         self.utilities = Utilities()
         self.agents_client: AgentsClient | None = None
+        self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
         self.toolset = AsyncToolSet()
         self.tracer = trace.get_tracer("zava_agent.tracing")
+        self.application_insights_connection_string = Config.APPLICATIONINSIGHTS_CONNECTION_STRING
 
     async def initialize(self, instructions_file: str) -> bool:
         """Initialize the agent with tools and instructions."""
@@ -99,12 +101,17 @@ class AgentManager:
                 credential=credential,
                 endpoint=Config.PROJECT_ENDPOINT,
             )
+            
+            self.project_client = AIProjectClient(
+                credential=credential,
+                endpoint=Config.PROJECT_ENDPOINT,
+            )
 
             await self._setup_agent_tools()
 
             # Enable Azure Monitor Telemetry
             configure_azure_monitor(
-                connection_string=Config.APPLICATIONINSIGHTS_CONNECTION_STRING)
+                connection_string= self.application_insights_connection_string)
 
             with self.tracer.start_as_current_span(trace_scenario):
                 # Create agent
@@ -131,7 +138,7 @@ class AgentManager:
     @property
     def is_initialized(self) -> bool:
         """Check if agent is properly initialized."""
-        return all([self.agents_client, self.agent])
+        return all([self.agents_client, self.project_client, self.agent])
 
 
 # Global service instance
