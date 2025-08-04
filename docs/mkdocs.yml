@@ -16,6 +16,7 @@ nav:
   # - Lab 1 Grounding LLMs with MCP: lab-1-mcp_intro.md
   - Lab 1 Agent Instructions: lab-1-agent-instructions.md
   - Lab 2 Start your Agent: lab-2-start-the-agent.md
+  - Lab 3 Semantic Search MCP Tool: lab-3-mcp-semantic-search.md
   - Lab 3 Add an MCP Tool: lab-3-mcp-time-service.md
   # - Lab 3 Visual Product Search: lab-3-visual-search.md
   - Lab 4 Service Monitoring: lab-4-monitoring.md

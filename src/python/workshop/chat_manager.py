@@ -202,6 +202,13 @@ class ChatManager:
                         # await self.submit_evaluation(thread.id, web_handler.run_id)
 
                     except Exception as e:
+                        # cancel the run if it fails
+                        if web_handler.run_id:
+                            try:
+                                await agents_client.runs.cancel(thread_id=thread.id, run_id=web_handler.run_id)
+                            except Exception as cancel_error:
+                                print(
+                                    f"⚠️ Warning: Failed to cancel run {web_handler.run_id}: {cancel_error}")
                         print(f"❌ Error in agent stream: {e}")
                         # Send error to client safely
                         await web_handler.put_safely({"type": "error", "error": str(e)})

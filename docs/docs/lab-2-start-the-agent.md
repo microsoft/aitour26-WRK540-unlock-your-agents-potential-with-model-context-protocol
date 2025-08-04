@@ -122,7 +122,11 @@ From the web chat client, you can start a conversation with the agent. The agent
     - ```Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.```
     - ```Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.```
 
-## Stop the Agent App
+<!-- ## Stop the Agent App
 
 1. Switch back to the VS Code editor.
-1. Press <kbd>Shift + F5</kbd> to stop the agent app.
+1. Press <kbd>Shift + F5</kbd> to stop the agent app. -->
+
+## Leave the Agent App Running
+
+Leave the agent app running as you will use it in the next lab to extend the agent with more tools and capabilities.
