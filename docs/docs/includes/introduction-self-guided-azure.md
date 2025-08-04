@@ -41,7 +41,7 @@ This deployment creates the following resources in your Azure subscription under
 
 !!! warning "Ensure you have at least 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls. Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
 
-We have provided a bash script to automate the deployment of the resources required for the workshop. Alternatively, you may deploy resources manually using Azure AI Foundry studio. Select the desired tab.
+We have provided a bash script to automate the deployment of the resources required for the workshop.
 
 ### Automated Deployment
 
