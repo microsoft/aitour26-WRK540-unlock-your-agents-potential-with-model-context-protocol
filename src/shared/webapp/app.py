@@ -18,9 +18,14 @@ import httpx
 from fastapi import FastAPI, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.propagate import inject
+from otel import configure_oltp_grpc_tracing
 
-# Configure logging
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
+tracer = configure_oltp_grpc_tracing()
+logger = logging.getLogger(__name__)
 
 # Agent service configuration
 AGENT_SERVICE_URL = os.environ.get(
@@ -102,6 +107,7 @@ class WebApp:
             return {"content": combined_message, "filename": file.filename}
 
         except Exception as e:
+            logging.error(f"Error processing file {file.filename}: {e}")
             return {"error": f"Error processing file: {e!s}"}
 
     async def stream_chat(self, message: str = "", session_id: str | None = None) -> StreamingResponse:
@@ -178,8 +184,10 @@ class WebApp:
             yield "data: [DONE]\n\n"
 
         except httpx.RequestError as e:
+            logger.error(f"Connection error to agent service: {e!s}")
             yield f"data: {json.dumps({'error': f'Connection error to agent service: {e!s}'})}\n\n"
         except Exception as e:
+            logger.error(f"Streaming error: {e!s}")
             yield f"data: {json.dumps({'error': f'Streaming error: {e!s}'})}\n\n"
 
     async def clear_chat(self, session_id: str = "default") -> Dict:
@@ -204,11 +212,14 @@ class WebApp:
                     "message": f"Agent service error: {response.status_code}"
                 }
         except httpx.RequestError as e:
+            logger.error("Connection error to agent service: %s", e)
             return {
                 "status": "error",
                 "message": f"Connection error to agent service: {e!s}"
             }
         except Exception as e:
+            logger.error(
+                "Error clearing chat for session %s: %s", session_id, e)
             return {
                 "status": "error",
                 "message": f"Error clearing chat: {e!s}"
@@ -227,6 +238,7 @@ class WebApp:
                         f.write(response.content)
                     return FileResponse(path=str(temp_file))
         except Exception as err:
+            logger.error("Error retrieving file from agent service: %s", err)
             raise HTTPException(
                 status_code=500, detail="Error retrieving file from agent service") from err
 
@@ -248,6 +260,7 @@ class WebApp:
                     "agent_service": {"status": "error", "code": response.status_code}
                 }
         except Exception as e:
+            logger.error("Error checking health of agent service: %s", e)
             return {
                 **web_status,
                 "agent_service": {"status": "error", "error": str(e)}
@@ -256,6 +269,8 @@ class WebApp:
 
 # FastAPI app
 app = FastAPI(title="Azure AI Agent Web Interface")
+FastAPIInstrumentor.instrument_app(app)
+HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 # Initialize web app
 web_app = WebApp(app)
@@ -265,6 +280,6 @@ if __name__ == "__main__":
     import uvicorn
 
     port = int(os.getenv("PORT", 8005))
-    print(f"Starting web interface on port {port}")
-    print(f"Agent service URL: {AGENT_SERVICE_URL}")
+    logger.info("Starting web interface on port %d", port)
+    logger.info("Agent service URL: %s", AGENT_SERVICE_URL)
     uvicorn.run(app, host="127.0.0.1", port=port)

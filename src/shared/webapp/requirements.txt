@@ -10,3 +10,11 @@ httpx>=0.28.1,<0.29.0
 
 # File upload support
 python-multipart>=0.0.20,<0.0.30
+
+# open telemetry
+opentelemetry-api==1.31.1
+opentelemetry-sdk==1.31.1
+opentelemetry-exporter-otlp-proto-grpc==1.31.1
+opentelemetry-instrumentation-fastapi==0.52b1
+opentelemetry-instrumentation-httpx==0.52b1
+opentelemetry-instrumentation-asyncpg==0.52b1
