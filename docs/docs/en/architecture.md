@@ -1,6 +1,6 @@
 ## Solution Architecture
 
-In this workshop, you will create the Zava Sales Agent: a conversational agent designed to answer questions about sales data, generate charts, provide product recommendations, and support image-based product searches for Zava's retail DIY business.
+In this workshop, you will create the Zava Sales Agent: a conversational agent designed to answer questions about sales data, generate charts for Zava's retail DIY business.
 
 ## Components of the Agent App
 
