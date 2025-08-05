@@ -108,3 +108,12 @@ Before starting to create **any** new files, create a new git branch using the t
 - Translate each file using the same rules as above.
 - Maintain the same file and folder structure in the translated output.
 - Save each translated file in the appropriate target language folder.
+
+## Verification
+- After translating all files, verify that the number of translated files matches the number of source files.
+- If any files remain unprocessed, resume from where you left off.
+- Confirm that all translations are complete and accurate.
+
+## Final Steps
+- cd to the `docs` folder, activate or create a venv and pip install the requirements.txt in the `docs` folder.
+- rebuild the MkDocs site using the command `mkdocs build`. Check for any errors and fix, ignore warnings and info messages.
