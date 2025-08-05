@@ -10,6 +10,7 @@ Web interface available at: http://127.0.0.1:8005
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import AsyncGenerator, Dict
 
@@ -22,7 +23,8 @@ from fastapi.staticfiles import StaticFiles
 logging.basicConfig(level=logging.ERROR)
 
 # Agent service configuration
-AGENT_SERVICE_URL = "http://127.0.0.1:8006"
+AGENT_SERVICE_URL = os.environ.get(
+    "services__python-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
 
 
 class WebApp:
@@ -262,6 +264,7 @@ web_app = WebApp(app)
 if __name__ == "__main__":
     import uvicorn
 
-    print("Starting web interface...")
+    port = int(os.getenv("PORT", 8005))
+    print(f"Starting web interface on port {port}")
     print(f"Agent service URL: {AGENT_SERVICE_URL}")
-    uvicorn.run(app, host="127.0.0.1", port=8005)
+    uvicorn.run(app, host="127.0.0.1", port=port)

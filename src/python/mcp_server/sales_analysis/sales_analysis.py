@@ -5,6 +5,7 @@ Provides comprehensive customer sales database access with individual table sche
 
 import argparse
 import asyncio
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -35,7 +36,6 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     semantic_search = SemanticSearchTextEmbedding()
     # Use connection pool instead of single connection for HTTP server
     await db.create_pool()
-
 
     try:
         yield AppContext(db=db, semantic_search=semantic_search)
@@ -249,7 +249,9 @@ async def get_current_utc_date() -> str:
 
 async def run_http_server() -> None:
     """Run the MCP server in HTTP mode."""
-    print(f"❤️ 📡 MCP endpoint available at: http://{mcp.settings.host}:{mcp.settings.port}/mcp")
+    mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
+    print(
+        f"❤️ 📡 MCP endpoint available at: http://{mcp.settings.host}:{mcp.settings.port}/mcp")
 
     # Run the FastMCP server as HTTP endpoint
     await mcp.run_streamable_http_async()
@@ -260,8 +262,10 @@ def main() -> None:
     global RLS_USER_ID
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stdio", action="store_true", help="Run server in stdio mode")
-    parser.add_argument("--RLS_USER_ID", type=str, default=None, help="Row Level Security User ID")
+    parser.add_argument("--stdio", action="store_true",
+                        help="Run server in stdio mode")
+    parser.add_argument("--RLS_USER_ID", type=str,
+                        default=None, help="Row Level Security User ID")
     args = parser.parse_args()
 
     # if running in stdio mode, set the global RLS_USER_ID
