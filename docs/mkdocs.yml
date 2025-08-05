@@ -132,6 +132,44 @@ plugins:
             "Summary": "まとめ"
             "Resources": "リソース"
             "About": "概要"
+        - locale: es
+          name: Español
+          site_name: Desbloquea el Potencial de tu Agente con MCP
+          admonition_translations:
+            tip: Consejo
+            warning: Advertencia
+            info: Información
+            note: Nota
+            danger: Peligro
+            success: Éxito
+            question: Pregunta
+          nav_translations:
+            "Workshop Introduction": "Introducción al Taller"
+            "Workshop Navigation": "Navegación del Taller"
+            "Getting Started": "Comenzando"
+            "Open the Workshop": "Abrir el Taller"
+            "Star the GitHub Repo": "Marcar con Estrella el Repositorio GitHub"
+            "Solution Architecture": "Arquitectura de la Solución"
+            "What is an MCP Server": "Qué es un Servidor MCP"
+            "Deploy Azure Resources": "Desplegar Recursos de Azure"
+            "Open Workspace": "Abrir Espacio de Trabajo"
+            "Agent Services Labs": "Laboratorios de Servicios de Agentes"
+            "AI Foundry Agent Services": "Servicios de Agentes AI Foundry"
+            "Lab 1 Agent Instructions": "Lab 1 Instrucciones del Agente"
+            "Lab 2 Start your Agent": "Lab 2 Iniciar tu Agente"
+            "Lab 3 Semantic Search MCP Tool": "Lab 3 Herramienta MCP de Búsqueda Semántica"
+            "Observability Labs": "Laboratorios de Observabilidad"
+            "Observability Overview": "Visión General de Observabilidad"
+            "Lab 4 Service Monitoring": "Lab 4 Monitoreo de Servicios"
+            "Lab 5 Continuous Evaluation": "Lab 5 Evaluación Continua"
+            "Lab 6 Understand Tracing": "Lab 6 Entender el Trazado"
+            "Security": "Seguridad"
+            "Finishing Up": "Finalizando"
+            "Home Work": "Tarea"
+            "Debugging with Dev Tunnel": "Depuración con Dev Tunnel"
+            "Summary": "Resumen"
+            "Resources": "Recursos"
+            "About": "Acerca de"
 
 theme:
   name: material
