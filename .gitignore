@@ -1,0 +1,28 @@
+__pycache__
+*.py[co]
+[.][v]env/
+.DS_Store
+.ruff_cache
+.env
+.coverage
+*.orig
+# .NET stuff
+bin
+obj
+appsettings.*.json
+*.csproj.user
+.mono
+*.user
+.vs
+
+# AZD
+.azure/
+.files/
+src/workshop/[.][v]env/
+
+/src/shared/files
+DevTunnels/devtunnels-tokens-microsoft
+DevTunnels/devtunnels.json
+src/python/workshop/DevTunnels/devtunnels-tokens-microsoft
+src/python/workshop/DevTunnels/devtunnels.json
+src/python/workshop/resources.txt

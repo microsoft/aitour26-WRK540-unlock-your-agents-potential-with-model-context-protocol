@@ -1,0 +1,117 @@
+{
+	"folders": [
+		{
+			"path": "../src/python/workshop"
+		},
+		{
+			"path": "../src/python/mcp_server"
+		},
+		{
+			"path": "../src/shared"
+		}
+	],
+	"settings": {
+		"peacock.remoteColor": "#3776AB",
+		"files.exclude": {
+			"**/__pycache__": true
+		},
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#4f90c6",
+			"activityBar.background": "#4f90c6",
+			"activityBar.foreground": "#15202b",
+			"activityBar.inactiveForeground": "#15202b99",
+			"activityBarBadge.background": "#902f64",
+			"activityBarBadge.foreground": "#e7e7e7",
+			"commandCenter.border": "#e7e7e799",
+			"sash.hoverBorder": "#4f90c6",
+			"statusBar.background": "#3776ab",
+			"statusBar.foreground": "#e7e7e7",
+			"statusBarItem.hoverBackground": "#4f90c6",
+			"statusBarItem.remoteBackground": "#3776ab",
+			"statusBarItem.remoteForeground": "#e7e7e7",
+			"titleBar.activeBackground": "#3776ab",
+			"titleBar.activeForeground": "#e7e7e7",
+			"titleBar.inactiveBackground": "#3776ab99",
+			"titleBar.inactiveForeground": "#e7e7e799"
+		},
+		"peacock.color": "#3776AB"
+	},
+	"launch": {
+		"version": "0.2.0",
+		"compounds": [
+			{
+				"name": "🔁🤖Debug Compound: Agent and MCP (stdio)",
+				"configurations": [
+					"Debug: Agent Manager (stdio)",
+					"Debug: Web App"
+				],
+				"stopAll": true
+			},
+			{
+				"name": "🌎🤖Debug Compound: Agent and MCP (http)",
+				"configurations": [
+					"❤️📡Debug: MCP Server Sales Analysis",
+					"Debug: Agent Manager (http)",
+					"Debug: Web App"
+				],
+				"stopAll": true
+			},
+		],
+		"configurations": [
+			{
+				"name": "Debug: Agent Manager (stdio)",
+				"type": "debugpy",
+				"request": "launch",
+				"program": "app.py",
+				"cwd": "${workspaceFolder:workshop}",
+				"console": "integratedTerminal",
+				"args": [],
+				"env": {
+					"PYDEVD_DISABLE_FILE_VALIDATION": "1",
+					"MAP_MCP_FUNCTIONS": "true"
+				},
+				"justMyCode": true
+			},
+			{
+				"name": "Debug: Agent Manager (http)",
+				"type": "debugpy",
+				"request": "launch",
+				"program": "app.py",
+				"cwd": "${workspaceFolder:workshop}",
+				"console": "integratedTerminal",
+				"args": [],
+				"env": {
+					"PYDEVD_DISABLE_FILE_VALIDATION": "1",
+					"MAP_MCP_FUNCTIONS": "false"
+				},
+				"justMyCode": true
+			},
+			{
+				"name": "Debug: Web App",
+				"type": "debugpy",
+				"request": "launch",
+				"program": "web_app.py",
+				"console": "integratedTerminal",
+				"cwd": "${workspaceFolder:workshop}",
+				"args": [],
+				"env": {
+					"PYDEVD_DISABLE_FILE_VALIDATION": "1"
+				},
+				"justMyCode": true
+			},
+			{
+				"name": "❤️📡Debug: MCP Server Sales Analysis",
+				"type": "debugpy",
+				"request": "launch",
+				"program": "sales_analysis.py",
+				"cwd": "${workspaceFolder:mcp_server}/sales_analysis",
+				"console": "integratedTerminal",
+				"args": [],
+				"env": {
+					"PYDEVD_DISABLE_FILE_VALIDATION": "1"
+				},
+				"justMyCode": true
+			}
+		]
+	}
+}

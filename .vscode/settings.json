@@ -1,0 +1,14 @@
+{
+    "chat.mcp.serverSampling": {
+        "workspace/.vscode/mcp.json: mcp-zava-sales-devcontainer": {
+            "allowedModels": [
+                "github.copilot-chat/gpt-4.1"
+            ]
+        }
+    },
+    "python.analysis.extraPaths": [
+        "./src/python/workshop"
+    ],
+    "remote.autoForwardPortsSource": "none",
+    "peacock.remoteColor": "#dd0531"
+}

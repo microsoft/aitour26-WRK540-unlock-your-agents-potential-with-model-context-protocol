@@ -1,0 +1,32 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "Python 3.13 with PostgreSQL",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.devcontainer.yml"
+    ],
+    "service": "devcontainer",
+    "workspaceFolder": "/workspace",
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "extensions": "ml"
+        },
+        "ghcr.io/devcontainers/features/dotnet:latest": {
+            "version": "9.0"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "mathematic.vscode-pdf",
+                "ms-ossdata.vscode-pgsql",
+                "charliermarsh.ruff"
+            ]
+        }
+    }
+    // "postCreateCommand": "pip install --user -r src/python/workshop/requirements.txt && pip install --user -r requirements-dev.txt"
+}

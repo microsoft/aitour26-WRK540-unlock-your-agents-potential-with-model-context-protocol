@@ -1,0 +1,189 @@
+site_name: Unlock your Agents Potential with MCP
+site_author: Dave Glover
+site_description: >-
+  Azure AI Foundry Agent Services with MCP Workshop.
+
+
+# Repository ..................................................
+repo_name: Unlock your Agents Potential with MCP
+repo_url: https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol
+
+# Copyright ...................................................
+copyright: >
+  Copyright &copy; 2023 - present Microsoft
+
+
+nav:
+  - Workshop Introduction: index.md
+  - Workshop Navigation: navigating-the-workshop.md
+  - Getting Started: 
+    - Open the Workshop: getting-started.md
+    - Star the GitHub Repo: getting_started-star-workshop.md
+    - Solution Architecture: architecture.md
+    - What is an MCP Server: mcp-overview.md
+    - Deploy Azure Resources: getting-started-azure.md
+    - Open Workspace: getting-started-workspace.md
+  - Agent Services Labs:
+    - AI Foundry Agent Services: agent-service-overview.md
+    - Lab 1 Agent Instructions: lab-1-agent-instructions.md
+    - Lab 2 Start your Agent: lab-2-start-the-agent.md
+    - Lab 3 Semantic Search MCP Tool: lab-3-mcp-semantic-search.md
+  - Observability Labs:
+    - Observability Overview: observability-overview.md
+    - Lab 4 Service Monitoring: lab-4-monitoring.md
+    - Lab 5 Continuous Evaluation: lab-5-continuous-evaluation.md
+    - Lab 6 Understand Tracing: lab-6-tracing.md
+  - Security: security.md
+  - Finishing Up: lab-7-finishing-up.md
+  - Home Work:
+    - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
+  - Summary: summary.md
+  - Resources: resources.md
+  - About: about.md
+  # - Deployment: deployment.md
+  # - Troubleshooting: troubleshooting.md
+
+
+plugins:
+  - search
+  - glightbox
+  - include-markdown
+  - timetoread:
+      wpm: 180
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: en
+          name: English
+          default: true
+        - locale: fr
+          name: Français
+          site_name: Atelier AI Tour 26
+          admonition_translations:
+            tip: Conseil
+            warning: Avertissement
+            info: Information
+            note: Remarque
+            danger: Danger
+            success: Succès
+            question: Question
+          nav_translations:
+            "Workshop Introduction": "Introduction à l'Atelier"
+            "Workshop Navigation": "Navigation de l'Atelier"
+            "Getting Started": "Pour Commencer"
+            "Open the Workshop": "Ouvrir l'Atelier"
+            "Star the GitHub Repo": "Marquer d'une Étoile le Dépôt GitHub"
+            "Solution Architecture": "Architecture de la Solution"
+            "What is an MCP Server": "Qu'est-ce qu'un Serveur MCP"
+            "Deploy Azure Resources": "Déployer les Ressources Azure"
+            "Open Workspace": "Ouvrir l'Espace de Travail"
+            "Agent Services Labs": "Laboratoires de Services d'Agents"
+            "AI Foundry Agent Services": "Services d'Agents AI Foundry"
+            "Lab 1 Agent Instructions": "Lab 1 Instructions de l'Agent"
+            "Lab 2 Start your Agent": "Lab 2 Démarrer votre Agent"
+            "Lab 3 Semantic Search MCP Tool": "Lab 3 Outil de Recherche Sémantique MCP"
+            "Observability Labs": "Laboratoires d'Observabilité"
+            "Observability Overview": "Vue d'ensemble de l'Observabilité"
+            "Lab 4 Service Monitoring": "Lab 4 Surveillance du Service"
+            "Lab 5 Continuous Evaluation": "Lab 5 Évaluation Continue"
+            "Lab 6 Understand Tracing": "Lab 6 Comprendre le Traçage"
+            "Security": "Sécurité"
+            "Finishing Up": "Finalisation"
+            "Home Work": "Travaux à Domicile"
+            "Debugging with Dev Tunnel": "Débogage avec Dev Tunnel"
+            "Summary": "Résumé"
+            "Resources": "Ressources"
+            "About": "À propos"
+        - locale: ja
+          name: 日本語
+          site_name: MCP でエージェントの可能性を解き放つ
+          admonition_translations:
+            tip: ヒント
+            warning: 警告
+            info: 情報
+            note: 注意
+            danger: 危険
+            success: 成功
+            question: 質問
+          nav_translations:
+            "Workshop Introduction": "ワークショップ紹介"
+            "Workshop Navigation": "ワークショップナビゲーション"
+            "Getting Started": "はじめに"
+            "Open the Workshop": "ワークショップを開く"
+            "Star the GitHub Repo": "GitHub リポジトリにスターを付ける"
+            "Solution Architecture": "ソリューションアーキテクチャ"
+            "What is an MCP Server": "MCP サーバーとは"
+            "Deploy Azure Resources": "Azure リソースをデプロイする"
+            "Open Workspace": "ワークスペースを開く"
+            "Agent Services Labs": "エージェントサービスラボ"
+            "AI Foundry Agent Services": "AI Foundry エージェントサービス"
+            "Lab 1 Agent Instructions": "ラボ1 エージェント指示"
+            "Lab 2 Start your Agent": "ラボ2 エージェントを開始する"
+            "Lab 3 Semantic Search MCP Tool": "ラボ3 セマンティック検索 MCP ツール"
+            "Observability Labs": "可観測性ラボ"
+            "Observability Overview": "可観測性概要"
+            "Lab 4 Service Monitoring": "ラボ4 サービス監視"
+            "Lab 5 Continuous Evaluation": "ラボ5 継続的評価"
+            "Lab 6 Understand Tracing": "ラボ6 トレーシングの理解"
+            "Security": "セキュリティ"
+            "Finishing Up": "仕上げ"
+            "Home Work": "ホームワーク"
+            "Debugging with Dev Tunnel": "Dev Tunnel でのデバッグ"
+            "Summary": "まとめ"
+            "Resources": "リソース"
+            "About": "概要"
+
+theme:
+  name: material
+  logo: media/favicon.png
+  favicon: media/favicon.png
+  features:
+    - navigation.instant
+    - navigation.footer
+    - content.code.copy
+    - navigation.tabs.sticky 
+    - content.tabs.link
+
+  # Change Font: https://squidfunk.github.io/mkdocs-material/setup/changing-the-fonts/?h=fonts
+  # Google Fonts Supported By Default: https://fonts.google.com/
+  font:
+    code: Roboto Mono #Monospaced
+    text: Roboto #Regular
+  # logo: docs/media/azure-ai-studio.svg
+  palette:
+    - scheme: default  # Light Mode
+      primary: black
+      accent: pink
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    - scheme: slate # Dark Mode
+      primary: amber
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      toc_depth: 2
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+        alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  # - pymdownx.emoji:
+      # emoji_index: !!python/name:material.extensions.emoji.twemoji
+      # emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+
+extra_css:
+  - css/custom.css
+
+
