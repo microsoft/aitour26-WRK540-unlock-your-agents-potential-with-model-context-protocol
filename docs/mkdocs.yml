@@ -170,6 +170,44 @@ plugins:
             "Summary": "Resumen"
             "Resources": "Recursos"
             "About": "Acerca de"
+        - locale: it
+          name: Italiano
+          site_name: Sblocca il Potenziale del Tuo Agente con MCP
+          admonition_translations:
+            tip: Suggerimento
+            warning: Avvertimento
+            info: Informazione
+            note: Nota
+            danger: Pericolo
+            success: Successo
+            question: Domanda
+          nav_translations:
+            "Workshop Introduction": "Introduzione al Workshop"
+            "Workshop Navigation": "Navigazione del Workshop"
+            "Getting Started": "Iniziare"
+            "Open the Workshop": "Aprire il Workshop"
+            "Star the GitHub Repo": "Mettere una Stella al Repository GitHub"
+            "Solution Architecture": "Architettura della Soluzione"
+            "What is an MCP Server": "Cos'è un Server MCP"
+            "Deploy Azure Resources": "Distribuire Risorse Azure"
+            "Open Workspace": "Aprire il Workspace"
+            "Agent Services Labs": "Laboratori Servizi Agente"
+            "AI Foundry Agent Services": "Servizi Agente AI Foundry"
+            "Lab 1 Agent Instructions": "Lab 1 Istruzioni Agente"
+            "Lab 2 Start your Agent": "Lab 2 Avviare il tuo Agente"
+            "Lab 3 Semantic Search MCP Tool": "Lab 3 Strumento MCP Ricerca Semantica"
+            "Observability Labs": "Laboratori Osservabilità"
+            "Observability Overview": "Panoramica Osservabilità"
+            "Lab 4 Service Monitoring": "Lab 4 Monitoraggio Servizi"
+            "Lab 5 Continuous Evaluation": "Lab 5 Valutazione Continua"
+            "Lab 6 Understand Tracing": "Lab 6 Comprendere il Tracing"
+            "Security": "Sicurezza"
+            "Finishing Up": "Completamento"
+            "Home Work": "Compiti a Casa"
+            "Debugging with Dev Tunnel": "Debug con Dev Tunnel"
+            "Summary": "Riassunto"
+            "Resources": "Risorse"
+            "About": "Informazioni"
 
 theme:
   name: material
