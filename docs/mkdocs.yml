@@ -246,6 +246,44 @@ plugins:
             "Summary": "الملخص"
             "Resources": "الموارد"
             "About": "حول"
+        - locale: hi
+          name: हिन्दी
+          site_name: Model Context Protocol के साथ अपने Agent की क्षमता को अनलॉक करें
+          admonition_translations:
+            tip: सुझाव
+            warning: चेतावनी
+            info: जानकारी
+            note: नोट
+            danger: खतरा
+            success: सफलता
+            question: प्रश्न
+          nav_translations:
+            "Workshop Introduction": "कार्यशाला परिचय"
+            "Workshop Navigation": "कार्यशाला नेविगेशन"
+            "Getting Started": "प्रारंभ करना"
+            "Open the Workshop": "कार्यशाला खोलें"
+            "Star the GitHub Repo": "GitHub रिपो को Star करें"
+            "Solution Architecture": "समाधान आर्किटेक्चर"
+            "What is an MCP Server": "MCP सर्वर क्या है"
+            "Deploy Azure Resources": "Azure संसाधन तैनात करें"
+            "Open Workspace": "कार्यक्षेत्र खोलें"
+            "Agent Services Labs": "एजेंट सेवा लैब्स"
+            "AI Foundry Agent Services": "AI Foundry एजेंट सेवाएं"
+            "Lab 1 Agent Instructions": "लैब 1 एजेंट निर्देश"
+            "Lab 2 Start your Agent": "लैब 2 अपना एजेंट शुरू करें"
+            "Lab 3 Semantic Search MCP Tool": "लैब 3 सिमेंटिक सर्च MCP टूल"
+            "Observability Labs": "अवलोकनीयता लैब्स"
+            "Observability Overview": "अवलोकनीयता अवलोकन"
+            "Lab 4 Service Monitoring": "लैब 4 सेवा निगरानी"
+            "Lab 5 Continuous Evaluation": "लैब 5 निरंतर मूल्यांकन"
+            "Lab 6 Understand Tracing": "लैब 6 ट्रेसिंग समझें"
+            "Security": "सुरक्षा"
+            "Finishing Up": "समाप्ति"
+            "Home Work": "गृह कार्य"
+            "Debugging with Dev Tunnel": "Dev Tunnel के साथ डिबगिंग"
+            "Summary": "सारांश"
+            "Resources": "संसाधन"
+            "About": "के बारे में"
 
 theme:
   name: material
