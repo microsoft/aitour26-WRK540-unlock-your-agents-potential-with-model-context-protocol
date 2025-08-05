@@ -284,6 +284,44 @@ plugins:
             "Summary": "सारांश"
             "Resources": "संसाधन"
             "About": "के बारे में"
+        - locale: ko
+          name: 한국어
+          site_name: MCP로 에이전트의 잠재력 발휘하기
+          admonition_translations:
+            tip: 팁
+            warning: 경고
+            info: 정보
+            note: 참고
+            danger: 위험
+            success: 성공
+            question: 질문
+          nav_translations:
+            "Workshop Introduction": "워크샵 소개"
+            "Workshop Navigation": "워크샵 내비게이션"
+            "Getting Started": "시작하기"
+            "Open the Workshop": "워크샵 열기"
+            "Star the GitHub Repo": "GitHub 리포지토리 별표 표시"
+            "Solution Architecture": "솔루션 아키텍처"
+            "What is an MCP Server": "MCP 서버란"
+            "Deploy Azure Resources": "Azure 리소스 배포"
+            "Open Workspace": "워크스페이스 열기"
+            "Agent Services Labs": "에이전트 서비스 랩"
+            "AI Foundry Agent Services": "AI Foundry 에이전트 서비스"
+            "Lab 1 Agent Instructions": "랩 1 에이전트 지침"
+            "Lab 2 Start your Agent": "랩 2 에이전트 시작"
+            "Lab 3 Semantic Search MCP Tool": "랩 3 시맨틱 검색 MCP 도구"
+            "Observability Labs": "관찰 가능성 랩"
+            "Observability Overview": "관찰 가능성 개요"
+            "Lab 4 Service Monitoring": "랩 4 서비스 모니터링"
+            "Lab 5 Continuous Evaluation": "랩 5 지속적 평가"
+            "Lab 6 Understand Tracing": "랩 6 추적 이해"
+            "Security": "보안"
+            "Finishing Up": "마무리"
+            "Home Work": "과제"
+            "Debugging with Dev Tunnel": "Dev Tunnel로 디버깅"
+            "Summary": "요약"
+            "Resources": "리소스"
+            "About": "소개"
         - locale: nl
           name: Nederlands
           site_name: Ontgrendel het Potentieel van je Agent met MCP
