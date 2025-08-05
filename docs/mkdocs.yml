@@ -284,6 +284,44 @@ plugins:
             "Summary": "सारांश"
             "Resources": "संसाधन"
             "About": "के बारे में"
+        - locale: nl
+          name: Nederlands
+          site_name: Ontgrendel het Potentieel van je Agent met MCP
+          admonition_translations:
+            tip: Tip
+            warning: Waarschuwing
+            info: Informatie
+            note: Opmerking
+            danger: Gevaar
+            success: Succes
+            question: Vraag
+          nav_translations:
+            "Workshop Introduction": "Workshop Introductie"
+            "Workshop Navigation": "Workshop Navigatie"
+            "Getting Started": "Aan de Slag"
+            "Open the Workshop": "Workshop Openen"
+            "Star the GitHub Repo": "GitHub Repo Sterren"
+            "Solution Architecture": "Oplossingsarchitectuur"
+            "What is an MCP Server": "Wat is een MCP Server"
+            "Deploy Azure Resources": "Azure Resources Implementeren"
+            "Open Workspace": "Workspace Openen"
+            "Agent Services Labs": "Agent Services Labs"
+            "AI Foundry Agent Services": "AI Foundry Agent Services"
+            "Lab 1 Agent Instructions": "Lab 1 Agent Instructies"
+            "Lab 2 Start your Agent": "Lab 2 Start je Agent"
+            "Lab 3 Semantic Search MCP Tool": "Lab 3 Semantische Zoek MCP Tool"
+            "Observability Labs": "Observeerbaarheid Labs"
+            "Observability Overview": "Observeerbaarheid Overzicht"
+            "Lab 4 Service Monitoring": "Lab 4 Service Monitoring"
+            "Lab 5 Continuous Evaluation": "Lab 5 Continue Evaluatie"
+            "Lab 6 Understand Tracing": "Lab 6 Tracing Begrijpen"
+            "Security": "Beveiliging"
+            "Finishing Up": "Afronden"
+            "Home Work": "Huiswerk"
+            "Debugging with Dev Tunnel": "Debuggen met Dev Tunnel"
+            "Summary": "Samenvatting"
+            "Resources": "Resources"
+            "About": "Over"
 
 theme:
   name: material
