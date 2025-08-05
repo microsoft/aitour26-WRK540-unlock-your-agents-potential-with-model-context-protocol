@@ -55,7 +55,7 @@ Before starting to create **any** new files, create a new git branch using the t
   - Maintain the original filename.
   - Do **not** wrap the translated content in Markdown code blocks.
   - Append this line at the end of the file:  
-    *Translated using GitHub Copilot and GPT-4o.*
+    *Translated using GitHub Copilot.*
   - Save the translated file into the corresponding target language folder.
 
 ---
