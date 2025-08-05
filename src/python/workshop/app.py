@@ -24,13 +24,21 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from mcp_client import MCPClient
 from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from otel import configure_oltp_grpc_tracing
 from terminal_colors import TerminalColors as tc
 from utilities import Utilities
 
-# Configure logging - suppress verbose Azure SDK logs
+VERBOSE_MODE = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") is not None
+
+logging.basicConfig(level=logging.INFO if VERBOSE_MODE else logging.ERROR)
+tracer = configure_oltp_grpc_tracing()
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.ERROR)
-Utilities.suppress_logs()
+
+# Suppress the verbosity of Azure SDK logs
+if not VERBOSE_MODE:
+    Utilities.suppress_logs()
 
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
@@ -54,7 +62,7 @@ class AgentManager:
         code_interpreter = CodeInterpreterTool()
         self.toolset.add(code_interpreter)
 
-        print("Setting up Agent tools...")
+        logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
             function_tools = await mcp_client.build_function_tools()
             self.toolset.add(function_tools)
@@ -123,7 +131,7 @@ class AgentManager:
                     toolset=self.toolset,
                     temperature=Config.TEMPERATURE,
                 )
-                print(f"Created agent, ID: {self.agent.id}")
+                logger.info("Created agent, ID: %s", self.agent.id)
 
                 # Enable auto function calls
                 if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
@@ -151,23 +159,25 @@ agent_service = ChatManager(agent_manager)
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     """Handle startup and shutdown events"""
     # Startup
-    print("Initializing agent service on startup...")
+    logger.info("Initializing agent service on startup...")
 
     # Initialize agent
     success = await agent_manager.initialize(INSTRUCTIONS_FILE)
 
     if not success:
-        print(
-            f"{tc.BG_BRIGHT_RED}Agent initialization failed. Check your configuration.{tc.RESET}")
+        logger.warning(
+            "Agent initialization failed. Check your configuration.")
     elif agent_manager.is_initialized and agent_manager.agent:
-        print(
-            f"✅ Agent initialized successfully with ID: {agent_manager.agent.id}")
+        logger.info(
+            "✅ Agent initialized successfully with ID: %s", agent_manager.agent.id)
 
     yield
 
 
 # FastAPI app with lifespan
 app = FastAPI(title="Azure AI Agent Service", lifespan=lifespan)
+FastAPIInstrumentor.instrument_app(app)
+HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 
 @app.get("/health")
@@ -220,7 +230,7 @@ async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"Error clearing chat for session {session_id}: {e}")
+        logger.error("Error clearing chat for session %s: %s", session_id, e)
         raise HTTPException(
             status_code=500, detail=f"Failed to clear chat: {e!s}") from e
 
@@ -246,6 +256,6 @@ async def serve_file(filename: str) -> FileResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    port = os.getenv("PORT", 8006)
-    print(f"Starting agent service on port {port}")
+    port = int(os.getenv("PORT", 8006))
+    logger.info("Starting agent service on port %d", port)
     uvicorn.run(app, host="127.0.0.1", port=port)

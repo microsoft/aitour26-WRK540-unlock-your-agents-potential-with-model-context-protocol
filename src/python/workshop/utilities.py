@@ -8,6 +8,8 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import DefaultAzureCredential
 from terminal_colors import TerminalColors as tc
 
+logger = logging.getLogger(__name__)
+
 
 class Utilities:
     # property to get the relative path of shared files
@@ -37,12 +39,12 @@ class Utilities:
             token = await credential.get_token("https://management.azure.com/.default")
             return credential
         except ClientAuthenticationError as e:
-            print(f"{tc.BG_BRIGHT_RED}❌ Azure Authentication Failed{tc.RESET}")
-            print("\n🔧 To fix this issue, please run the following command:")
-            print(f"{tc.CYAN}Azure CLI:{tc.RESET}")
-            print("   az login --use-device-code")
-            print(
-                f"\n{tc.YELLOW}After authentication, run the program again.{tc.RESET}")
+            logger.error("❌ Azure Authentication Failed")
+            logger.error(
+                "🔧 To fix this issue, please run the following command:")
+            logger.error("Azure CLI:")
+            logger.error("   az login --use-device-code")
+            logger.error("After authentication, run the program again.")
             raise e
 
     @property
@@ -58,15 +60,15 @@ class Utilities:
 
     def log_msg_green(self, msg: str) -> None:
         """Print a message in green."""
-        print(f"{tc.GREEN}{msg}{tc.RESET}")
+        logger.info("%s%s%s", tc.GREEN, msg, tc.RESET)
 
     def log_msg_purple(self, msg: str) -> None:
         """Print a message in purple."""
-        print(f"{tc.PURPLE}{msg}{tc.RESET}")
+        logger.info("%s%s%s", tc.PURPLE, msg, tc.RESET)
 
     def log_token_blue(self, msg: str) -> None:
         """Print a token in blue."""
-        print(f"{tc.BLUE}{msg}{tc.RESET}", end="", flush=True)
+        logger.info("%s%s%s", tc.BLUE, msg, tc.RESET)
 
     async def get_file(self, agents_client: AgentsClient, file_id: str, attachment_name: str) -> dict:
         """Retrieve the file and save it to the local disk. Returns file info."""

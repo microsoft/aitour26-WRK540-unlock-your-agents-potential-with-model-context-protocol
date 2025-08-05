@@ -7,6 +7,7 @@ and streaming responses.
 
 import asyncio
 import contextlib
+import logging
 from datetime import datetime
 from typing import AsyncGenerator, Dict, Protocol, cast
 
@@ -22,6 +23,8 @@ from utilities import Utilities
 
 # Get tracer instance
 tracer = trace.get_tracer("zava_agent.tracing")
+logger = logging.getLogger(__name__)
+
 
 RESPONSE_TIMEOUT_SECONDS = 60
 
@@ -87,29 +90,32 @@ class ChatManager:
                         await self.agent_manager.agents_client.threads.delete(thread.id)
                         span.set_attribute("thread_id", thread.id)
                         span.set_attribute("session_id", session_id)
-                        span.set_attribute("agent_id", self.agent_manager.agent.id)
-                        span.set_attribute("date_time", datetime.now().isoformat())
+                        span.set_attribute(
+                            "agent_id", self.agent_manager.agent.id)
+                        span.set_attribute(
+                            "date_time", datetime.now().isoformat())
                 del self.session_threads[session_id]
 
-        print(f"Cleared thread for session {session_id}")
+        logger.info("Cleared thread for session %s", session_id)
 
     async def submit_evaluation(self, thread_id: str, run_id: str | None) -> None:
         """Submit evaluation request for continuous evaluation."""
         try:
             if not run_id:
-                print("⚠️ Warning: run_id is required for evaluation")
+                logger.warning("⚠️ Warning: run_id is required for evaluation")
                 return
             if not self.agent_manager.project_client:
-                print("⚠️ Warning: project_client is not available for evaluation")
+                logger.warning(
+                    "⚠️ Warning: project_client is not available for evaluation")
                 return
-                
+
             # Create evaluators for agent evaluation using EvaluatorConfiguration
             evaluators = {
                 "relevance": EvaluatorConfiguration(id=EvaluatorIds.RELEVANCE),
-                "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY), 
+                "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY),
                 "coherence": EvaluatorConfiguration(id=EvaluatorIds.COHERENCE),
             }
-            
+
             # Create agent evaluation request
             evaluation_request = AgentEvaluationRequest(
                 thread_id=thread_id,
@@ -119,12 +125,14 @@ class ChatManager:
             )
 
             evaluation_response = await self.agent_manager.project_client.evaluations.create_agent_evaluation(evaluation_request)
-            print(f"✅ Evaluation submitted for run {run_id}: {evaluation_response.id}")
-            
+            logger.info("✅ Evaluation submitted for run %s: %s",
+                        run_id, evaluation_response.id)
+
         except Exception as e:
-            print(f"⚠️ Warning: Failed to submit evaluation for run {run_id}: {e}")
+            logger.warning(
+                "⚠️ Warning: Failed to submit evaluation for run %s: %s", run_id, e)
             import traceback
-            print(f"Full traceback: {traceback.format_exc()}")
+            logger.error("Full traceback: %s", traceback.format_exc())
             # Don't fail the main flow for evaluation errors
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
@@ -207,9 +215,9 @@ class ChatManager:
                             try:
                                 await agents_client.runs.cancel(thread_id=thread.id, run_id=web_handler.run_id)
                             except Exception as cancel_error:
-                                print(
-                                    f"⚠️ Warning: Failed to cancel run {web_handler.run_id}: {cancel_error}")
-                        print(f"❌ Error in agent stream: {e}")
+                                logger.warning(
+                                    "⚠️ Warning: Failed to cancel run %s: %s", web_handler.run_id, cancel_error)
+                        logger.error("❌ Error in agent stream: %s", e)
                         # Send error to client safely
                         await web_handler.put_safely({"type": "error", "error": str(e)})
                         span.set_attribute("error", True)
@@ -229,8 +237,8 @@ class ChatManager:
                         # Monitor queue health
                         queue_size = web_handler.get_queue_size()
                         if queue_size > 100:  # Warn if queue gets too large
-                            print(
-                                f"⚠️ Warning: Token queue size is large: {queue_size}")
+                            logger.warning(
+                                "⚠️ Warning: Token queue size is large: %d", queue_size)
 
                         # Wait for next token with timeout
                         item = await asyncio.wait_for(web_handler.token_queue.get(), timeout=RESPONSE_TIMEOUT_SECONDS)
@@ -265,13 +273,14 @@ class ChatManager:
                 if web_handler:
                     remaining_items = web_handler.get_queue_size()
                     if remaining_items > 0:
-                        print(
-                            f"🧹 Cleaning up {remaining_items} remaining items in token queue")
+                        logger.info(
+                            "🧹 Cleaning up %d remaining items in token queue", remaining_items)
                     await web_handler.cleanup()
 
             # Send completion signal
             yield ChatResponse(done=True)
-            print(f"✅ Processed {tokens_processed} tokens successfully")
+            logger.info("✅ Processed %d tokens successfully", tokens_processed)
 
         except Exception as e:
+            logger.error("❌ Error processing chat message: %s", e)
             yield ChatResponse(error=f"Streaming error: {e!s}")
