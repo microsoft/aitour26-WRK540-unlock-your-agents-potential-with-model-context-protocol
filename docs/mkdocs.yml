@@ -170,6 +170,44 @@ plugins:
             "Summary": "Resumen"
             "Resources": "Recursos"
             "About": "Acerca de"
+        - locale: ar
+          name: العربية
+          site_name: اطلق إمكانات وكيلك مع بروتوكول سياق النموذج
+          admonition_translations:
+            tip: نصيحة
+            warning: تحذير
+            info: معلومات
+            note: ملاحظة
+            danger: خطر
+            success: نجاح
+            question: سؤال
+          nav_translations:
+            "Workshop Introduction": "مقدمة الورشة"
+            "Workshop Navigation": "التنقل في الورشة"
+            "Getting Started": "البدء"
+            "Open the Workshop": "فتح الورشة"
+            "Star the GitHub Repo": "وضع نجمة على مستودع GitHub"
+            "Solution Architecture": "بنية الحل"
+            "What is an MCP Server": "ما هو خادم MCP"
+            "Deploy Azure Resources": "نشر موارد Azure"
+            "Open Workspace": "فتح مساحة العمل"
+            "Agent Services Labs": "مختبرات خدمات الوكلاء"
+            "AI Foundry Agent Services": "خدمات وكلاء AI Foundry"
+            "Lab 1 Agent Instructions": "المختبر 1 تعليمات الوكيل"
+            "Lab 2 Start your Agent": "المختبر 2 ابدأ وكيلك"
+            "Lab 3 Semantic Search MCP Tool": "المختبر 3 أداة البحث الدلالي MCP"
+            "Observability Labs": "مختبرات قابلية المراقبة"
+            "Observability Overview": "نظرة عامة على قابلية المراقبة"
+            "Lab 4 Service Monitoring": "المختبر 4 مراقبة الخدمة"
+            "Lab 5 Continuous Evaluation": "المختبر 5 التقييم المستمر"
+            "Lab 6 Understand Tracing": "المختبر 6 فهم التتبع"
+            "Security": "الأمان"
+            "Finishing Up": "الانتهاء"
+            "Home Work": "الواجب المنزلي"
+            "Debugging with Dev Tunnel": "التصحيح مع Dev Tunnel"
+            "Summary": "الملخص"
+            "Resources": "الموارد"
+            "About": "حول"
 
 theme:
   name: material
