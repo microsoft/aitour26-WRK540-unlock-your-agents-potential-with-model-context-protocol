@@ -9,6 +9,7 @@ REST API available at: http://127.0.0.1:8006
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict
@@ -101,7 +102,7 @@ class AgentManager:
                 credential=credential,
                 endpoint=Config.PROJECT_ENDPOINT,
             )
-            
+
             self.project_client = AIProjectClient(
                 credential=credential,
                 endpoint=Config.PROJECT_ENDPOINT,
@@ -111,7 +112,7 @@ class AgentManager:
 
             # Enable Azure Monitor Telemetry
             configure_azure_monitor(
-                connection_string= self.application_insights_connection_string)
+                connection_string=self.application_insights_connection_string)
 
             with self.tracer.start_as_current_span(trace_scenario):
                 # Create agent
@@ -245,5 +246,6 @@ async def serve_file(filename: str) -> FileResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    print("Starting agent service...")
-    uvicorn.run(app, host="127.0.0.1", port=8006)
+    port = os.getenv("PORT", 8006)
+    print(f"Starting agent service on port {port}")
+    uvicorn.run(app, host="127.0.0.1", port=port)

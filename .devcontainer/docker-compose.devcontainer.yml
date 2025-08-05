@@ -1,14 +1,12 @@
 services:
   devcontainer:
-    build:
-      context: .
-      dockerfile: .devcontainer/Dockerfile
+    image: mcr.microsoft.com/devcontainers/base:bookworm
     volumes:
       - .:/workspace:cached
     command: sleep infinity
     working_dir: /workspace
     networks:
-      - unlock-agents-zava-network
+      - zava-network
     depends_on:
       db:
         condition: service_healthy
