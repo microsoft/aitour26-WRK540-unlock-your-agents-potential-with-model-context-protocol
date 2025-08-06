@@ -20,3 +20,6 @@ echo "DevTunnels installed."
 
 echo Setting up Aspire CLI
 curl -sSL https://aspire.dev/install.sh | bash
+
+echo Restoring .NET dependencies
+dotnet restore src/csharp
