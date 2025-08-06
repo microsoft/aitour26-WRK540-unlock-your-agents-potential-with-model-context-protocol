@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import Agent, AgentThread, ThreadMessage
@@ -84,7 +84,7 @@ class Utilities:
         folder_path = Path(self.shared_files_path) / "files"
         folder_path.mkdir(parents=True, exist_ok=True)
         file_path = folder_path / file_name
-        print(f"Saving file to: {file_path}")
+        logger.info("Saving file to: %s", file_path)
 
         # Save the file using a synchronous context manager
         with file_path.open("wb") as file:

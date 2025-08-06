@@ -84,7 +84,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         # Send file information to web interface
         if files:
             for file_info in files:
-                # print(f"🔍 DEBUG: Sending file info: {file_info}")  # Debug
+                logger.debug("🔍 DEBUG: Sending file info: %s", file_info)
                 await self.put_safely({"type": "file", "file_info": file_info})
 
     async def on_thread_run(self, run: ThreadRun) -> None:

@@ -76,7 +76,7 @@ class ChatManager:
             # Create new thread for this session
             thread = await self.agent_manager.agents_client.threads.create()
             self.session_threads[session_id] = thread
-            print(f"Created new thread {thread.id} for session {session_id}")
+            logger.info("Created new thread %s for session %s", thread.id, session_id)
 
             return thread
 
