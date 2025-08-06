@@ -52,7 +52,8 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
         logging.info(
             "Azure Monitor connection string detected. Setting up Azure Monitor tracing exporter.")
         azure_processor = BatchSpanProcessor(AzureMonitorTraceExporter(
-            connection_string=azure_monitor_connection_string))
+            connection_string=azure_monitor_connection_string,
+            disable_offline_storage=True))
         traceProvider.add_span_processor(azure_processor)
 
     trace.set_tracer_provider(traceProvider)
@@ -64,7 +65,8 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
             PeriodicExportingMetricReader(OTLPMetricExporter()))
     if has_azure_monitor:
         metric_readers.append(PeriodicExportingMetricReader(
-            AzureMonitorMetricExporter(connection_string=azure_monitor_connection_string)))
+            AzureMonitorMetricExporter(connection_string=azure_monitor_connection_string,
+                                       disable_offline_storage=True)))
 
     meterProvider = MeterProvider(
         metric_readers=metric_readers) if metric_readers else MeterProvider()
@@ -85,7 +87,8 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
     if has_azure_monitor:
         logging.info("Setting up Azure Monitor log exporter.")
         azure_log_exporter = AzureMonitorLogExporter(
-            connection_string=azure_monitor_connection_string)
+            connection_string=azure_monitor_connection_string,
+            disable_offline_storage=True)
         logger_provider.add_log_record_processor(
             BatchLogRecordProcessor(azure_log_exporter))
 

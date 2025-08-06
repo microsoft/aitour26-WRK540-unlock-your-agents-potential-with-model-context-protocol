@@ -41,6 +41,8 @@ logger = logging.getLogger(__name__)
 # Suppress the verbosity of Azure SDK logs
 if not VERBOSE_MODE:
     Utilities.suppress_logs()
+else:
+    logger.info("Verbose mode enabled. Azure SDK logs will be shown.")
 
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"

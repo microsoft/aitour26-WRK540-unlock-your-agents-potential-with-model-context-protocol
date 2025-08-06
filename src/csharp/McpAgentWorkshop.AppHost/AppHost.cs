@@ -38,7 +38,7 @@ var agentApp = builder.AddPythonApp("python-agent-app", Path.Combine(sourceFolde
     .WithEnvironment("MODEL_DEPLOYMENT_NAME", chatDeployment)
     .WithEnvironment("EMBEDDING_MODEL_DEPLOYMENT_NAME", embeddingDeployment)
     .WithEnvironment("AZURE_OPENAI_ENDPOINT", aoai)
-    .WithEnvironment("APPLICATION_INSIGHTS_CONNECTION_STRING", appInsights)
+    .WithEnvironment("APPLICATIONINSIGHTS_CONNECTION_STRING", appInsights)
     .WithEnvironment("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true")
     .WithPostgres(zava)
     .WithEnvironment("MAP_MCP_FUNCTIONS", "false")

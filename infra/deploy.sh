@@ -84,7 +84,7 @@ mkdir -p "$(dirname "$RESOURCES_FILE_PATH")"
   echo "- Application Insights Name: $APPLICATION_INSIGHTS_NAME"
 } > "$RESOURCES_FILE_PATH"
 
-CSHARP_PROJECT_PATH="../src/csharp/workshop/McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj"
+CSHARP_PROJECT_PATH="../src/csharp/McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj"
 
 # Set the user secrets for the C# project (if the project exists)
 if [ -f "$CSHARP_PROJECT_PATH" ]; then
