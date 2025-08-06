@@ -23,8 +23,7 @@ from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.propagate import inject
 from otel import configure_oltp_grpc_tracing
 
-logging.basicConfig(level=logging.INFO)
-tracer = configure_oltp_grpc_tracing()
+tracer = configure_oltp_grpc_tracing(tracer_name="zava_web_app")
 logger = logging.getLogger(__name__)
 
 # Agent service configuration

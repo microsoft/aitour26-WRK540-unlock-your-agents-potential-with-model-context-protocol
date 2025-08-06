@@ -17,7 +17,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
-def configure_oltp_grpc_tracing() -> trace.Tracer:
+def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: str = __name__) -> trace.Tracer:
     # Check if OTEL endpoint is configured
     has_otel_endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT") is not None
 
@@ -76,6 +76,6 @@ def configure_oltp_grpc_tracing() -> trace.Tracer:
 
     # Always add console handler
     root_logger.addHandler(console_handler)
-    root_logger.setLevel(logging.INFO)  # Set default level to INFO
+    root_logger.setLevel(logging_level)
 
-    return trace.get_tracer(__name__)
+    return trace.get_tracer(tracer_name)

@@ -17,7 +17,6 @@ from typing import Any, AsyncGenerator, Dict
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet, CodeInterpreterTool, McpTool
 from azure.ai.projects.aio import AIProjectClient
-from azure.monitor.opentelemetry import configure_azure_monitor
 from chat_manager import ChatManager, ChatRequest
 from config import Config
 from fastapi import FastAPI, HTTPException
@@ -32,8 +31,11 @@ from utilities import Utilities
 
 VERBOSE_MODE = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") is not None
 
-logging.basicConfig(level=logging.INFO if VERBOSE_MODE else logging.ERROR)
-tracer = configure_oltp_grpc_tracing()
+tracer = configure_oltp_grpc_tracing(
+    logging_level=logging.INFO if VERBOSE_MODE else logging.ERROR,
+    tracer_name="zava_agent",
+    azure_monitor_connection_string=Config.APPLICATIONINSIGHTS_CONNECTION_STRING
+)
 logger = logging.getLogger(__name__)
 
 # Suppress the verbosity of Azure SDK logs
@@ -48,7 +50,6 @@ RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
-tracer = trace.get_tracer("zava_agent.tracing")
 mcp_client = MCPClient.create_default(RLS_USER_ID)
 
 
@@ -117,10 +118,6 @@ class AgentManager:
             )
 
             await self._setup_agent_tools()
-
-            # Enable Azure Monitor Telemetry
-            configure_azure_monitor(
-                connection_string=self.application_insights_connection_string)
 
             with self.tracer.start_as_current_span(trace_scenario):
                 # Create agent

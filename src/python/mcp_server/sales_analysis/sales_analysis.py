@@ -23,9 +23,7 @@ from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 RLS_USER_ID = None
 
 VERBOSE_MODE = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") is not None
-
-logging.basicConfig(level=logging.INFO if VERBOSE_MODE else logging.ERROR)
-tracer = configure_oltp_grpc_tracing()
+tracer = configure_oltp_grpc_tracing(logging.INFO if VERBOSE_MODE else logging.ERROR, tracer_name="zava_sales_analysis")
 logger = logging.getLogger(__name__)
 
 
