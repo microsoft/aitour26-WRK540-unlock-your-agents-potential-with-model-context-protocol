@@ -12,7 +12,7 @@ MCP (Model Context Protocol) is an open standard that lets AI agents access exte
 ```
 ┌─────────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Azure AI Agent    │    │   MCP Client    │    │   MCP Server    │
-│   (main.py)         │◄──►│ (mcp_client.py) │◄──►│ (mcp_server_sales_analysis.py) │
+│   (main.py)         │◄──►│ (mcp_client.py) │◄──►│ (sales_analysis)│
 │                     │    └─────────────────┘    └─────────────────┘
 │ ┌─────────────────┐ │                                   │
 │ │ Azure AI        │ │                                   ▼
