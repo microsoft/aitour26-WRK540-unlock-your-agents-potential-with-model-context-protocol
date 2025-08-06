@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
@@ -11,6 +12,8 @@ from azure.ai.agents.models import (
     ThreadRun,
 )
 from utilities import Utilities
+
+logger = logging.getLogger(__name__)
 
 
 class WebStreamEventHandler(AsyncAgentEventHandler[str]):
@@ -30,9 +33,9 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         """Clean up resources and drain the queue."""
         if self._is_closed:
             return
-            
+
         self._is_closed = True
-        
+
         # Drain any remaining items in the queue
         try:
             while not self.token_queue.empty():
@@ -41,7 +44,8 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
                 except asyncio.QueueEmpty:
                     break
         except Exception as e:
-            print(f"⚠️ Warning: Error during WebStreamEventHandler cleanup: {e}")
+            logger.warning(
+                "⚠️ Warning: Error during WebStreamEventHandler cleanup: %s", e)
 
     async def put_safely(self, item: dict | str | None) -> bool:
         """Safely put an item in the queue, handling closed state."""
@@ -51,7 +55,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
             await self.token_queue.put(item)
             return True
         except Exception as e:
-            print(f"⚠️ Warning: Failed to put item in queue: {e}")
+            logger.warning("⚠️ Warning: Failed to put item in queue: %s", e)
             return False
 
     def get_queue_size(self) -> int:
@@ -60,7 +64,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
             return self.token_queue.qsize()
         except Exception:
             return 0
-    
+
     def is_closed(self) -> bool:
         """Check if the handler has been closed."""
         return self._is_closed
@@ -80,19 +84,19 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         # Send file information to web interface
         if files:
             for file_info in files:
-                # print(f"🔍 DEBUG: Sending file info: {file_info}")  # Debug
+                logger.debug("🔍 DEBUG: Sending file info: %s", file_info)
                 await self.put_safely({"type": "file", "file_info": file_info})
 
     async def on_thread_run(self, run: ThreadRun) -> None:
         """Handle thread run events"""
         # Store the run ID for later access
         self.run_id = run.id
-        
-        print(f"Run status: {run.status}, ID: {run.id}")
+
+        logger.info("Run status: %s, ID: %s", run.status, run.id)
         if run.status == RunStatus.FAILED:
-            print(f"Run failed. Error: {run.last_error}")
-            print(f"Thread ID: {run.thread_id}")
-            print(f"Run ID: {run.id}")
+            logger.error("Run failed. Error: %s", run.last_error)
+            logger.error("Thread ID: %s", run.thread_id)
+            logger.error("Run ID: %s", run.id)
 
     async def on_run_step(self, step: RunStep) -> None:
         pass
@@ -101,7 +105,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         pass
 
     async def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+        logger.error("An error occurred. Data: %s", data)
 
     async def on_done(self) -> None:
         """Handle stream completion."""
@@ -109,4 +113,5 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
 
     async def on_unhandled_event(self, event_type: str, event_data: object) -> None:
         """Handle unhandled events."""
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        logger.warning("Unhandled Event Type: %s, Data: %s",
+                       event_type, event_data)

@@ -1,7 +1,5 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-    "name": "Python 3.13 with PostgreSQL",
+    "name": "MCP Agent Workshop",
     "dockerComposeFile": [
         "../docker-compose.yml",
         "docker-compose.devcontainer.yml"
@@ -14,19 +12,32 @@
         },
         "ghcr.io/devcontainers/features/dotnet:latest": {
             "version": "9.0"
-        }
+        },
+        "ghcr.io/devcontainers/features/python": {
+            "version": "3.13"
+        },
+        "ghcr.io/dotnet/aspire-devcontainer-feature/dotnetaspire": {},
+        "ghcr.io/devcontainers/features/docker-in-docker": {},
+        "ghcr.io/devcontainers/features/node": {}
     },
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-azuretools.vscode-docker",
-                "ms-python.python",
-                "ms-python.black-formatter",
                 "mathematic.vscode-pdf",
                 "ms-ossdata.vscode-pgsql",
-                "charliermarsh.ruff"
+                "charliermarsh.ruff",
+                "ms-azuretools.vscode-bicep"
             ]
         }
-    }
-    // "postCreateCommand": "pip install --user -r src/python/workshop/requirements.txt && pip install --user -r requirements-dev.txt"
+    },
+    "containerEnv": {
+        "ENVIRONMENT": "container",
+        "postgres_host": "postgres",
+        "postgres_port": "5432",
+        "postgres_user": "postgres",
+        "postgres_password": "postgres",
+        "postgres_db": "zava"
+    },
+    "postCreateCommand": "/bin/bash -c ./.devcontainer/postCreateCommand.sh >> ~/postCreateCommand.log 2>&1"
 }
