@@ -1,13 +1,13 @@
-name: zava-retail-diy
+name: unlock-agents-zava-diy
 
 networks:
-  zava-network:
+  unlock-agents-zava-network:
     driver: bridge
 
 services:
   db:
     image: pgvector/pgvector:pg17
-    container_name: zava-pgvector-db
+    container_name: unlock-agents-zava-pgvector-db
     ports:
       - "5432:5432"
     environment:
@@ -15,11 +15,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: P@ssw0rd!
     volumes:
-      - zava_postgresql_data:/var/lib/postgresql/data
-      - ./scripts/backups:/docker-entrypoint-initdb.d/backups:ro
+      - unlock-agents-zava-database:/var/lib/postgresql/data
+      - ./data:/docker-entrypoint-initdb.d/backups:ro
       - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     networks:
-      - zava-network
+      - unlock-agents-zava-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
@@ -29,5 +29,5 @@ services:
       start_period: 30s
 
 volumes:
-  zava_postgresql_data:
+  unlock-agents-zava-database:
     driver: local

@@ -10,90 +10,84 @@ Web interface available at: http://127.0.0.1:8005
 
 import json
 import logging
-import os
+import sys
 from pathlib import Path
 from typing import AsyncGenerator, Dict
+
+# Add workshop folder to path to import shared modules
+sys.path.append(str(Path(__file__).parent.parent / "workshop"))
 
 import httpx
 from fastapi import FastAPI, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
-from opentelemetry.propagate import inject
-from otel import configure_oltp_grpc_tracing
+from utilities import Utilities
 
-tracer = configure_oltp_grpc_tracing(tracer_name="zava_web_app")
-logger = logging.getLogger(__name__)
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
 
 # Agent service configuration
-AGENT_SERVICE_URL = os.environ.get(
-    "services__python-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
+AGENT_SERVICE_URL = "http://127.0.0.1:8006"
 
 
 class WebApp:
     """Handles all web interface functionality for the AI Agent Chat application."""
-
+    
     def __init__(self, app: FastAPI) -> None:
         """Initialize the web interface with FastAPI app."""
         self.app = app
-
+        self.utilities = Utilities()
+        
         self._setup_routes()
         self._setup_static_files()
-
+    
     def _setup_static_files(self) -> None:
         """Setup static file serving."""
         # Use absolute path since parent navigation isn't working as expected
-        static_dir = Path("static")
-        self.app.mount(
-            "/static", StaticFiles(directory=str(static_dir)), name="static")
-
+        static_dir = Path("/workspace/src/shared/static")
+        self.app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    
     def _setup_routes(self) -> None:
         """Setup all web routes."""
         self.app.get("/", response_class=HTMLResponse)(self.get_chat_page)
-        self.app.get("/favicon.ico",
-                     response_class=FileResponse)(self.get_favicon)
+        self.app.get("/favicon.ico", response_class=FileResponse)(self.get_favicon)
         self.app.post("/upload")(self.upload_file)
         self.app.get("/chat/stream")(self.stream_chat)
         self.app.delete("/chat/clear")(self.clear_chat)
         self.app.get("/files/{filename}")(self.serve_file)
         self.app.get("/health")(self.health_check)
-
+    
     async def get_chat_page(self) -> HTMLResponse:
         """Serve the chat HTML page."""
-        html_file = Path("static/index.html")
+        html_file = Path("/workspace/src/shared/static/index.html")
         with html_file.open("r") as f:
             return HTMLResponse(content=f.read())
-
+    
     async def get_favicon(self) -> FileResponse:
         """Serve the favicon.ico file."""
-        favicon_path = Path("static/favicon.ico")
+        favicon_path = Path("/workspace/src/shared/static/favicon.ico")
         return FileResponse(favicon_path, media_type="image/x-icon")
-
+    
     async def upload_file(self, file: UploadFile, message: str = Form(None)) -> Dict:
         """Handle file upload and extract text content."""
         try:
             # Check file size (10MB limit)
             content = await file.read()
             if len(content) > 10 * 1024 * 1024:
-                raise HTTPException(
-                    status_code=413, detail="File too large (max 10MB)")
+                raise HTTPException(status_code=413, detail="File too large (max 10MB)")
 
             # Extract text based on file type
             file_text = ""
             file_extension = (
-                file.filename.lower().split(
-                    ".")[-1] if file.filename and "." in file.filename else ""
+                file.filename.lower().split(".")[-1] if file.filename and "." in file.filename else ""
             )
 
             if file_extension in ["txt", "md"]:
                 file_text = content.decode("utf-8")
             elif file_extension in ["pdf"]:
-                # Could integrate PDF parsing
-                file_text = f"[PDF file: {file.filename}]"
+                file_text = f"[PDF file: {file.filename}]"  # Could integrate PDF parsing
             elif file_extension in ["doc", "docx"]:
-                # Could integrate Word parsing
-                file_text = f"[Word document: {file.filename}]"
+                file_text = f"[Word document: {file.filename}]"  # Could integrate Word parsing
             else:
                 file_text = f"[Uploaded file: {file.filename}]"
 
@@ -106,9 +100,8 @@ class WebApp:
             return {"content": combined_message, "filename": file.filename}
 
         except Exception as e:
-            logging.error(f"Error processing file {file.filename}: {e}")
             return {"error": f"Error processing file: {e!s}"}
-
+    
     async def stream_chat(self, message: str = "", session_id: str | None = None) -> StreamingResponse:
         """Stream chat responses by proxying to the agent service."""
         if not message.strip():
@@ -124,14 +117,14 @@ class WebApp:
             self._generate_stream(message, session_id),
             media_type="text/event-stream",
             headers={
-                "Cache-Control": "no-cache",
+                "Cache-Control": "no-cache", 
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no",
                 "Access-Control-Allow-Origin": "*",
                 "Content-Encoding": "identity"
             },
         )
-
+    
     async def _generate_stream(self, message: str, session_id: str) -> AsyncGenerator[str, None]:
         """Generate streaming response by proxying to agent service."""
         try:
@@ -141,7 +134,7 @@ class WebApp:
                     "message": message,
                     "session_id": session_id
                 }
-
+                
                 async with client.stream(
                     "POST",
                     f"{AGENT_SERVICE_URL}/chat/stream",
@@ -151,7 +144,7 @@ class WebApp:
                     if response.status_code != 200:
                         yield f"data: {json.dumps({'error': f'Agent service error: {response.status_code}'})}\n\n"
                         return
-
+                    
                     assistant_message = ""
                     async for chunk in response.aiter_text():
                         if chunk.strip():
@@ -159,11 +152,10 @@ class WebApp:
                             lines = chunk.strip().split('\n')
                             for line in lines:
                                 if line.startswith('data: '):
-                                    # Remove 'data: ' prefix
-                                    data_str = line[6:]
+                                    data_str = line[6:]  # Remove 'data: ' prefix
                                     try:
                                         data = json.loads(data_str)
-
+                                        
                                         # Convert agent service response format to web format
                                         if data.get("content"):
                                             assistant_message += data["content"]
@@ -183,12 +175,10 @@ class WebApp:
             yield "data: [DONE]\n\n"
 
         except httpx.RequestError as e:
-            logger.error(f"Connection error to agent service: {e!s}")
             yield f"data: {json.dumps({'error': f'Connection error to agent service: {e!s}'})}\n\n"
         except Exception as e:
-            logger.error(f"Streaming error: {e!s}")
             yield f"data: {json.dumps({'error': f'Streaming error: {e!s}'})}\n\n"
-
+    
     async def clear_chat(self, session_id: str = "default") -> Dict:
         """Clear chat history and call agent service to delete thread for specific session."""
         try:
@@ -198,7 +188,7 @@ class WebApp:
                     f"{AGENT_SERVICE_URL}/chat/clear",
                     params={"session_id": session_id}
                 )
-
+                
                 if response.status_code == 200:
                     result = response.json()
                     return {
@@ -211,19 +201,16 @@ class WebApp:
                     "message": f"Agent service error: {response.status_code}"
                 }
         except httpx.RequestError as e:
-            logger.error("Connection error to agent service: %s", e)
             return {
-                "status": "error",
+                "status": "error", 
                 "message": f"Connection error to agent service: {e!s}"
             }
         except Exception as e:
-            logger.error(
-                "Error clearing chat for session %s: %s", session_id, e)
             return {
                 "status": "error",
                 "message": f"Error clearing chat: {e!s}"
             }
-
+    
     async def serve_file(self, filename: str) -> FileResponse:
         """Proxy file serving to agent service or serve locally."""
         try:
@@ -236,15 +223,28 @@ class WebApp:
                     with temp_file.open("wb") as f:
                         f.write(response.content)
                     return FileResponse(path=str(temp_file))
-        except Exception as err:
-            logger.error("Error retrieving file from agent service: %s", err)
-            raise HTTPException(
-                status_code=500, detail="Error retrieving file from agent service") from err
-
+        except Exception:
+            pass
+        
+        # Fallback to local file serving
+        files_dir = Path(self.utilities.shared_files_path) / "files"
+        file_path = files_dir / filename
+        
+        if not file_path.exists() or not file_path.is_file():
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Security check: ensure the file is within the files directory
+        try:
+            file_path.resolve().relative_to(files_dir.resolve())
+        except ValueError as exc:
+            raise HTTPException(status_code=403, detail="Access denied") from exc
+        
+        return FileResponse(path=str(file_path))
+    
     async def health_check(self) -> Dict:
         """Check health of web app and agent service."""
         web_status = {"status": "healthy", "service": "web_interface"}
-
+        
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.get(f"{AGENT_SERVICE_URL}/health")
@@ -259,7 +259,6 @@ class WebApp:
                     "agent_service": {"status": "error", "code": response.status_code}
                 }
         except Exception as e:
-            logger.error("Error checking health of agent service: %s", e)
             return {
                 **web_status,
                 "agent_service": {"status": "error", "error": str(e)}
@@ -268,8 +267,6 @@ class WebApp:
 
 # FastAPI app
 app = FastAPI(title="Azure AI Agent Web Interface")
-FastAPIInstrumentor.instrument_app(app)
-HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 # Initialize web app
 web_app = WebApp(app)
@@ -278,7 +275,6 @@ web_app = WebApp(app)
 if __name__ == "__main__":
     import uvicorn
 
-    port = int(os.getenv("PORT", 8005))
-    logger.info("Starting web interface on port %d", port)
-    logger.info("Agent service URL: %s", AGENT_SERVICE_URL)
-    uvicorn.run(app, host="127.0.0.1", port=port)
+    print("Starting web interface...")
+    print(f"Agent service URL: {AGENT_SERVICE_URL}")
+    uvicorn.run(app, host="127.0.0.1", port=8005)

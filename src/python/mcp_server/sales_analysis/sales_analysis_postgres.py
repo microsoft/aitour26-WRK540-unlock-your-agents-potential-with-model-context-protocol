@@ -23,19 +23,16 @@ from typing import Any, Dict, List, Optional
 
 import asyncpg
 from dotenv import load_dotenv
-from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
 
 # Load environment variables (don't override existing ones)
 load_dotenv(override=False)
 
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-# Initialize AsyncPGInstrumentor with our tracer
-AsyncPGInstrumentor().instrument()
-
 # PostgreSQL connection configuration
-POSTGRES_URL = os.getenv(
-    "POSTGRES_URL", "postgresql://store_manager:StoreManager123!@db:5432/zava")
+POSTGRES_URL = os.getenv("POSTGRES_URL", "postgresql://store_manager:StoreManager123!@db:5432/zava")
 
 SCHEMA_NAME = "retail"
 MANAGER_ID = ""
@@ -86,14 +83,13 @@ class PostgreSQLSchemaProvider:
                 )
                 # Don't preload schemas here to avoid connection exhaustion
                 logger.info(
-                    "✅ PostgreSQL connection pool created: %s",
-                    self.postgres_config
+                    f"✅ PostgreSQL connection pool created: {self.postgres_config}"
                 )
             except Exception as e:
-                logger.error("❌ Failed to create PostgreSQL pool: %s", e)
+                logger.error(f"❌ Failed to create PostgreSQL pool: {e}")
                 raise
 
-    async def ensure_schemas_loaded(self, schema_name: str, rls_user_id: str) -> None:
+    async def ensure_schemas_loaded(self, schema_name: str, rls_user_id:str) -> None:
         """Ensure schemas are loaded for the specified schema, loading them if not already cached."""
         if self.all_schemas is None:
             self.all_schemas = await self.get_all_schemas(schema_name, rls_user_id=rls_user_id)
@@ -116,7 +112,7 @@ class PostgreSQLSchemaProvider:
         try:
             return await self.connection_pool.acquire()
         except Exception as e:
-            logger.error("Failed to acquire connection from pool: %s", e)
+            logger.error(f"Failed to acquire connection from pool: {e}")
             raise RuntimeError(
                 f"Connection pool exhausted or unavailable: {e}") from e
 
@@ -404,7 +400,7 @@ class PostgreSQLSchemaProvider:
             if conn:
                 await self.release_connection(conn)
 
-    async def get_all_schemas(self, schema_name: str, rls_user_id: str) -> Dict[str, Dict[str, Any]]:
+    async def get_all_schemas(self, schema_name: str, rls_user_id:str) -> Dict[str, Dict[str, Any]]:
         """Get schema metadata for all tables in the specified schema."""
         table_names = await self.get_all_table_names(schema_name)
         result = {}
@@ -506,7 +502,7 @@ class PostgreSQLSchemaProvider:
         conn = None
         try:
             conn = await self.get_connection()
-
+            
             # Set rls_user_id once for the connection
             await conn.execute(
                 "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
@@ -515,8 +511,7 @@ class PostgreSQLSchemaProvider:
             for table_name in table_names:
                 try:
                     # Check if table exists first
-                    schema_name, parsed_table_name = self._parse_table_name(
-                        table_name)
+                    schema_name, parsed_table_name = self._parse_table_name(table_name)
                     table_exists_result = await conn.fetchval(
                         """SELECT EXISTS (
                             SELECT 1 FROM information_schema.tables 
@@ -525,22 +520,19 @@ class PostgreSQLSchemaProvider:
                         schema_name,
                         parsed_table_name,
                     )
-
+                    
                     if not table_exists_result:
-                        schemas.append(
-                            f"**ERROR:** Table '{table_name}' not found\n")
+                        schemas.append(f"**ERROR:** Table '{table_name}' not found\n")
                         continue
 
                     # Get schema data efficiently within the same connection
                     # Use the original method but with our existing connection
                     schema_data = await self._get_table_metadata(conn, table_name)
-                    formatted_schema = self.format_schema_metadata_for_ai(
-                        schema_data)
+                    formatted_schema = self.format_schema_metadata_for_ai(schema_data)
                     schemas.append(f"\n\n{formatted_schema}")
-
+                    
                 except Exception as e:
-                    schemas.append(
-                        f"Error retrieving {table_name} schema: {e!s}\n")
+                    schemas.append(f"Error retrieving {table_name} schema: {e!s}\n")
 
             return "".join(schemas)
 
@@ -729,9 +721,10 @@ class PostgreSQLSchemaProvider:
             if conn:
                 await self.release_connection(conn)
 
+
     async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 20, similarity_threshold: float = 30.0) -> str:
         """Search for products by similarity using pgvector cosine similarity.
-
+        
         Args:
             query_embedding: The embedding vector to search for similar products
             max_rows: Maximum number of rows to return
@@ -741,12 +734,12 @@ class PostgreSQLSchemaProvider:
         conn = None
         try:
             max_rows = min(max_rows, 100)  # Limit to 100 for performance
-
+            
             # Convert similarity percentage threshold to distance threshold
             # Similarity percentage = (1 - distance) * 100
             # So distance = 1 - (similarity_percentage / 100)
             distance_threshold = 1.0 - (similarity_threshold / 100.0)
-
+            
             conn = await self.get_connection()
 
             await conn.execute(
@@ -832,7 +825,7 @@ async def main() -> None:
     # Test connection first
     if not await test_connection():
         logger.error(
-            "❌ Error: Cannot connect to PostgreSQL using: %s", POSTGRES_URL)
+            f"❌ Error: Cannot connect to PostgreSQL using: {POSTGRES_URL}")
         logger.error("   Please verify:")
         logger.error("   1. PostgreSQL is running")
         logger.error("   2. Database 'zava' exists")
@@ -849,32 +842,32 @@ async def main() -> None:
             await provider.ensure_schemas_loaded(SCHEMA_NAME, rls_user_id=MANAGER_ID)
 
             logger.info(
-                "📋 Getting all table schemas from %s schema...", SCHEMA_NAME)
+                f"\n📋 Getting all table schemas from {SCHEMA_NAME} schema...")
             if not provider.all_schemas:
                 logger.warning(
-                    "❌ No schemas available in %s schema", SCHEMA_NAME)
+                    f"❌ No schemas available in {SCHEMA_NAME} schema")
                 logger.warning(
-                    "Please run the PostgreSQL database generator first:")
+                    "   Please run the PostgreSQL database generator first:")
                 logger.warning(
-                    "python shared/data/database/generate_zava_postgres.py")
+                    "   python shared/data/database/generate_zava_postgres.py")
                 return
 
-            logger.info("🧪 Testing SQL Query Execution:")
+            logger.info("\n🧪 Testing SQL Query Execution:")
             logger.info("=" * 50)
 
-            logger.info("📊 Test 1: Count all customers")
+            logger.info("\n📊 Test 1: Count all customers")
             result = await provider.execute_query(f"SELECT COUNT(*) as total_customers FROM {SCHEMA_NAME}.customers", rls_user_id=MANAGER_ID)
-            logger.info("Result: %s", result)
+            logger.info(f"Result: {result}")
 
-            logger.info("📊 Test 2: Count stores")
+            logger.info("\n📊 Test 2: Count stores")
             result = await provider.execute_query(f"SELECT COUNT(*) as total_stores FROM {SCHEMA_NAME}.stores", rls_user_id=MANAGER_ID)
-            logger.info("Result: %s", result)
+            logger.info(f"Result: {result}")
 
-            logger.info("📊 Test 3: Count categories and types")
+            logger.info("\n📊 Test 3: Count categories and types")
             result = await provider.execute_query(f"SELECT COUNT(*) as total_categories FROM {SCHEMA_NAME}.categories", rls_user_id=MANAGER_ID)
-            logger.info("Result: %s", result)
+            logger.info(f"Result: {result}")
 
-            logger.info("📊 Test 4: Orders with revenue")
+            logger.info("\n📊 Test 4: Orders with revenue")
             result = await provider.execute_query(
                 f"""SELECT COUNT(DISTINCT o.order_id) as orders, 
                     SUM(oi.total_amount) as revenue 
@@ -882,11 +875,11 @@ async def main() -> None:
                     JOIN {SCHEMA_NAME}.order_items oi ON o.order_id = oi.order_id 
                     LIMIT 1""", rls_user_id=MANAGER_ID
             )
-            logger.info("Result: %s", result)
+            logger.info(f"Result: {result}")
 
-            logger.info("✅ SQL Query tests completed!")
+            logger.info("\n✅ SQL Query tests completed!")
             logger.info("=" * 50)
-            logger.info("📋 All table schemas in %s schema:\n", SCHEMA_NAME)
+            print(f"\n📋 All table schemas in {SCHEMA_NAME} schema:\n")
 
             # --- Use the new efficient method for getting all schemas ---
             all_table_names = [
@@ -899,10 +892,10 @@ async def main() -> None:
                 f"{SCHEMA_NAME}.{ORDER_ITEMS_TABLE}",
                 f"{SCHEMA_NAME}.{INVENTORY_TABLE}"
             ]
-            logger.info("Database schema info: %s", await provider.get_table_metadata_from_list(all_table_names, rls_user_id=MANAGER_ID))
+            print(await provider.get_table_metadata_from_list(all_table_names, rls_user_id=MANAGER_ID))
 
     except Exception as e:
-        logger.error("❌ Error during analysis: %s", e)
+        logger.error(f"❌ Error during analysis: {e}")
         raise
 
 

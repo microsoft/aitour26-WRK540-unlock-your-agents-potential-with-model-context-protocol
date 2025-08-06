@@ -11,7 +11,6 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from terminal_colors import TerminalColors as tc
 
-logger = logging.getLogger(__name__)
 
 class MCPClient:
     """Client for communicating with MCP servers."""
@@ -92,7 +91,7 @@ class MCPClient:
         try:
             await self._ensure_session()
             assert self._session is not None
-            logger.info("Calling tool: %s with arguments: %s", tool_name, arguments)
+            print(f"{tc.BRIGHT_BLUE}Calling tool: {tool_name} with arguments: {arguments}{tc.RESET}")
             result = await self._session.call_tool(tool_name, arguments)
             return self._extract_content(result)
         except Exception as e:
@@ -125,14 +124,14 @@ class MCPClient:
 
     async def build_function_tools(self) -> AsyncFunctionTool:
         """Fetch tool schemas from MCP Server and build function tools."""
-        logger.info("🔧 Fetching tools from MCP server...")
+        print("🔧 Fetching tools from MCP server...")
 
         tools = await self.fetch_tools_async()
         if not tools:
-            logger.warning("⚠️  No tools found from MCP server")
+            print("⚠️  No tools found from MCP server")
             return AsyncFunctionTool(set())
 
-        logger.info("✅ Found %d tools from MCP server", len(tools))
+        print(f"✅ Found {len(tools)} tools from MCP server")
 
         # Create specific tool functions with proper parameter signatures
         functions_set = set()
@@ -200,7 +199,7 @@ class MCPClient:
                 functions_set.add(generic_func)
 
         tool_names = [tool["function"]["name"] for tool in tools]
-        logger.info("📋 Available MCP tools: %s", ', '.join(tool_names))
+        print(f"📋 Available MCP tools: {', '.join(tool_names)}")
 
         return AsyncFunctionTool(functions_set)
 
@@ -211,11 +210,11 @@ if __name__ == "__main__":
         client = MCPClient.create_default("00000000-0000-0000-0000-000000000000")  # Example RLS user ID
         async with client:
             tools = await client.fetch_tools_async()
-            logger.info("Available tools: %s", [tool['function']['name'] for tool in tools])
+            print(f"Available tools: {[tool['function']['name'] for tool in tools]}")
 
             if tools:
                 tool_name = tools[0]["function"]["name"]
                 result = await client.call_tool_async(tool_name, {})
-                logger.info("Test result: %s", result)
+                print(f"Test result: {result}")
 
     asyncio.run(test())
