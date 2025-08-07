@@ -22,7 +22,7 @@ If you want to disable mkdocs:
 
 ## MKDocs and Language Translation
 
-1. From VS Code, select Agent mode, select the desired LLM, eg `gpt-4.1`.
+1. From VS Code, select Agent mode, select the desired LLM, eg `claude sonnet 4`.
 2. Type `/mkdocs-translations`
 3. You'll be prompted to enter the target language, be sure to select the correct name of the language, e.g. `Spanish` or `French`.
 4. The Agent will then translate the content in the `docs/docs/en` folder to the target language, creating a new folder under `docs/docs/` with the appropriate ISO 639-1 or locale code.
