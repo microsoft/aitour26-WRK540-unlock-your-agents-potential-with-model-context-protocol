@@ -94,6 +94,44 @@ plugins:
             "Summary": "Resumen"
             "Resources": "Recursos"
             "About": "Acerca de"
+        - locale: hi
+          name: हिंदी
+          site_name: Model Context Protocol के साथ अपने Agent की क्षमता को अनलॉक करें
+          admonition_translations:
+            tip: टिप
+            warning: चेतावनी
+            info: जानकारी
+            note: नोट
+            danger: खतरा
+            success: सफलता
+            question: प्रश्न
+          nav_translations:
+            "Workshop Introduction": "वर्कशॉप परिचय"
+            "Workshop Navigation": "वर्कशॉप नेविगेशन"
+            "Getting Started": "शुरुआत करना"
+            "Open the Workshop": "वर्कशॉप खोलना"
+            "Star the GitHub Repo": "GitHub रिपो को स्टार करना"
+            "Solution Architecture": "समाधान आर्किटेक्चर"
+            "What is an MCP Server": "MCP सर्वर क्या है"
+            "Deploy Azure Resources": "Azure संसाधन तैनात करना"
+            "Open Workspace": "वर्कस्पेस खोलना"
+            "Agent Services Labs": "एजेंट सेवाएं लैब्स"
+            "AI Foundry Agent Services": "AI Foundry एजेंट सेवाएं"
+            "Lab 1 Agent Instructions": "लैब 1 एजेंट निर्देश"
+            "Lab 2 Start your Agent": "लैब 2 अपना एजेंट शुरू करना"
+            "Lab 3 Semantic Search": "लैब 3 सिमेंटिक सर्च"
+            "Observability Labs": "ऑब्जर्वेबिलिटी लैब्स"
+            "Observability Overview": "ऑब्जर्वेबिलिटी ओवरव्यू"
+            "Lab 4 Service Monitoring": "लैब 4 सेवा निगरानी"
+            "Lab 5 Continuous Evaluation": "लैब 5 निरंतर मूल्यांकन"
+            "Lab 6 Understand Tracing": "लैब 6 ट्रेसिंग को समझना"
+            "Security": "सुरक्षा"
+            "Finishing Up": "समाप्ति"
+            "Home Work": "होम वर्क"
+            "Debugging with Dev Tunnel": "Dev Tunnel के साथ डिबगिंग"
+            "Summary": "सारांश"
+            "Resources": "संसाधन"
+            "About": "के बारे में"
 
 
 theme:
