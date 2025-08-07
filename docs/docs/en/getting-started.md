@@ -2,8 +2,8 @@ Select your workshop experience:
 
 === "@event Attendees"
 
-    {% include-markdown "includes/introduction-event.md" %}
+    {% include-markdown "includes/en/introduction-event.md" %}
 
 === "Self-Guided Learners"
 
-    {% include-markdown "includes/introduction-self-guided.md" %}
+    {% include-markdown "includes/en/introduction-self-guided.md" %}
