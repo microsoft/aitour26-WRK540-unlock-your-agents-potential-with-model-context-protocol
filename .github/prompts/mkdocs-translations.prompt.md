@@ -54,7 +54,7 @@ Before starting to create **any** new files, create a new git branch using the t
   - Preserve all Markdown formatting, including headings, code blocks, metadata, and links.
   - Maintain the original filename.
   - Do **not** wrap the translated content in Markdown code blocks.
-  - Append this line at the end of the file:  
+  - Append this line at the end of the file in the target language:
     *Translated using GitHub Copilot.*
   - Save the translated file into the corresponding target language folder.
 
