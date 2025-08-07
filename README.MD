@@ -20,6 +20,13 @@ If you want to disable mkdocs:
 1. Delete the references to it in [docs/README.md](./docs/README.md)
 1. Delete the docs/assets folder and its contents.
 
+## MKDocs and Language Translation
+
+1. From VS Code, select Agent mode, select the desired LLM, eg `gpt-4.1`.
+2. Type `/mkdocs-translations`
+3. You'll be prompted to enter the target language, be sure to select the correct name of the language, e.g. `Spanish` or `French`.
+4. The Agent will then translate the content in the `docs/docs/en` folder to the target language, creating a new folder under `docs/docs/` with the appropriate ISO 639-1 or locale code.
+
 ## Other folders
 Note the data, docs, src, lab, session-delivery-resources folders. 
 1. Remove folders that you dont need.
