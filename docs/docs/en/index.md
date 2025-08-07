@@ -1,6 +1,6 @@
 # Unlock Your Agent's Potential with Model Context Protocol and PostgreSQL
 
-## A 50-minute interactive workshop
+## A 55-minute interactive workshop
 
 Imagine you’re a sales manager at Zava, a retail DIY company with stores across Washington State and a growing online presence. You specialize in outdoor equipment, home improvement tools, and DIY supplies.
 
