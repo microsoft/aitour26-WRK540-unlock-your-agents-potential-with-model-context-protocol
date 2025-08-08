@@ -1,21 +1,11 @@
-# Zava Sales Agent — Architecture (Concise)
-
 ## Overview
 The Zava Sales Agent is a conversational application that answers questions about sales data and can generate charts for a retail DIY business. It runs on Azure and uses an Azure OpenAI model as its core reasoning engine. Management and monitoring happen in Azure AI Foundry.
 
 ## High-Level Design
 
-```
-User ──> Azure AI Agents Service ──(tool calls/streaming)──> MCP Client
-         │
-         └─> Azure OpenAI (GPT-4/4o-mini)
+![](../media/architecture.png)
 
-MCP Client ◄── stdio/HTTPS ──► MCP Server (sales_analysis)
-                                   │
-                                   └─> Azure Database for PostgreSQL (+ pgvector, RLS)
-```
-
-This follows the MCP pattern: the agent talks to an MCP **client**, which speaks to an MCP **server** exposing tools and data access; in the workshop this runs locally via **stdio**, while production uses **HTTPS**.
+This follows the MCP pattern: the agent talks to an MCP **server** exposing tools and data access; in the workshop this runs locally via **stdio**, while production uses **HTTPS**.
 
 ## Components
 
@@ -38,13 +28,12 @@ This follows the MCP pattern: the agent talks to an MCP **client**, which speaks
 
 1. **User asks a question** (e.g., sales by product).  
 2. **Agent (Azure AI Agents Service)** decides which tool calls are needed and streams partial responses for speed.  
-3. **MCP Client → MCP Server** forwards tool calls.  
-4. **MCP Server**  
+3. **MCP Server**  
       - Fetches schema details for accurate queries,  
       - Generates and executes SQL against PostgreSQL,  
       - Provides time services where needed,  
       - Returns structured results.  
-5. **Agent** may use **Code Interpreter** to turn results into charts and summaries for the user.
+4. **Agent** may use **Code Interpreter** to turn results into charts and summaries for the user.
 
 ## Transports
 - **Workshop:** `stdio` between MCP client and server (simple local dev).  
@@ -58,7 +47,3 @@ This follows the MCP pattern: the agent talks to an MCP **client**, which speaks
 
 ## Extensibility
 Swap or add tools/data by updating the MCP server and agent instructions. The same pattern adapts easily to other domains (e.g., customer support).
-
----
-
-**In one sentence:** Azure AI Agents (with Azure OpenAI) call MCP tools over stdio/HTTPS to query a PostgreSQL+pgvector store, with schema-aware SQL execution and strong NFRs (async, streaming, observability), managed through Azure AI Foundry.
