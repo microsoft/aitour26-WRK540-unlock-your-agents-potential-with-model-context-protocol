@@ -40,10 +40,10 @@ This follows the MCP pattern: the agent talks to an MCP **client**, which speaks
 2. **Agent (Azure AI Agents Service)** decides which tool calls are needed and streams partial responses for speed.  
 3. **MCP Client → MCP Server** forwards tool calls.  
 4. **MCP Server**  
-   - Fetches schema details for accurate queries,  
-   - Generates and executes SQL against PostgreSQL,  
-   - Provides time services where needed,  
-   - Returns structured results.  
+      - Fetches schema details for accurate queries,  
+      - Generates and executes SQL against PostgreSQL,  
+      - Provides time services where needed,  
+      - Returns structured results.  
 5. **Agent** may use **Code Interpreter** to turn results into charts and summaries for the user.
 
 ## Transports
