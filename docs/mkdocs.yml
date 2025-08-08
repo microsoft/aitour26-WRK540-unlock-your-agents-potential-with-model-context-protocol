@@ -19,8 +19,8 @@ nav:
   - Getting Started: 
     - Open the Workshop: getting-started.md
     - Star the GitHub Repo: getting_started-star-workshop.md
-    - Solution Architecture: architecture.md
-    - What is an MCP Server: mcp-overview.md
+    - Solution Architecture: zava-sales-agent-architecture.md
+    # - What is an MCP Server: mcp-overview.md
     - Deploy Azure Resources: getting-started-azure.md
     - Open Workspace: getting-started-workspace.md
   - Agent Services Labs:
