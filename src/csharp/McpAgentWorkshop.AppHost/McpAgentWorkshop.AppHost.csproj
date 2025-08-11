@@ -18,4 +18,8 @@
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="9.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../McpAgentWorkshop.McpServer/McpAgentWorkshop.McpServer.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -62,7 +62,7 @@ var agentApp = builder.AddPythonApp("python-agent-app", Path.Combine(sourceFolde
         return activePort.PortUri;
     });
 
-builder.AddPythonApp("chat-frontend", Path.Combine(sourceFolder, "shared", "webapp"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
+builder.AddPythonApp("python-chat-frontend", Path.Combine(sourceFolder, "shared", "webapp"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
     .WithReference(agentApp)
     .WaitFor(agentApp)
     .WithHttpEndpoint(env: "PORT")
@@ -71,5 +71,44 @@ builder.AddPythonApp("chat-frontend", Path.Combine(sourceFolder, "shared", "weba
 
 builder.AddMcpInspector("mcp-inspector")
     .WithReference(mcpServer);
+
+var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("dotnet-mcp-server")
+    .WithReference(zava)
+    .WaitFor(zava)
+    .WithDevTunnel(devtunnel);
+
+var dotnetAgentApp = builder.AddPythonApp("dotnet-agent-app", Path.Combine(sourceFolder, "python", "workshop"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
+    .WithHttpEndpoint(env: "PORT")
+    .WithHttpHealthCheck("/health")
+    .WithEnvironment("PROJECT_ENDPOINT", foundry)
+    .WithEnvironment("MODEL_DEPLOYMENT_NAME", chatDeployment)
+    .WithPostgres(zava)
+    .WithEnvironment("MAP_MCP_FUNCTIONS", "false")
+    .WithReference(dotnetMcpServer)
+    .WaitFor(dotnetMcpServer)
+    .WaitFor(devtunnel)
+    .WithOtlpExporter()
+    .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
+    .WithEnvironment("DEV_TUNNEL_URL", () =>
+    {
+        var endpoint = dotnetMcpServer.GetEndpoint("http") ?? throw new InvalidOperationException("MCP Server HTTP endpoint not found.");
+
+        var devTunnelInfo = devtunnel.Resource.GetTunnelDetailsAsync();
+        devTunnelInfo.Wait();
+
+        var result = devTunnelInfo.Result;
+
+        var activePort = result.Tunnel.Ports.FirstOrDefault(p => p.PortNumber == endpoint.Port) ?? throw new InvalidOperationException($"No active port found for MCP Server on port {endpoint.Port}.");
+
+        return activePort.PortUri;
+    });
+
+builder.AddPythonApp("dotnet-chat-frontend", Path.Combine(sourceFolder, "shared", "web_app"), "web_app.py", virtualEnvironmentPath: virtualEnvironmentPath)
+    .WithReference(dotnetAgentApp)
+    .WaitFor(dotnetAgentApp)
+    .WithHttpEndpoint(env: "PORT")
+    .WithOtlpExporter()
+    .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true");
+
 
 builder.Build().Run();
