@@ -27,7 +27,7 @@ The workshop is available in both Python and C#. Use the language selector tabs 
 Preferred: **GitHub Codespaces**, which provides a preconfigured environment with all required tools. Alternatively, run locally with a Visual Studio Code **Dev Container** and **Docker**. Use the tabs below to choose.
 
 !!! Tip
-    **Building the Codespace or Dev Container will take approximately 5 minutes. Start the process and then you can continue reading the instructions while it builds.**
+    Codespaces or Dev Container builds take about 5 minutes. Start the build, then **continue reading** while it completes.
 
 === "GitHub Codespaces"
 
