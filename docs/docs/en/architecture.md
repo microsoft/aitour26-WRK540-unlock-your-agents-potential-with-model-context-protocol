@@ -48,7 +48,8 @@
 - **Asynchronous APIs:** Agents service and PostgreSQL use async APIs; ideal with FastAPI/ASP.NET/Streamlit.
 - **Token streaming:** Improves perceived latency in the UI.
 - **Observability:** Built‑in tracing and metrics support monitoring and optimization.
-- **Security:** PostgreSQL Row Level Security (RLS) ensures data access controls.
+- **Database security:** PostgreSQL is secured with restricted agent privileges and Row‑Level Security (RLS), limiting agents to only their authorized data.
+- **Code Interpreter:** The [Azure AI Agents Service Code Interpreter](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/code-interpreter?view=azure-python-preview&tabs=python&pivots=overview){:target="_blank"} runs LLM‑generated code on demand in a **sandboxed** environment, preventing actions beyond the agent’s scope.
 
 ## Extensibility
 
