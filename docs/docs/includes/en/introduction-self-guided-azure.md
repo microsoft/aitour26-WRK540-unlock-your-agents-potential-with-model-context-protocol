@@ -88,7 +88,6 @@ cd infra && ./deploy.sh
     - Application Insights Name: appi-zava-agent-wks-nnnn
     ```
 
-
 === "C#"
 
     The script securely stores project variables using the Secret Manager for [ASP.NET Core development secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets){:target="_blank"}.
