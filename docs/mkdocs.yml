@@ -20,7 +20,6 @@ nav:
     - Open the Workshop: getting-started.md
     - Star the GitHub Repo: getting_started-star-workshop.md
     - Architecture Overview: architecture.md
-    - Security Considerations: security.md
     - Deploy Azure Resources: getting-started-azure.md
     - Open Workspace: getting-started-workspace.md
   - Agent Services Labs:
