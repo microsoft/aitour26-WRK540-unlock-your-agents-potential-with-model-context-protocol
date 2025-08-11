@@ -91,7 +91,7 @@ if [ -f "$CSHARP_PROJECT_PATH" ]; then
   dotnet user-secrets set "Parameters:FoundryEndpoint" "$PROJECTS_ENDPOINT" --project "$CSHARP_PROJECT_PATH"
   dotnet user-secrets set "Parameters:ChatModelDeploymentName" "gpt-4o-mini" --project "$CSHARP_PROJECT_PATH"
   dotnet user-secrets set "Parameters:EmbeddingModelDeploymentName" "text-embedding-3-small" --project "$CSHARP_PROJECT_PATH"
-  dotnet user-secrets set "Parameters:ApplicationInsightsConnectionString" "$APPLICATIONINSIGHTS_CONNECTION_STRING" --project "$CSHARP_PROJECT_PATH"
+  dotnet user-secrets set "ConnectionStrings:ApplicationInsights" "$APPLICATIONINSIGHTS_CONNECTION_STRING" --project "$CSHARP_PROJECT_PATH"
   dotnet user-secrets set "Parameters:AzureOpenAIEndpoint" "$AZURE_OPENAI_ENDPOINT" --project "$CSHARP_PROJECT_PATH"
 fi
 

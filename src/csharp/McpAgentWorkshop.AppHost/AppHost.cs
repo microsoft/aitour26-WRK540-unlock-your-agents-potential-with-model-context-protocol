@@ -6,7 +6,7 @@ var foundry = builder.AddParameter("FoundryEndpoint");
 var chatDeployment = builder.AddParameter("ChatModelDeploymentName");
 var embeddingDeployment = builder.AddParameter("EmbeddingModelDeploymentName");
 var aoai = builder.AddParameter("AzureOpenAIEndpoint");
-var appInsights = builder.AddParameter("ApplicationInsightsConnectionString");
+var appInsights = builder.AddConnectionString("ApplicationInsights", "APPLICATIONINSIGHTS_CONNECTION_STRING");
 
 var pg = builder.AddPostgres("pg")
     .WithPgAdmin()
@@ -75,7 +75,8 @@ builder.AddMcpInspector("mcp-inspector")
 var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("dotnet-mcp-server")
     .WithReference(zava)
     .WaitFor(zava)
-    .WithDevTunnel(devtunnel);
+    .WithDevTunnel(devtunnel)
+    .WithReference(appInsights);
 
 var dotnetAgentApp = builder.AddPythonApp("dotnet-agent-app", Path.Combine(sourceFolder, "python", "workshop"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
     .WithHttpEndpoint(env: "PORT")
