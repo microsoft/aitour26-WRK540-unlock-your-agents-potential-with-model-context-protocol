@@ -13,7 +13,13 @@ from typing import AsyncGenerator, Dict, Protocol, cast
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentEvaluationRequest, EvaluatorConfiguration, EvaluatorIds
+
+# from azure.ai.projects.models import (
+#     AgentEvaluationRedactionConfiguration,
+#     AgentEvaluationRequest,
+#     EvaluatorConfiguration,
+#     EvaluatorIds,
+# )
 from config import Config
 from opentelemetry import trace
 from pydantic import BaseModel
@@ -93,39 +99,41 @@ class ChatManager:
 
         print(f"Cleared thread for session {session_id}")
 
-    async def submit_evaluation(self, thread_id: str, run_id: str | None) -> None:
-        """Submit evaluation request for continuous evaluation."""
-        try:
-            if not run_id:
-                print("⚠️ Warning: run_id is required for evaluation")
-                return
-            if not self.agent_manager.project_client:
-                print("⚠️ Warning: project_client is not available for evaluation")
-                return
+    # async def submit_evaluation(self, thread_id: str, run_id: str | None) -> None:
+    #     """Submit evaluation request for continuous evaluation."""
+    #     try:
+    #         if not run_id:
+    #             print("⚠️ Warning: run_id is required for evaluation")
+    #             return
+    #         if not self.agent_manager.project_client:
+    #             print("⚠️ Warning: project_client is not available for evaluation")
+    #             return
                 
-            # Create evaluators for agent evaluation using EvaluatorConfiguration
-            evaluators = {
-                "relevance": EvaluatorConfiguration(id=EvaluatorIds.RELEVANCE),
-                "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY), 
-                "coherence": EvaluatorConfiguration(id=EvaluatorIds.COHERENCE),
-            }
+    #         # Create evaluators for agent evaluation using EvaluatorConfiguration
+    #         evaluators = {
+    #             # "relevance": EvaluatorConfiguration(id=EvaluatorIds.RELEVANCE),
+    #             "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY), 
+    #             # "coherence": EvaluatorConfiguration(id=EvaluatorIds.COHERENCE),
+    #         }
             
-            # Create agent evaluation request
-            evaluation_request = AgentEvaluationRequest(
-                thread_id=thread_id,
-                run_id=run_id,
-                evaluators=evaluators,
-                app_insights_connection_string=self.agent_manager.application_insights_connection_string
-            )
+    #         # Create agent evaluation request
+    #         evaluation_request = AgentEvaluationRequest(
+    #             thread_id=thread_id,
+    #             run_id=run_id,
+    #             evaluators=evaluators,
+    #             redaction_configuration=AgentEvaluationRedactionConfiguration(
+    #                 redact_score_properties=False),
+    #             app_insights_connection_string=self.agent_manager.application_insights_connection_string
+    #         )
 
-            evaluation_response = await self.agent_manager.project_client.evaluations.create_agent_evaluation(evaluation_request)
-            print(f"✅ Evaluation submitted for run {run_id}: {evaluation_response.id}")
+    #         evaluation_response = await self.agent_manager.project_client.evaluations.create_agent_evaluation(evaluation_request)
+    #         print(f"✅ Evaluation submitted for run {run_id}: {evaluation_response.id}")
             
-        except Exception as e:
-            print(f"⚠️ Warning: Failed to submit evaluation for run {run_id}: {e}")
-            import traceback
-            print(f"Full traceback: {traceback.format_exc()}")
-            # Don't fail the main flow for evaluation errors
+    #     except Exception as e:
+    #         print(f"⚠️ Warning: Failed to submit evaluation for run {run_id}: {e}")
+    #         import traceback
+    #         print(f"Full traceback: {traceback.format_exc()}")
+    #         # Don't fail the main flow for evaluation errors
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
         """Process chat message and stream responses."""
