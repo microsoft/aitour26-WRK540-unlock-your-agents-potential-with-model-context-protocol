@@ -1,49 +1,54 @@
-## Solution Architecture
+## Core technologies at a glance
 
-In this workshop, you will create the Zava Sales Agent: a conversational agent designed to answer questions about sales data, generate charts for Zava's retail DIY business.
+- **Azure AI Foundry Agent Service**
+  Hosts the LLM-driven agent; orchestrates tools (including MCP Servers); manages context, Code Interpreter, and token streaming; and provides authentication, logging, and scaling.
+- **MCP Servers**
+  MCP (Model Context Protocol) is an open standard that gives LLMs a unified interface to external tools, APIs, and data. It standardizes tool discovery (like OpenAPI for REST) and improves composability by making tools easy to update or swap as needs evolve.
+- **PostgreSQL + pgvector**
+  Stores relational data and embeddings; supports both relational (SQL) and semantic (vector) queries (via pgvector), governed by SQL and RLS.
 
-## Components of the Agent App
+**Together:** the Agent Service routes user intents; the MCP server translates them into tool/SQL calls; PostgreSQL+pgvector answers semantic and analytical questions.
 
-1. **Microsoft Azure services**
+## Architecture (high level)
 
-    This agent is built on Microsoft Azure services.
+```plaintext
+┌─────────────────────┐                         ┌─────────────────┐
+│   Zava Agent App    │       stdio/https       │   MCP Server    │
+│   (app.py)          │◄───────────────────────►│ (sales_analysis)│
+│                     │      MCP Transports     └─────────────────┘
+│ ┌─────────────────┐ │                                 │
+│ │ Azure AI        │ │                                 ▼
+│ │ Agents Service  │ │                         ┌─────────────────┐
+│ │ + Streaming     │ │                         │ Azure Database  │
+│ │                 │ │                         │ for PostgreSQL  │
+│ └─────────────────┘ │                         │   + pgvector    │
+└─────────────────────┘                         └─────────────────┘
+         │                                              |
+         ▼                                              ▼
+┌─────────────────────┐                         ┌─────────────────┐
+│ Azure OpenAI        │                         │ Zava Sales      │
+│ Model Deployments   │                         │ Database with   │
+│ - gpt-4o-mini       │                         │ Semantic Search │
+│ - text-embedding-3- │                         └─────────────────┘
+│   small             │
+└─────────────────────┘
+```
 
-      - **Generative AI model**: The underlying LLM powering this app is the [Azure OpenAI gpt-4o-mini](https://learn.microsoft.com/azure/ai-foundry/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#how-do-i-access-the-gpt-4o-and-gpt-4o-mini-models){:target="_blank"} LLM.
+## Key benefits of MCP Servers
 
-      - **Control Plane**: The app and its architectural components are managed and monitored using the [Azure AI Foundry](https://ai.azure.com){:target="_blank"} portal, accessible via the browser.
+- **Interoperability** – Connect AI agents to any vendor’s MCP‑enabled tools with minimal custom code.
+- **Security hooks** – Integrate sign‑in, permissions, and activity logging.
+- **Reusability** – Build once, reuse across projects, clouds, and runtimes.
+- **Operational simplicity** – A single contract reduces boilerplate and maintenance.
 
-2. **Azure AI Foundry (SDK)**
+## Best practices demonstrated
 
-    The workshop is offered in [Python](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python-preview&context=%2Fazure%2Fai-services%2Fagents%2Fcontext%2Fcontext){:target="_blank"} using the Azure AI Foundry SDK. The SDK supports key features of the Azure AI Agents service, including [Code Interpreter](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/code-interpreter?view=azure-python-preview&tabs=python&pivots=overview){:target="_blank"} and [Model Context Protocol (MCP)](https://modelcontextprotocol.io/){:target="_blank"} integration.
+- **Asynchronous APIs:** Agents service and PostgreSQL use async APIs; ideal with FastAPI/ASP.NET/Streamlit.
+- **Token streaming:** Improves perceived latency in the UI.
+- **Observability:** Built‑in tracing and metrics support monitoring and optimization.
+- **Database security:** PostgreSQL is secured with restricted agent privileges and Row‑Level Security (RLS), limiting agents to only their authorized data.
+- **Code Interpreter:** The [Azure AI Agents Service Code Interpreter](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/code-interpreter?view=azure-python-preview&tabs=python&pivots=overview){:target="_blank"} runs LLM‑generated code on demand in a **sandboxed** environment, preventing actions beyond the agent’s scope.
 
-3. **Database**
+## Extensibility
 
-    The app is powered by the Zava Sales Database, a [Azure Database for PostgreSQL flexible server](https://www.postgresql.org/){:target="_blank"} with pgvector extension containing comprehensive sales data for Zava's retail DIY operations. 
-
-    The database supports complex queries for sales, inventory, and customer data. Row-Level Security (RLS) ensures agents access only their assigned stores.
-
-4. **MCP Server**
-
-    The Model Context Protocol (MCP) server is a custom Python service that acts as a bridge between the agent and the PostgreSQL database. It handles:
-
-     - **Database Schema Discovery**: Automatically retrieves database schemas to help the agent understand available data.
-     - **Query Generation**: Transforms natural language requests into SQL queries.
-     - **Tool Execution**: Executes SQL queries and returns results in a format the agent can use.
-     - **Time Services**: Provides time-related data for generating time-sensitive reports.
-
-## Extending the Workshop Solution
-
-The workshop is easily adaptable to use cases like customer support by updating the database and customizing Foundry Agent Service instructions.
-
-## Best Practices Demonstrated in the App
-
-The app also demonstrates some best practices for efficiency and user experience.
-
-- **Asynchronous APIs**:
-  In the workshop sample, both the Foundry Agent Service and PostgreSQL use asynchronous APIs, optimizing resource efficiency and scalability. This design choice becomes especially advantageous when deploying the application with asynchronous web frameworks like FastAPI, ASP.NET, or Streamlit.
-
-- **Token Streaming**:
-  Token streaming is implemented to improve user experience by reducing perceived response times for the LLM-powered agent app.
-
-- **Observability**:
-  The app includes built-in [tracing](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/tracing){:target="_blank"} and [metrics](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/metrics){:target="_blank"} to monitor agent performance, usage patterns, and latency. This enables you to identify issues and optimize the agent over time.
+The workshop pattern can be adapted (e.g., customer support) by updating the database + agent instructions in Foundry.

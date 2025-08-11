@@ -1,26 +1,26 @@
-कार्यशाला दस्तावेज़ लेआउट से परिचित होने के लिए एक क्षण लें:
+workshop document layout से परिचित होने के लिए एक क्षण लें:
 
-### पेज नेविगेशन तत्व
+### Page Navigation Elements
 
-- बाईं ओर मुख्य नेविगेशन मेनू में दस्तावेज़ीकरण के सभी अनुभागों के लिंक हैं।
-- शीर्ष पर कंट्रोल पैनल आपको विशिष्ट विषयों या keywords की खोज करने, light और dark themes के बीच स्विच करने, और दस्तावेज़ीकरण के विभिन्न भाषा versions तक पहुंचने की अनुमति देता है।
-- इस कार्यशाला के लिए GitHub repository का लिंक शीर्ष दाएं कोने में उपलब्ध है।
-- अगले/पिछले पृष्ठों के लिए प्रत्येक पृष्ठ के नीचे नेविगेशन लिंक।
+- बाईं ओर main navigation menu में documentation के सभी sections के लिए links हैं।
+- ऊपर control panel आपको specific topics या keywords खोजने, light और dark themes के बीच switch करने, और documentation के विभिन्न भाषा versions तक पहुंचने की अनुमति देता है।
+- इस workshop के लिए GitHub repository का link ऊपरी दाएं कोने में उपलब्ध है।
+- प्रत्येक page के bottom में next/previous pages के लिए navigation links हैं।
 
-### इमेज का विस्तार
+### Image को Expand करना
 
-दस्तावेज़ीकरण में छवियों को बड़े आकार में देखने के लिए, आप उन पर क्लिक कर सकते हैं। यह छवि को नए टैब में खोलेगा, जिससे आप अधिक विवरण देख सकेंगे।
+Documentation में images को बड़े size में देखने के लिए, आप उन पर click कर सकते हैं। यह image को नए tab में खोलेगा, जिससे आप अधिक detail देख सकते हैं।
 
 ![Workshop documentation layout](media/document-layout.png)
 
-### कोड स्निपेट्स कॉपी करना
+### Code Snippets को Copy करना
 
-कार्यशाला का अधिकतम लाभ उठाने के लिए, आपको अक्सर दस्तावेज़ीकरण से टेक्स्ट कोड स्निपेट्स की आवश्यकता होगी।
+Workshop का अधिकतम लाभ उठाने के लिए, आपको अक्सर documentation से text code snippets की आवश्यकता होगी।
 
-टेक्स्ट स्निपेट्स पूरे दस्तावेज़ीकरण में ग्रे बॉक्स में हाइलाइट किए गए हैं। आप snippet के दाईं ओर hover करने पर दिखाई देने वाले copy icon पर क्लिक करके टेक्स्ट को कॉपी कर सकते हैं।
+Text snippets पूरे documentation में gray boxes में highlighted हैं। आप snippet के दाईं ओर hover करने पर दिखाई देने वाले copy icon पर click करके text को copy कर सकते हैं।
 
 ```text
 # Example text snippet
 ```
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*

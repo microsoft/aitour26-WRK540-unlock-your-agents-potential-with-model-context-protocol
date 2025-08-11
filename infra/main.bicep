@@ -30,7 +30,7 @@ param models array = [
     format: 'OpenAI'
     version: '1'
     skuName: 'GlobalStandard'
-    capacity: 120
+    capacity: 50
   }
 ]
 

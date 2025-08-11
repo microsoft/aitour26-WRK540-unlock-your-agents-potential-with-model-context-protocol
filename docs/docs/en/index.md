@@ -1,6 +1,6 @@
 # Unlock Your Agent's Potential with Model Context Protocol and PostgreSQL
 
-## A 50-minute interactive workshop
+## A 55-minute interactive workshop
 
 Imagine you’re a sales manager at Zava, a retail DIY company with stores across Washington State and a growing online presence. You specialize in outdoor equipment, home improvement tools, and DIY supplies.
 
@@ -13,20 +13,20 @@ You need to analyze sales data to find trends, understand customer preferences, 
 Learn to build an AI agent that analyzes sales data, answers product questions, and helps customers find products using image search. Key topics:
 
 1. **Azure AI Foundry Agent Service**: Build and deploy AI agents with integrated tools and observability.  
-2. **Model Context Protocol (MCP)**: Connect LLMs to external tools, data, and systems for enhanced functionality.  
+2. **Model Context Protocol (MCP)**: Connects the Agent Service to external tools, data, over industry stanadard protocols to enhance agent functionality.  
 3. **Azure AI Foundry**: Rapidly build and deploy AI agents with integrated tools and observability.
 
 ### Just starting your AI Agents journey?
 
-If you're new to AI agents, start with the [Build your code-first agent with Azure AI Foundry](https://aka.ms/aitour/WRK552){:target="_blank"} workshop. You'll learn to build a code-first agent using Azure AI Foundry, integrating LLMs with databases, documents, and Bing search — a solid foundation for more advanced agents like the Zava Agent.
+New to AI agents? Start with [Build your code-first agent with Azure AI Foundry](https://aka.ms/aitour/WRK552){:target="_blank"}. You'll build a code-first agent integrating LLMs with databases, documents, and Bing Search—a solid foundation for advanced agents like Zava.
 
 ## What is an LLM-Powered AI Agent?
 
-A Large Language Model (LLM) powered AI Agent is semi-autonomous software designed to achieve a given goal without requiring predefined steps or processes. Rather than following explicitly programmed instructions, the agent determines how to accomplish a task using instructions and context.
+An LLM-powered AI agent is semi-autonomous software that achieves goals without predefined steps. Instead of hard-coded workflows, it decides what to do based on instructions and context.
 
-For example, if a user asks, "**Show the total sales for each store as a pie chart**", the app doesn’t rely on predefined logic for this request. Instead, the LLM interprets the request, manages the conversation flow and context, and orchestrates the necessary actions to produce the store sales pie chart.
+Example: If a user asks, "Show total sales per store as a pie chart", the agent interprets the request, tracks context, and orchestrates the right tools to produce the chart—no prebuilt logic required.
 
-Unlike traditional applications, where developers define the logic and workflows to support business processes, AI Agents shift this responsibility to the LLM. In these systems, prompt engineering, clear instructions, and tool development are critical to ensuring the app performs as intended.
+This shifts much of the application logic from developers to the model. Clear instructions and dependable tools are essential for predictable agent behavior and results.
 
 ## Introduction to the Azure AI Foundry
 

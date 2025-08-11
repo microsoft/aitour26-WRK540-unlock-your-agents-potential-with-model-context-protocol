@@ -2,8 +2,8 @@
 
     {% include-markdown "includes/hi/lab-6-finishing-up-event.md" %} -->
 
-=== "Self-Guided Learners"
+=== "स्व-निर्देशित शिक्षार्थी"
 
     {% include-markdown "includes/hi/lab-6-finishing-up-self-guided.md" %}
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*

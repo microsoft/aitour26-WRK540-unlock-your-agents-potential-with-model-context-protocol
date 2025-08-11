@@ -1,50 +1,50 @@
-## Self-Guided Learners
+## स्व-निर्देशित शिक्षार्थी
 
-ये निर्देश self-guided learners के लिए हैं जिनके पास पूर्व-कॉन्फ़िगर किए गए लैब वातावरण तक पहुंच नहीं है। अपना वातावरण सेट करने और कार्यशाला शुरू करने के लिए इन चरणों का पालन करें।
+ये निर्देश उन स्व-निर्देशित शिक्षार्थियों के लिए हैं जिनके पास pre-configured lab environment तक पहुंच नहीं है। अपना environment set up करने और workshop शुरू करने के लिए इन steps को follow करें।
 
 ## परिचय
 
-यह कार्यशाला आपको Azure AI Agents Service और संबंधित SDK के बारे में सिखाने के लिए डिज़ाइन की गई है। इसमें कई लैब्स हैं, जो Azure AI Agents Service की एक विशिष्ट सुविधा को उजागर करती है। लैब्स को क्रम में पूरा करने के लिए बनाया गया है, क्योंकि प्रत्येक पिछली लैब के ज्ञान और कार्य पर आधारित है।
+यह workshop आपको Azure AI Agents Service और संबंधित SDK के बारे में सिखाने के लिए डिज़ाइन किया गया है। इसमें multiple labs हैं, प्रत्येक Azure AI Agents Service की specific feature को highlight करती है। Labs को order में पूरा करना है, क्योंकि प्रत्येक previous lab के knowledge और work पर build करती है।
 
-## आवश्यकताएं
+## Prerequisites
 
-1. Azure subscription तक पहुंच। यदि आपके पास Azure subscription नहीं है, तो शुरू करने से पहले एक [free account](https://azure.microsoft.com/free/){:target="_blank"} बनाएं।
-1. आपको GitHub account की आवश्यकता है। यदि आपके पास एक नहीं है, तो [GitHub](https://github.com/join){:target="_blank"} पर इसे बनाएं।
+1. Azure subscription तक पहुंच। यदि आपके पास Azure subscription नहीं है, तो शुरू करने से पहले [free account](https://azure.microsoft.com/free/){:target="_blank"} बनाएं।
+1. आपको GitHub account की आवश्यकता है। यदि आपके पास नहीं है, तो [GitHub](https://github.com/join){:target="_blank"} पर बनाएं।
 
-## कार्यशाला प्रोग्रामिंग भाषा का चयन
+## Workshop Programming Language सेलेक्ट करना
 
-कार्यशाला Python और C# दोनों में उपलब्ध है। अपनी पसंदीदा भाषा चुनने के लिए भाषा चयनकर्ता टैब का उपयोग करें। नोट करें, कार्यशाला के बीच भाषा न बदलें।
+Workshop Python और C# दोनों में उपलब्ध है। अपनी preferred language चुनने के लिए language selector tabs का उपयोग करें। नोट करें, workshop के बीच में languages switch न करें।
 
-**अपनी पसंदीदा भाषा के लिए टैब का चयन करें:**
+**अपनी preferred language के लिए tab सेलेक्ट करें:**
 
 === "Python"
-    कार्यशाला के लिए डिफ़ॉल्ट भाषा **Python** सेट है।
+    Workshop के लिए default language **Python** पर set है।
 === "C#"
-    कार्यशाला के लिए डिफ़ॉल्ट भाषा **C#** सेट है।
+    Workshop के लिए default language **C#** पर set है।
 
-## कार्यशाला खोलना
+## Workshop खोलना
 
-इस कार्यशाला को चलाने का **पसंदीदा** तरीका **GitHub Codespaces** का उपयोग करना है। यह विकल्प कार्यशाला पूरा करने के लिए आवश्यक सभी टूल्स और संसाधनों के साथ एक पूर्व-कॉन्फ़िगर किया गया वातावरण प्रदान करता है। वैकल्पिक रूप से, आप Visual Studio Code Dev Container और Docker का उपयोग करके कार्यशाला को स्थानीय रूप से खोल सकते हैं। दोनों विकल्प नीचे वर्णित हैं।
+इस workshop को चलाने का **preferred** तरीका **GitHub Codespaces** का उपयोग करना है। यह option एक pre-configured environment प्रदान करता है जिसमें workshop पूरा करने के लिए आवश्यक सभी tools और resources हैं। वैकल्पिक रूप से, आप Visual Studio Code Dev Container और Docker का उपयोग करके workshop को locally खोल सकते हैं। दोनों options नीचे describe किए गए हैं।
 
 !!! Note
-    **Codespace या Dev Container बनाने में लगभग 5 मिनट लगेंगे। प्रक्रिया शुरू करें और फिर आप इसे बनाते समय निर्देशों को पढ़ना जारी रख सकते हैं।**
+    **Codespace या Dev Container को build करने में लगभग 5 minutes लगेंगे। Process शुरू करें और फिर आप build होते समय instructions पढ़ना जारी रख सकते हैं।**
 
 === "GitHub Codespaces"
 
-    GitHub Codespaces में प्रोजेक्ट खोलने के लिए **Open in GitHub Codespaces** का चयन करें।
+    Project को GitHub Codespaces में खोलने के लिए **Open in GitHub Codespaces** सेलेक्ट करें।
 
     [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol){:target="_blank"}
 
 === "VS Code Dev Container"
 
     <!-- !!! warning "Apple Silicon Users"
-        आप जल्द ही चलाने वाली automated deployment script Apple Silicon पर समर्थित नहीं है। कृपया Dev Container के बजाय Codespaces से या macOS से deployment script चलाएं। -->
+        जो automated deployment script आप जल्द ही चलाएंगे वो Apple Silicon पर supported नहीं है। कृपया Dev Container के बजाय Codespaces से या macOS से deployment script चलाएं। -->
 
-    वैकल्पिक रूप से, आप Visual Studio Code Dev Container का उपयोग करके प्रोजेक्ट को स्थानीय रूप से खोल सकते हैं, जो [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers){:target="_blank"} का उपयोग करके आपके स्थानीय VS Code development environment में प्रोजेक्ट खोलेगा।
+    वैकल्पिक रूप से, आप Visual Studio Code Dev Container का उपयोग करके project को locally खोल सकते हैं, जो [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers){:target="_blank"} का उपयोग करके आपके local VS Code development environment में project खोलेगा।
 
-    1. Docker Desktop शुरू करें (यदि पहले से इंस्टॉल नहीं है तो इसे इंस्टॉल करें)
-    2. VS Code Dev Container में प्रोजेक्ट खोलने के लिए **Dev Containers Open** का चयन करें।
+    1. Docker Desktop शुरू करें (यदि पहले से installed नहीं है तो install करें)
+    2. Project को VS Code Dev Container में खोलने के लिए **Dev Containers Open** सेलेक्ट करें।
 
         [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol)
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*

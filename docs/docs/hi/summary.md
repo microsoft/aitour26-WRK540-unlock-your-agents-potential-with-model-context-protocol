@@ -1,39 +1,39 @@
 # सारांश
 
-इस कार्यशाला ने दिखाया कि कैसे Foundry Agent Service का लाभ उठाकर एक मजबूत वार्तालाप एजेंट बनाया जाए जो बिक्री-संबंधी प्रश्नों के उत्तर देने, डेटा विश्लेषण करने, विज़ुअलाइज़ेशन जेनरेट करने, और बेहतर अंतर्दृष्टि के लिए बाहरी डेटा स्रोतों को एकीकृत करने में सक्षम हो। यहां मुख्य takeaways हैं:
+इस workshop ने demonstrate किया कि Foundry Agent Service का leverage करके कैसे एक robust conversational agent बनाया जाए जो sales-related प्रश्नों के उत्तर देने, data analysis perform करने, visualizations generate करने, और enhanced insights के लिए external data sources को integrate करने में सक्षम हो। यहां मुख्य takeaways हैं:
 
 ## 1. Model Context Protocol (MCP) और Dynamic SQL Queries
 
-- एजेंट PostgreSQL डेटाबेस के विरुद्ध SQL क्वेरीज़ को dynamically जेनरेट और निष्पादित करने के लिए Foundry Agent Service का उपयोग करता है, जिससे यह सटीक डेटा पुनर्प्राप्ति के साथ उपयोगकर्ता प्रश्नों का उत्तर दे सकता है। MCP Server वार्तालाप संदर्भ को प्रबंधित करने और यह सुनिश्चित करने का एक संरचित तरीका प्रदान करता है कि एजेंट जटिल क्वेरीज़ को प्रभावी रूप से संभाल सके।
+- Agent PostgreSQL database के against dynamically SQL queries generate और execute करने के लिए Foundry Agent Service का उपयोग करता है, जिससे यह accurate data retrieval के साथ user questions का जवाब दे सकता है। MCP Server conversation context को manage करने और यह सुनिश्चित करने का structured way प्रदान करता है कि agent complex queries को effectively handle कर सके।
 
 ## 2. Context Management
 
-- एजेंट Foundry Agent Service का उपयोग करके वार्तालाप संदर्भ को कुशलतापूर्वक प्रबंधित करता है, यह सुनिश्चित करते हुए कि बातचीत प्रासंगिक और सुसंगत रहे।
+- Agent Foundry Agent Service का उपयोग करके conversation context को efficiently manage करता है, यह सुनिश्चित करते हुए कि interactions relevant और coherent रहें।
 
-## 3. डेटा विज़ुअलाइज़ेशन
+## 3. Data Visualization
 
-- Code Interpreter के साथ, एजेंट उपयोगकर्ता क्वेरीज़ के आधार पर pie charts और tables जैसे विज़ुअलाइज़ेशन जेनरेट कर सकता है, जिससे डेटा अधिक सुलभ और actionable हो जाता है। आप कई भाषाओं का समर्थन करने वाले विज़ुअलाइज़ेशन बनाने के लिए Code Interpreter में अतिरिक्त फॉन्ट attach कर सकते हैं।
+- Code Interpreter के साथ, agent user queries के based पर pie charts और tables जैसे visualizations generate कर सकता है, data को अधिक accessible और actionable बनाता है। आप multiple languages को support करने वाले visualizations create करने के लिए Code Interpreter में additional fonts attach कर सकते हैं।
 
-## 4. फाइल जेनरेशन
+## 4. File Generation
 
-- एजेंट Excel, CSV, JSON, और image formats सहित downloadable files बना सकता है, जो उपयोगकर्ताओं को डेटा का विश्लेषण और साझाकरण करने के लिए लचीले विकल्प प्रदान करता है।
+- Agent Excel, CSV, JSON, और image formats सहित downloadable files create कर सकता है, users को data का विश्लेषण और share करने के लिए flexible options प्रदान करता है।
 
-## 5. निगरानी और लॉगिंग
+## 5. Monitoring और Logging
 
-- Foundry Agent Service में built-in monitoring और logging क्षमताएं शामिल हैं, जो आपको एजेंट प्रदर्शन, उपयोगकर्ता बातचीत, और सिस्टम स्वास्थ्य को ट्रैक करने की अनुमति देती हैं। यह production environments में एजेंट की विश्वसनीयता और प्रभावशीलता बनाए रखने के लिए महत्वपूर्ण है।
+- Foundry Agent Service में built-in monitoring और logging capabilities शामिल हैं, जो आपको agent performance, user interactions, और system health को track करने की अनुमति देती हैं। यह production environments में agent की reliability और effectiveness बनाए रखने के लिए crucial है।
 
-## 6. सुरक्षा सर्वोत्तम प्रथाएं
+## 6. Security Best Practices
 
-- SQL injection जैसे सुरक्षा जोखिम read-only डेटाबेस एक्सेस को लागू करके और ऐप को सुरक्षित वातावरण के भीतर चलाकर कम किए गए हैं।
+- SQL injection जैसे security risks को read-only database access enforce करके और app को secure environment के भीतर run करके कम किया जाता है।
 
-## 7. बहुभाषी समर्थन
+## 7. Multi-Language Support
 
-- एजेंट और LLM कई भाषाओं का समर्थन करते हैं, विविध भाषाई पृष्ठभूमि के उपयोगकर्ताओं के लिए एक समावेशी अनुभव प्रदान करते हैं।
+- Agent और LLM multiple languages को support करते हैं, diverse linguistic backgrounds से users के लिए inclusive experience offer करते हैं।
 
-## 8. अनुकूलनशीलता और कस्टमाइज़ेशन
+## 8. Adaptability और Customization
 
-- कार्यशाला Foundry Agent Service की लचीलेपन पर जोर देती है, जो आपको निर्देशों को संशोधित करके और अतिरिक्त टूल्स को एकीकृत करके ग्राहक सहायता या प्रतिस्पर्धी विश्लेषण जैसे विभिन्न उपयोग के मामलों के लिए एजेंट को अनुकूलित करने की अनुमति देती है।
+- Workshop Foundry Agent Service की flexibility पर emphasis करती है, आपको instructions modify करके और additional tools integrate करके विभिन्न use cases, जैसे customer support या competitive analysis, के लिए agent को adapt करने की अनुमति देती है।
 
-यह कार्यशाला आपको Foundry Agent Service की पूर्ण क्षमताओं का लाभ उठाते हुए अपनी व्यावसायिक आवश्यकताओं के अनुकूल वार्तालाप एजेंट बनाने और विस्तारित करने के लिए ज्ञान और टूल्स से लैस करती है।
+यह workshop आपको अपनी business needs के अनुरूप conversational agents बनाने और extend करने के लिए knowledge और tools से equip करती है, Foundry Agent Service की full capabilities का leverage करते हुए।
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*

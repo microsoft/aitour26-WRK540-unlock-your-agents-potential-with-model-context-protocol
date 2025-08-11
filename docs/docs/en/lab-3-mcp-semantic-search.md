@@ -1,6 +1,6 @@
 ## What You'll Learn
 
-In this lab, you enable semantic search capabilities in the Azure AI Agent using the Model Context Protocol (MCP) and the PostgreSQL database.
+In this lab, you enable semantic search capabilities in the Azure AI Agent using the Model Context Protocol (MCP) and the PostgreSQL database with the [PostgreSQL Vector](https://github.com/pgvector/pgvector){:target="_blank"} extension enabled.
 
 ## Introduction
 

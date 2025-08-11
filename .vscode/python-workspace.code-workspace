@@ -34,7 +34,13 @@
             "titleBar.inactiveBackground": "#3776ab99",
             "titleBar.inactiveForeground": "#e7e7e799"
         },
-        "peacock.color": "#3776AB"
+        "peacock.color": "#3776AB",
+        "workbench.startupEditor": "none"
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python"
+        ]
     },
     "tasks": {
         "version": "2.0.0",
@@ -47,7 +53,7 @@
                     "${workspaceFolder:workshop}/app.py",
                     "${workspaceFolder:shared}/instructions/mcp_server_tools_with_code_interpreter.txt",
                     "${workspaceFolder:shared}/instructions/mcp_server_tools_with_semantic_search.txt",
-                    "${workspaceFolder:mcp_server}/sales_analysis/sales_analysis.py"
+                    "${workspaceFolder:mcp_server}/sales_analysis/sales_analysis.py",
                 ],
                 "group": "build",
                 "runOptions": {

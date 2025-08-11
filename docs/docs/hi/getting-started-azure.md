@@ -1,13 +1,13 @@
-# प्रारंभ करना
+# शुरुआत करना
 
-अपने कार्यशाला अनुभव का चयन करें:
+अपना वर्कशॉप अनुभव चुनें:
 
-=== "@event Attendees"
+=== "@event प्रतिभागी"
 
     {% include-markdown "includes/hi/introduction-event.md" %}
 
-=== "Self-Guided Learners"
+=== "स्व-निर्देशित शिक्षार्थी"
 
     {% include-markdown "includes/hi/introduction-self-guided-azure.md" %}
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*

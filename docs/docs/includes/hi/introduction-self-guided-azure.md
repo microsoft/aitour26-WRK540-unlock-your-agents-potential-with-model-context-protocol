@@ -1,51 +1,51 @@
-## Codespace Build पूरा होने की प्रतीक्षा करें
+## Codespace Build पूरा होने का इंतज़ार करें
 
-आगे बढ़ने से पहले, सुनिश्चित करें कि आपका Codespace या Dev Container पूरी तरह से बनाया गया है और तैयार है। यह आपके इंटरनेट कनेक्शन और डाउनलोड किए जा रहे संसाधनों के आधार पर कई मिनट लग सकते हैं।
+आगे बढ़ने से पहले, सुनिश्चित करें कि आपका Codespace या Dev Container पूरी तरह से built और ready है। यह आपके internet connection और download होने वाले resources के आधार पर कई minutes ले सकता है।
 
-## Azure के साथ प्रमाणीकरण
+## Azure के साथ Authenticate करना
 
-एजेंट ऐप को Azure AI Agents Service और models तक पहुंच की अनुमति देने के लिए Azure के साथ प्रमाणीकरण करें। इन चरणों का पालन करें:
+Agent app को Azure AI Agents Service और models तक पहुंच देने के लिए Azure के साथ authenticate करें। इन steps को follow करें:
 
-1. पुष्टि करें कि कार्यशाला वातावरण तैयार है और VS Code में खुला है।
-2. VS Code से, VS Code में **Terminal** > **New Terminal** के माध्यम से एक टर्मिनल खोलें, फिर चलाएं:
+1. Confirm करें कि workshop environment ready है और VS Code में खुला है।
+2. VS Code से, VS Code में **Terminal** > **New Terminal** के माध्यम से terminal खोलें, फिर चलाएं:
 
     ```shell
     az login --use-device-code
     ```
 
     !!! note
-        आपको एक ब्राउज़र खोलने और Azure में लॉग इन करने के लिए कहा जाएगा। authentication code कॉपी करें और:
+        आपको browser खोलने और Azure में log in करने के लिए कहा जाएगा। Authentication code copy करें और:
 
-        1. अपने account type का चयन करें और **Next** पर क्लिक करें।
-        2. अपने Azure credentials के साथ sign in करें।
-        3. Code पेस्ट करें।
-        4. **OK**, फिर **Done** पर क्लिक करें।
+        1. अपना account type चुनें और **Next** पर click करें।
+        2. अपनी Azure credentials के साथ sign in करें।
+        3. Code को paste करें।
+        4. **OK**, फिर **Done** पर click करें।
 
     !!! warning
-        यदि आपके पास कई Azure tenants हैं, तो सही वाले को निर्दिष्ट करने के लिए उपयोग करें:
+        यदि आपके पास multiple Azure tenants हैं, तो सही tenant specify करें:
 
         ```shell
         az login --use-device-code --tenant <tenant_id>
         ```
 
-3. इसके बाद, command line से उपयुक्त subscription का चयन करें।
-4. अगले चरणों के लिए टर्मिनल विंडो खुली छोड़ें।
+3. इसके बाद, command line से appropriate subscription सेलेक्ट करें।
+4. अगले steps के लिए terminal window को खुला छोड़ दें।
 
-## Azure Resources तैनात करें
+## Azure Resources Deploy करना
 
-यह deployment आपकी Azure subscription में **rg-zava-agent-wks-nnnn** resource group के तहत निम्नलिखित संसाधन बनाती है:
+यह deployment आपकी Azure subscription में **rg-zava-agent-wks-nnnn** resource group के under निम्नलिखित resources create करती है:
 
 - **fdy-zava-agent-wks-nnnn** नाम का एक **Azure AI Foundry hub**
 - **prj-zava-agent-wks-nnnn** नाम का एक **Azure AI Foundry project**
-- दो models तैनात किए गए हैं: **gpt-4o-mini** और **text-embedding-3-small**। [मूल्य निर्धारण देखें।](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
+- दो models deploy किए जाते हैं: **gpt-4o-mini** और **text-embedding-3-small**। [Pricing देखें।](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
 
-!!! warning "सुनिश्चित करें कि आपके पास gpt-4o-mini Global Standard SKU के लिए कम से कम 120K TPM quota है, क्योंकि एजेंट बार-बार model calls करता है। [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"} में अपना quota जांचें।"
+!!! warning "सुनिश्चित करें कि आपके पास gpt-4o-mini Global Standard SKU के लिए कम से कम 120K TPM quota है, क्योंकि agent frequent model calls करता है। [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"} में अपना quota check करें।"
 
-हमने कार्यशाला के लिए आवश्यक संसाधनों की तैनाती को automate करने के लिए एक bash script प्रदान की है।
+हमने workshop के लिए आवश्यक resources की deployment को automate करने के लिए bash script प्रदान की है।
 
-### स्वचालित तैनाती
+### Automated Deployment
 
-`deploy.sh` script डिफ़ॉल्ट रूप से `westus` region में resources तैनात करती है। script चलाने के लिए:
+`deploy.sh` script default रूप से `westus` region में resources deploy करती है। Script चलाने के लिए:
 
 ```bash
 cd infra && ./deploy.sh
@@ -53,15 +53,15 @@ cd infra && ./deploy.sh
 
 <!-- !!! note "Windows पर, `deploy.sh` के बजाय `deploy.ps1` चलाएं" -->
 
-### कार्यशाला कॉन्फ़िगरेशन
+### Workshop Configuration
 
 === "Python"
 
-    #### Azure Resource कॉन्फ़िगरेशन
+    #### Azure Resource Configuration
 
-    Deploy script **.env** फाइल जेनरेट करती है, जिसमें project और model endpoints, model deployment names, और Application Insights connection string शामिल हैं। .env फाइल स्वचालित रूप से `src/python/workshop` फोल्डर में सेव हो जाएगी। 
+    Deploy script **.env** file generate करती है, जिसमें project और model endpoints, model deployment names, और Application Insights connection string शामिल है। .env file automatically `src/python/workshop` folder में save हो जाएगी।
     
-    आपकी **.env** फाइल निम्नलिखित के समान दिखेगी, आपकी values के साथ अपडेट की गई:
+    आपकी **.env** file निम्नलिखित के समान दिखेगी, आपकी values के साथ updated:
 
     ```python
     PROJECT_ENDPOINT="<your_project_endpoint>"
@@ -73,9 +73,9 @@ cd infra && ./deploy.sh
     AZURE_OPENAI_ENDPOINT="<your_azure_openai_endpoint>"
     ```
 
-    #### Azure Resource नाम
+    #### Azure Resource Names
 
-    आपको `workshop` फोल्डर में `resources.txt` नाम की एक फाइल भी मिलेगी। इस फाइल में deployment के दौरान बनाए गए Azure resources के नाम हैं। 
+    आपको `workshop` folder में `resources.txt` नाम की file भी मिलेगी। इस file में deployment के दौरान create किए गए Azure resources के names शामिल हैं।
 
     यह निम्नलिखित के समान दिखेगी:
 
@@ -91,10 +91,10 @@ cd infra && ./deploy.sh
 
     Script [ASP.NET Core development secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets){:target="_blank"} के लिए Secret Manager का उपयोग करके project variables को securely store करती है।
 
-    VS Code में C# workspace खोलने के बाद आप निम्नलिखित कमांड चलाकर secrets देख सकते हैं:
+    VS Code में C# workspace खोलने के बाद आप निम्नलिखित command चलाकर secrets देख सकते हैं:
 
     ```bash
     dotnet user-secrets list
     ```
 
-*GitHub Copilot और GPT-4o का उपयोग करके अनुवादित।*
+*GitHub Copilot का उपयोग करके अनुवादित।*
