@@ -10,7 +10,7 @@ Monitoring keeps your Azure AI Foundry Agent Service available, performant, and 
 1. In the search box, paste the copied `AI Project Name`.
 1. Select the **AI Project** from the search results.
 
-## Open the Monitoring page
+## Open the Monitoring dashboard
 
 1. From the `resources.txt`, copy the value for the `Application Insights Name` to the clipboard.
 1. Switch back to the AI Foundry portal, select the **Monitoring** section in the left-hand menu.
@@ -18,7 +18,7 @@ Monitoring keeps your Azure AI Foundry Agent Service available, performant, and 
 1. Select the **Application Insights** resource from the dropdown list.
 1. Select **Connect**.
 
-## Explore the Monitoring page
+### Explore the Monitoring dashboard
 
 Familiarize yourself with the information available on the `Application analytics` dashboard.
 
@@ -26,7 +26,7 @@ Familiarize yourself with the information available on the `Application analytic
 
 ![The image shows the application monitoring dashboard](../media/monitor_usage.png)
 
-## Monitor Resource Usage
+### Monitor Resource Usage
 
 You can dig deeper, select `Resource Usage` to view detailed metrics about your AI Project's resource consumption. Again, you can filter the data by time range.
 
