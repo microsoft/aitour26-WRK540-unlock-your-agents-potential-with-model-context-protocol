@@ -1,27 +1,21 @@
-## Opening the Language Workspace
-
-There are two workspaces in the workshop, one for Python and one for C#. The workspace contains the source code and all the files needed to complete the labs for each language. Choose the workspace that matches the language you want to work with.
+There are two VS Code workspaces in the workshop, one for Python and one for C#. The workspace contains the source code and all the files needed to complete the labs for each language. Choose the workspace that matches the language you want to work with.
 
 === "Python"
 
-    1. Copy the following command to your clipboard:
-
-        ```text
-        File: Open Workspace from File...
-        ```
-    2. Switch to Visual Studio Code, press <kbd>F1</kbd> to open the Command Palette.
-    3. Paste the command into the Command Palette and select **Open Workspace from File...**.
-    4. Copy and paste the following path into the file picker and press <kbd>Enter</kbd>:
+    1. **Copy** the following path to the clipboard:
 
         ```text
         /workspace/.vscode/python-workspace.code-workspace
         ```
+    1. From the VS Code menu, select **File** then **Open Workspace from File**.
+    3. Replace and **paste** the copied path name and select **OK**.
+
 
     ## Project Structure
 
-    Be sure to familiarize yourself with the key **folders** and **files** you’ll be working with throughout the workshop.
+    Familiarize yourself with the key **folders** and **files** in the workspace you’ll be working with throughout the workshop.
 
-    ### The workshop folder
+    ### The "workshop" folder
 
     - The **app.py** file: The entry point for the app, containing its main logic.
   
@@ -30,11 +24,11 @@ There are two workspaces in the workshop, one for Python and one for C#. The wor
     - The **resources.txt** file: Contains the resources used by the agent app.
     - The **.env** file: Contains the environment variables used by the agent app.
 
-    ### The mcp_server folder
+    ### The "mcp_server" folder
 
     - The **sales_analysis.py** file: The MCP Server with tools for sales analysis.
 
-    ### The shared folder
+    ### The "shared/instructions" folder
 
     - The **instructions** folder: Contains the instructions passed to the LLM.
 

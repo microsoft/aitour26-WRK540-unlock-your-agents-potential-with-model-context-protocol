@@ -21,7 +21,7 @@ nav:
     - Star the GitHub Repo: getting_started-star-workshop.md
     - Architecture Overview: architecture.md
     - Deploy Agent Resources: getting-started-azure.md
-    - Open Workspace: getting-started-workspace.md
+    - Open VS Code Workspace: getting-started-workspace.md
   - Agent Services Labs:
     - AI Foundry Agent Services: agent-service-overview.md
     - Lab 1 Agent Instructions: lab-1-agent-instructions.md
