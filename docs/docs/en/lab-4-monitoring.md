@@ -1,18 +1,33 @@
-
-**TBC: This lab does not involve making any code changes. It is focused on monitoring the Azure AI Foundry Agent Service from Azure AI Foundry.**
-
 ## Introduction
 
-Monitoring is essential for ensuring the availability, performance, and reliability of your Azure AI Foundry Agent Service. Azure Monitor automatically collects and aggregates metrics and logs from your resources, providing real-time insights and alerting you to potential issues. With built-in dashboards and support for custom alerts, you can track key metrics, analyze trends, and respond proactively to maintain healthy operations. Monitoring is available for agents in a standard agent setup and can be accessed through the Azure portal, CLI, REST API, or client libraries.
+Monitoring keeps your Azure AI Foundry Agent Service available, performant, and reliable. Azure Monitor collects metrics and logs, provides real‑time insights, and sends alerts. Use dashboards and custom alerts to track key metrics, analyze trends, and respond proactively. Access monitoring via the Azure portal, CLI, REST API, or client libraries.
 
 ## Lab Exercise
 
-<!-- **THESE INSTRUCTIONS ARE NOT COMPLETE AND NEED TO BE FINISHED**
+1. From the VS Code file explorer, open the `resources.txt` file in the `workshop` folder.
+1. **Copy** the value for the `AI Project Name` key to the clipboard.
+1. Navigate to the [Azure AI Portal All Resources](https://ai.azure.com/allResources) page.
+1. In the search box, paste the copied `AI Project Name`.
+1. Select the **AI Project** from the search results.
 
-1. Open the `monitoring.py` file.
+## Open the Monitoring page
 
-2. Review the code and identify the key metrics being collected for the Azure AI Foundry Agent Service.
+1. From the `resources.txt`, copy the value for the `Application Insights Name` to the clipboard.
+1. Switch back to the AI Foundry portal, select the **Monitoring** section in the left-hand menu.
+1. Paste the copied `Application Insights Name` into the `Application Insights resource name` dropdown list.
+1. Select the **Application Insights** resource from the dropdown list.
+1. Select **Connect**.
 
-3. Implement custom alerts for any critical metrics that require immediate attention.
+## Explore the Monitoring page
 
-4. Test the monitoring setup by simulating various scenarios and verifying that alerts are triggered as expected. -->
+Familiarize yourself with the information available on the `Application analytics` dashboard.
+
+!!!tip "You can select date ranges to filter the data displayed in the monitoring tools."
+
+![The image shows the application monitoring dashboard](../media/monitor_usage.png)
+
+## Monitor Resource Usage
+
+You can dig deeper, select `Resource Usage` to view detailed metrics about your AI Project's resource consumption. Again, you can filter the data by time range.
+
+![The image shows the resource usage monitoring dashboard](../media/monitor_resource_usage.png)
