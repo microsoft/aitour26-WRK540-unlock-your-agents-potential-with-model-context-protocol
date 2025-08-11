@@ -3,9 +3,9 @@
 ## Core technologies at a glance
 
 - **Azure AI Foundry Agent Service**
-  Hosts the LLM-driven agent, handles tool (inc MCP Servers) orchestration, context management, Code Interpreter, and token streaming, and provides auth, logging, and scale.
+  Hosts the LLM-driven agent; orchestrates tools (including MCP Servers); manages context, Code Interpreter, and token streaming; and provides authentication, logging, and scaling.
 - **MCP Servers**
-  MCP (Model Context Protocol) is an open standard that lets LLMs access external tools, APIs, and data sources through a unified interface. It standardizes tool discovery and access (like OpenAPI for REST) and improves composability by making it easier to update or swap tools as business needs and evolve.
+  MCP (Model Context Protocol) is an open standard that gives LLMs a unified interface to external tools, APIs, and data. It standardizes tool discovery (like OpenAPI for REST) and improves composability by making tools easy to update or swap as needs evolve.
 - **PostgreSQL + pgvector**
   Stores relational data and embeddings; supports both relational (SQL) and semantic (vector) queries (via pgvector), governed by SQL and RLS.
 
