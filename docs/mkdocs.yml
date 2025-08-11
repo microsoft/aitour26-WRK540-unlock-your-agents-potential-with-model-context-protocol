@@ -33,10 +33,10 @@ nav:
     - Lab 5 Continuous Evaluation: lab-5-continuous-evaluation.md
     - Lab 6 Understand Tracing: lab-6-tracing.md
   - Finishing Up: lab-7-finishing-up.md
-  - Home Work:
-    - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
   - Summary: summary.md
   - Resources: resources.md
+  - Home Work:
+    - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
   - About: about.md
 
 
