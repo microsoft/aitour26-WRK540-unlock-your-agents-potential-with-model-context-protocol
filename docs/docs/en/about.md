@@ -7,6 +7,8 @@
 
 Zava DIY is a tool designed to help developers create synthetic data for testing and development purposes. It allows users to generate realistic datasets that can be used in various applications, ensuring that the data meets specific requirements without compromising privacy or security.
 
+[Zava DIY Product Dataset](https://github.com/microsoft/ai-tour-26-zava-diy-dataset-plus-mcp/tree/main){:target="_blank"} GitHub Repo.
+
 The database includes:
 
 - **8 stores** across Washington State, each with unique inventory and sales data
