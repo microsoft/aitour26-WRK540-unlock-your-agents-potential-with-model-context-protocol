@@ -13,7 +13,7 @@ var pg = builder.AddPostgres("pg")
     .WithInitFiles(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", "scripts"))
     // Use the pgvector image for PostgreSQL with pgvector extension
     .WithImage("pgvector/pgvector", "pg17")
-    // .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Persistent)
     ;
 
 var zava = pg.AddDatabase("zava");
@@ -78,18 +78,12 @@ var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("d
     .WithDevTunnel(devtunnel)
     .WithReference(appInsights);
 
-var dotnetAgentApp = builder.AddPythonApp("dotnet-agent-app", Path.Combine(sourceFolder, "python", "workshop"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
-    .WithHttpEndpoint(env: "PORT")
-    .WithHttpHealthCheck("/health")
-    .WithEnvironment("PROJECT_ENDPOINT", foundry)
-    .WithEnvironment("MODEL_DEPLOYMENT_NAME", chatDeployment)
-    .WithPostgres(zava)
+var dotnetAgentApp = builder.AddProject<Projects.McpAgentWorkshop_WorkshopApi>("dotnet-agent-app")
+    .WithReference(zava)
     .WithEnvironment("MAP_MCP_FUNCTIONS", "false")
     .WithReference(dotnetMcpServer)
     .WaitFor(dotnetMcpServer)
     .WaitFor(devtunnel)
-    .WithOtlpExporter()
-    .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
     .WithEnvironment("DEV_TUNNEL_URL", () =>
     {
         var endpoint = dotnetMcpServer.GetEndpoint("http") ?? throw new InvalidOperationException("MCP Server HTTP endpoint not found.");
@@ -102,9 +96,10 @@ var dotnetAgentApp = builder.AddPythonApp("dotnet-agent-app", Path.Combine(sourc
         var activePort = result.Tunnel.Ports.FirstOrDefault(p => p.PortNumber == endpoint.Port) ?? throw new InvalidOperationException($"No active port found for MCP Server on port {endpoint.Port}.");
 
         return activePort.PortUri;
-    });
+    })
+    .WithReference(appInsights);
 
-builder.AddPythonApp("dotnet-chat-frontend", Path.Combine(sourceFolder, "shared", "web_app"), "web_app.py", virtualEnvironmentPath: virtualEnvironmentPath)
+builder.AddPythonApp("dotnet-chat-frontend", Path.Combine(sourceFolder, "shared", "webapp"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
     .WithReference(dotnetAgentApp)
     .WaitFor(dotnetAgentApp)
     .WithHttpEndpoint(env: "PORT")

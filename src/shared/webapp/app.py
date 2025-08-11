@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Agent service configuration
 AGENT_SERVICE_URL = os.environ.get(
-    "services__python-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
+    "services__dotnet-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
 
 
 class WebApp:

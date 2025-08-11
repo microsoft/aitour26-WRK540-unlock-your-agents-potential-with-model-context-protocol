@@ -7,4 +7,5 @@
   <Project Path="McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj" />
   <Project Path="McpAgentWorkshop.McpServer/McpAgentWorkshop.McpServer.csproj" />
   <Project Path="McpAgentWorkshop.ServiceDefaults/McpAgentWorkshop.ServiceDefaults.csproj" />
+  <Project Path="McpAgentWorkshop.WorkshopApi/McpAgentWorkshop.WorkshopApi.csproj" />
 </Solution>
