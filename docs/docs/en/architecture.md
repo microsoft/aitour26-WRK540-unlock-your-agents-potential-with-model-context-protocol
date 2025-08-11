@@ -1,5 +1,3 @@
-# Architecture Overview
-
 ## Core technologies at a glance
 
 - **Azure AI Foundry Agent Service**

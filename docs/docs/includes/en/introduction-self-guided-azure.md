@@ -1,12 +1,11 @@
-## Wait for Codespace Build to Complete
-
-Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
+!!! danger 
+    Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
 
 ## Authenticate with Azure
 
 Authenticate with Azure to allow the agent app access to the Azure AI Agents Service and models. Follow these steps:
 
-1. From VS Code, open a terminal via **Terminal** > **New Terminal** in VS Code, then run:
+1. From VS Code, **press** <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> to open a new terminal window. Then run the following command:
 
     ```shell
     az login --use-device-code
@@ -34,13 +33,17 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
 
 ## Deploy the Azure Resources
 
-This deployment creates the following resources in your Azure subscription under the **rg-zava-agent-wks-nnnn** resource group:
+This deployment creates the following resources in your Azure subscription.
 
+- A resource group named **rg-zava-agent-wks-nnnn**
 - An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnn**
 - An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnn**
 - Two models are deployed: **gpt-4o-mini** and **text-embedding-3-small**. [See pricing.](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
 
-!!! warning "Ensure you have at least 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls. Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
+!!! warning "Ensure you have at least the following model quotas"
+    - 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls.
+    - 50K TPM for the text-embedding-3-small model Global Standard SKU.
+    - Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
 
 ### Automated Deployment
 
