@@ -1,25 +1,28 @@
 ## Wait for Codespace Build to Complete
 
-Before proceeding, ensure that your Codespace or Dev Container is fully built and ready. This may take several minutes, depending on your internet connection and the resources being downloaded.
+Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
 
 ## Authenticate with Azure
 
 Authenticate with Azure to allow the agent app access to the Azure AI Agents Service and models. Follow these steps:
 
-1. Confirm the workshop environment is ready and open in VS Code.
-2. From VS Code, open a terminal via **Terminal** > **New Terminal** in VS Code, then run:
+1. From VS Code, open a terminal via **Terminal** > **New Terminal** in VS Code, then run:
 
     ```shell
     az login --use-device-code
     ```
 
-    !!! note
-        You'll be prompted to open a browser and log in to Azure. Copy the authentication code and:
+    !!! tip
 
-        1. Choose your account type and click **Next**.
-        2. Sign in with your Azure credentials.
-        3. Paste the code.
-        4. Click **OK**, then **Done**.
+        You will be prompted to open a browser and log in to Azure. 
+
+        1. First copy the **Authentication Code** to the clipboard.
+        2. Next, press <kbd>ctrl</kbd> (Windows/Linux) or <kbd>cmd</kbd> (Mac) + <kbd>click</kbd> the authentication URL to open it in your browser.
+        3. Paste the code and click **Next**.
+        4. Pick an account and sign in.
+        6. Click **Continue**
+        7. Return to the terminal window in VS Code.
+        8. You may be prompted to select a subscription.
 
     !!! warning
         If you have multiple Azure tenants, specify the correct one using:
@@ -28,8 +31,8 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
         az login --use-device-code --tenant <tenant_id>
         ```
 
-3. Next, select the appropriate subscription from the command line.
-4. Leave the terminal window open for the next steps.
+2. Next, select the appropriate subscription from the command line.
+3. Leave the terminal window open for the next steps.
 
 ## Deploy the Azure Resources
 
