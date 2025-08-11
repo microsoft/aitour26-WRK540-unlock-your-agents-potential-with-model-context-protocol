@@ -29,6 +29,7 @@ var mcpServer = builder.AddPythonApp("python-mcp-server", Path.Combine(sourceFol
     .WithHttpEndpoint(env: "PORT")
     .WithOtlpExporter()
     .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
+    .WithEnvironment("APPLICATIONINSIGHTS_CONNECTION_STRING", appInsights)
     .WithDevTunnel(devtunnel);
 
 var agentApp = builder.AddPythonApp("python-agent-app", Path.Combine(sourceFolder, "python", "workshop"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)

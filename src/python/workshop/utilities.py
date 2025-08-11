@@ -28,6 +28,7 @@ class Utilities:
             "azure.core",
             "azure.identity",
             "uvicorn.access",
+            "azure.monitor.opentelemetry.exporter.export._base"
         ]:
             logging.getLogger(name).setLevel(logging.WARNING)
 

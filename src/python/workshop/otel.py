@@ -53,7 +53,7 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
             "Azure Monitor connection string detected. Setting up Azure Monitor tracing exporter.")
         azure_processor = BatchSpanProcessor(AzureMonitorTraceExporter(
             connection_string=azure_monitor_connection_string,
-            disable_offline_storage=True))
+            disable_offline_storage=False))
         traceProvider.add_span_processor(azure_processor)
 
     trace.set_tracer_provider(traceProvider)

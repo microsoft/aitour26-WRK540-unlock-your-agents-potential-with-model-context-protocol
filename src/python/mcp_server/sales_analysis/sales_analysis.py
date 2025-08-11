@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Annotated, Optional
 
+from azure.monitor.opentelemetry import configure_azure_monitor
 from mcp.server.fastmcp import Context, FastMCP
 from opentelemetry.instrumentation.starlette import StarletteInstrumentor
 from otel import configure_oltp_grpc_tracing
@@ -22,8 +23,6 @@ from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 
 RLS_USER_ID = None
 
-VERBOSE_MODE = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") is not None
-tracer = configure_oltp_grpc_tracing(logging.INFO if VERBOSE_MODE else logging.ERROR, tracer_name="zava_sales_analysis")
 logger = logging.getLogger(__name__)
 
 
@@ -106,6 +105,8 @@ def get_app_context() -> AppContext:
     raise RuntimeError("Invalid lifespan context type")
 
 # @mcp.tool()
+
+
 async def semantic_search_products(
     ctx: Context,
     query_description: Annotated[str, Field(
@@ -182,7 +183,8 @@ async def get_multiple_table_schemas(
     rls_user_id = get_rls_user_id(ctx)
 
     if not table_names:
-        logger.error("Error: table_names parameter is required and cannot be empty")
+        logger.error(
+            "Error: table_names parameter is required and cannot be empty")
         return "Error: table_names parameter is required and cannot be empty"
 
     valid_tables = {
@@ -199,7 +201,8 @@ async def get_multiple_table_schemas(
     # Validate table names
     invalid_tables = [name for name in table_names if name not in valid_tables]
     if invalid_tables:
-        logger.error("Error: Invalid table names: %s. Valid tables are: %s", invalid_tables, sorted(valid_tables))
+        logger.error("Error: Invalid table names: %s. Valid tables are: %s",
+                     invalid_tables, sorted(valid_tables))
         return f"Error: Invalid table names: {invalid_tables}. Valid tables are: {sorted(valid_tables)}"
 
     logger.info("Manager ID: %s", rls_user_id)
@@ -262,6 +265,13 @@ async def get_current_utc_date() -> str:
 
 async def run_http_server() -> None:
     """Run the MCP server in HTTP mode."""
+
+    # Only configure azure monitor if running in HTTP mode
+    # when running in STDIO mode, it will already be configured
+    # from the host application
+    configure_azure_monitor(
+        connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
+
     mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
     StarletteInstrumentor().instrument_app(mcp.sse_app())
     StarletteInstrumentor().instrument_app(mcp.streamable_http_app())
