@@ -12,18 +12,6 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
     az login --use-device-code
     ```
 
-    !!! tip
-
-        You will be prompted to open a browser and log in to Azure. 
-
-        1. First copy the **Authentication Code** to the clipboard.
-        2. Next, press <kbd>ctrl</kbd> (Windows/Linux) or <kbd>cmd</kbd> (Mac) + <kbd>click</kbd> the authentication URL to open it in your browser.
-        3. Paste the code and click **Next**.
-        4. Pick an account and sign in.
-        6. Click **Continue**
-        7. Return to the terminal window in VS Code.
-        8. You may be prompted to select a subscription.
-
     !!! warning
         If you have multiple Azure tenants, specify the correct one using:
 
@@ -31,7 +19,17 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
         az login --use-device-code --tenant <tenant_id>
         ```
 
-2. Next, select the appropriate subscription from the command line.
+2. Follow these steps to authenticate:
+
+    1. **Copy** the **Authentication Code** to the clipboard.
+    2. **Press and hold** the <kbd>ctrl</kbd> or <kbd>cmd</kbd> key.
+    3. **Select** the authentication URL to open it in your browser.
+    4. **Paste** the code and click **Next**.
+    5. **Pick an account** and sign in.
+    6. Select **Continue**
+    7. **Return** to the terminal window in VS Code.
+    8. If prompted, **select** a subscription.
+
 3. Leave the terminal window open for the next steps.
 
 ## Deploy the Azure Resources
@@ -44,9 +42,9 @@ This deployment creates the following resources in your Azure subscription under
 
 !!! warning "Ensure you have at least 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls. Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
 
-We have provided a bash script to automate the deployment of the resources required for the workshop.
-
 ### Automated Deployment
+
+Run the following bash script to automate the deployment of the resources required for the workshop.
 
 The `deploy.sh` script deploys resources to the `westus` region by default. To run the script:
 
