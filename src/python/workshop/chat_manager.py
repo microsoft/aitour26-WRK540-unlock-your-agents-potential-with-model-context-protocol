@@ -11,7 +11,14 @@ from datetime import datetime
 from typing import AsyncGenerator, Dict, Protocol, cast
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet
+from azure.ai.agents.models import (
+    Agent,
+    AgentThread,
+    AsyncToolSet,
+    RunCompletionUsage,
+    TruncationObject,
+    TruncationStrategy,
+)
 from azure.ai.projects.aio import AIProjectClient
 
 # from azure.ai.projects.models import (
@@ -137,6 +144,9 @@ class ChatManager:
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
         """Process chat message and stream responses."""
+        usage: RunCompletionUsage | None = None
+        run_status = None
+
         if not request.message.strip():
             yield ChatResponse(error="Empty message")
             return
@@ -194,6 +204,12 @@ class ChatManager:
                     toolset = cast(
                         AsyncToolSet, self.agent_manager.toolset)
 
+                    # Limit context to last 3 messages (instead of default auto truncation)
+                    truncation_strategy = TruncationObject(
+                        type=TruncationStrategy.LAST_MESSAGES,  # or "last_messages"
+                        last_messages=3
+                    )
+
                     try:
                         async with await agents_client.runs.stream(
                             thread_id=thread.id,
@@ -204,10 +220,21 @@ class ChatManager:
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
                             tool_resources=toolset.resources,
+                            truncation_strategy=truncation_strategy
                         ) as stream:
                             await stream.until_done()
 
-                        # await self.submit_evaluation(thread.id, web_handler.run_id)
+                        print(f"Run status: {web_handler.run_status}")
+                        print(f"Run usage: {web_handler.usage}")
+                        print(f"Incomplete details: {web_handler.incomplete_details}")
+
+                        span.set_attribute("usage", str(web_handler.usage))
+                        span.set_attribute("run_status", str(web_handler.run_status))
+
+                        # Update the method-level variables
+                        nonlocal usage, run_status
+                        usage = web_handler.usage
+                        run_status = web_handler.run_status
 
                     except Exception as e:
                         # cancel the run if it fails
@@ -278,6 +305,8 @@ class ChatManager:
                     await web_handler.cleanup()
 
             # Send completion signal
+            if usage:
+                yield ChatResponse(content=f"</br></br>Token usage: Prompt: {usage.prompt_tokens}, Completion: {usage.completion_tokens}, Total: {usage.total_tokens}")
             yield ChatResponse(done=True)
             print(f"✅ Processed {tokens_processed} tokens successfully")
 
