@@ -61,7 +61,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
                 except asyncio.QueueEmpty:
                     break
         except Exception as e:
-            logger.Error("Error during WebStreamEventHandler cleanup: %s", e)
+            logger.error("Error during WebStreamEventHandler cleanup: %s", e)
 
     async def put_safely(self, item: dict | str | None) -> bool:
         """Safely put an item in the queue, handling closed state."""
