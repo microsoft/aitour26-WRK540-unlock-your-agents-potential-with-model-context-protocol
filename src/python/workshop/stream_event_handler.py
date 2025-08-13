@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 class WebStreamEventHandler(AsyncAgentEventHandler[str]):
     """Handle LLM streaming events and tokens for web interface output."""
 
+    markdown_pattern = re.compile(r'!?\[[^\]]*\]\(sandbox:/mnt/data[^)]*\)')
+
     def __init__(self, utilities: Utilities, agents_client: AgentsClient) -> None:
         super().__init__()
         # Only keep the variables that are actually used
@@ -37,9 +39,6 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         
         # Buffer for filtering markdown images and links
         self.text_buffer = ""
-        # Regex patterns for markdown images and links separately
-        self.markdown_image_pattern = re.compile(r'!\[([^\]]*)\]\([^)]+\)')
-        self.markdown_link_pattern = re.compile(r'(?<!!)\[([^\]]*)\]\([^)]+\)')
         # Maximum buffer size to prevent memory issues
         self.max_buffer_size = 1000
 
@@ -91,13 +90,11 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
             return
             
         # Look for complete markdown image and link patterns
-        image_matches = list(self.markdown_image_pattern.finditer(self.text_buffer))
-        link_matches = list(self.markdown_link_pattern.finditer(self.text_buffer))
+        matches = list(self.markdown_pattern.finditer(self.text_buffer))
         
-        if image_matches or link_matches:
+        if matches:
             # Remove complete markdown image and link patterns
-            filtered_text = self.markdown_image_pattern.sub('', self.text_buffer)
-            filtered_text = self.markdown_link_pattern.sub('', filtered_text)
+            filtered_text = self.markdown_pattern.sub('', self.text_buffer)
             
             # Send the filtered text if there's any content left
             if filtered_text:
@@ -197,8 +194,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         # Flush any remaining content in the buffer
         if self.text_buffer:
             # For final flush, remove any markdown images and links but send remaining content
-            filtered_text = self.markdown_image_pattern.sub('', self.text_buffer)
-            filtered_text = self.markdown_link_pattern.sub('', filtered_text)
+            filtered_text = self.markdown_pattern.sub('', self.text_buffer)
             if filtered_text:
                 await self.put_safely({"type": "text", "content": filtered_text})
             self.text_buffer = ""
