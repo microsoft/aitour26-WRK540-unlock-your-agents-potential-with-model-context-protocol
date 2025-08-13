@@ -1,0 +1,19 @@
+# Web Interface for Azure AI Agent Chat
+# Requirements for the FastAPI web application
+
+# Core web framework dependencies
+fastapi>=0.115.14,<0.116.0
+uvicorn[standard]>=0.35.0,<0.36.0
+
+# HTTP client for agent service communication
+httpx>=0.28.1,<0.29.0
+
+# File upload support
+python-multipart>=0.0.20,<0.0.30
+
+# open telemetry
+opentelemetry-api==1.31.1
+opentelemetry-sdk==1.31.1
+opentelemetry-exporter-otlp-proto-grpc==1.31.1
+opentelemetry-instrumentation-fastapi==0.52b1
+opentelemetry-instrumentation-httpx==0.52b1
