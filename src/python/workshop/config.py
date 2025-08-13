@@ -18,10 +18,8 @@ class Config:
     EMBEDDING_MODEL_DEPLOYMENT_NAME: str = os.environ["EMBEDDING_MODEL_DEPLOYMENT_NAME"]
     PROJECT_ENDPOINT: str = os.environ["PROJECT_ENDPOINT"]
     APPLICATIONINSIGHTS_CONNECTION_STRING: str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    DEV_TUNNEL_URL: Optional[str] = (
-        (url + "mcp/" if url.endswith("/") else url +
-         "/mcp/") if (url := os.getenv("DEV_TUNNEL_URL")) else None
-    )
+    DEV_TUNNEL_URL: str = url + \
+        "/mcp" if (url := os.getenv("DEV_TUNNEL_URL")) else ""
 
     # Model parameters
     MAX_COMPLETION_TOKENS = 2 * 10240

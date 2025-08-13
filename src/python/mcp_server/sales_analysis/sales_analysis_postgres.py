@@ -685,45 +685,42 @@ class PostgreSQLSchemaProvider:
         return schema_data
 
     async def execute_query(self, sql_query: str, rls_user_id: str) -> str:
-        """Execute a SQL query and return results in LLM-friendly JSON format."""
-        conn = None
+        """Execute a SQL query and return results in compact JSON.
+
+        Compact success shape:
+          {"c":["col1","col2"],"r":[[v11,v12],[v21,v22]],"n":2}
+        Empty result adds 'msg':
+          {"c":[],"r":[],"n":0,"msg":"No rows"}
+        Error shape:
+          {"err":"...","q":"SELECT ...","c":[],"r":[],"n":0}
+        """
+        conn: Optional[asyncpg.Connection] = None
         try:
             conn = await self.get_connection()
-
             await conn.execute(
-                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
-
-            # logger.info(f"\n🔍 Executing PostgreSQL query: {sql_query}\n")
-            rows = await conn.fetch(sql_query)
-
-            if not rows:
-                return json.dumps(
-                    {
-                        "results": [],
-                        "row_count": 0,
-                        "columns": [],
-                        "message": "The query returned no results. Try a different question.",
-                    }
-                )
-
-            # Convert asyncpg Records to list of dictionaries (much simpler!)
-            results = [dict(row) for row in rows]
-            columns = list(rows[0].keys()) if rows else []
-
-            # Return LLM-friendly format
-            return json.dumps(
-                {"results": results, "row_count": len(results), "columns": columns}, indent=2, default=str
+                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id
             )
 
+            rows = await conn.fetch(sql_query)
+            if not rows:
+                return json.dumps(
+                    {"c": [], "r": [], "n": 0, "msg": "No rows"},
+                    separators=(',', ':'),
+                    default=str,
+                )
+
+            columns = list(rows[0].keys())
+            data_rows = [[row[col] for col in columns] for row in rows]
+            return json.dumps(
+                {"c": columns, "r": data_rows, "n": len(data_rows)},
+                separators=(',', ':'),
+                default=str,
+            )
         except Exception as e:
             return json.dumps(
-                {
-                    "error": f"PostgreSQL query failed: {e!s}",
-                    "query": sql_query,
-                    "results": [],
-                    "row_count": 0,
-                    "columns": [],
-                }
+                {"err": f"PostgreSQL query failed: {e!s}", "q": sql_query, "c": [], "r": [], "n": 0},
+                separators=(',', ':'),
+                default=str,
             )
         finally:
             if conn:
@@ -731,7 +728,7 @@ class PostgreSQLSchemaProvider:
 
     async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 20, similarity_threshold: float = 30.0) -> str:
         """Search for products by similarity using pgvector cosine similarity.
-
+        
         Args:
             query_embedding: The embedding vector to search for similar products
             max_rows: Maximum number of rows to return
@@ -741,12 +738,12 @@ class PostgreSQLSchemaProvider:
         conn = None
         try:
             max_rows = min(max_rows, 100)  # Limit to 100 for performance
-
+            
             # Convert similarity percentage threshold to distance threshold
             # Similarity percentage = (1 - distance) * 100
             # So distance = 1 - (similarity_percentage / 100)
             distance_threshold = 1.0 - (similarity_threshold / 100.0)
-
+            
             conn = await self.get_connection()
 
             await conn.execute(
@@ -769,45 +766,42 @@ class PostgreSQLSchemaProvider:
             rows = await conn.fetch(query, embedding_str, max_rows, distance_threshold)
 
             if not rows:
-                return json.dumps(
-                    {
-                        "results": [],
-                        "row_count": 0,
-                        "columns": [],
-                        "message": f"No products found with similarity threshold >= {similarity_threshold}%. Try a lower threshold or different search query.",
-                    }
-                )
+                return json.dumps({
+                    "c": [],
+                    "r": [],
+                    "n": 0,
+                    "msg": f"No products >= {similarity_threshold}%"
+                }, separators=(',', ':'), default=str)
 
-            # Convert asyncpg Records to list of dictionaries and add similarity percentage
-            results = []
+            # Prepare compact columnar data including similarity percent
+            base_columns = list(rows[0].keys())  # includes similarity_distance
+            # We'll append 'sp' (similarity percent) short key instead of longer name
+            columns = [*base_columns, 'sp']
+            data_rows = []
             for row in rows:
-                row_dict = dict(row)
-                # Convert similarity distance to a percentage (lower distance = higher similarity)
-                similarity_distance = row_dict.get('similarity_distance', 1.0)
+                similarity_distance = row.get('similarity_distance', 1.0)
                 similarity_percent = max(0, (1 - similarity_distance) * 100)
-                row_dict['similarity_percent'] = round(similarity_percent, 1)
-                results.append(row_dict)
+                row_values = [row[col] for col in base_columns]
+                row_values.append(round(similarity_percent, 1))
+                data_rows.append(row_values)
 
-            columns = list(rows[0].keys()) if rows else []
-            columns.append('similarity_percent')
-
-            # Return LLM-friendly format
-            return json.dumps(
-                {"results": results, "row_count": len(results), "columns": columns}, indent=2, default=str
-            )
+            return json.dumps({
+                "c": columns,
+                "r": data_rows,
+                "n": len(data_rows)
+            }, separators=(',', ':'), default=str)
 
         except Exception as e:
-            return json.dumps(
-                {
-                    "error": f"PostgreSQL semantic search failed: {e!s}",
-                    "results": [],
-                    "row_count": 0,
-                    "columns": [],
-                }
-            )
+            return json.dumps({
+                "err": f"PostgreSQL semantic search failed: {e!s}",
+                "c": [],
+                "r": [],
+                "n": 0
+            }, separators=(',', ':'), default=str)
         finally:
             if conn:
                 await self.release_connection(conn)
+ 
 
 
 async def test_connection() -> bool:
