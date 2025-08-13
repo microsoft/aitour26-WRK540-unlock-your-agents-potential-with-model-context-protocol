@@ -161,7 +161,7 @@ class ChatManager:
                     thread = session_thread  # Use the session-specific thread
                     toolset = cast(AsyncToolSet, self.agent_manager.toolset)
 
-                    # Limit context to last 3 messages (instead of default auto truncation)
+                    # Limit context to last 5 messages (instead of default auto truncation)
                     truncation_strategy = TruncationObject(
                         type=TruncationStrategy.LAST_MESSAGES,  # or "last_messages"
                         last_messages=5,
