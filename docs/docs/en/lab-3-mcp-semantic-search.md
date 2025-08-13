@@ -13,14 +13,14 @@ From the previous lab you can ask the agent questions about sales data, but it w
 1. Paste the following question into the Web Chat tab in your browser:
 
     ```text
-    How did different stores perform with 18 amp breakers?
+    What 18 amp circuit breakers do we sell?
     ```
 
-    The agent responds: “I couldn’t find any sales data for 18 amp breakers in our records. 😱 However, here are some suggestions for similar products you might want to explore.” This happens because the agent relies only on matching queries by keywords and does not understand the semantic meaning of your question. The LLM may still make educated product suggestions from any product context it may already have.
+    The agent responds with something similar to this message: "I couldn’t find any specific 18 amp circuit breakers in our inventory. However, we may have other types of circuit breakers available. Would you like me to search for general circuit breakers or any other related products? 😊"
 
 ## Stop the Agent App
 
-From VS Code, you can stop the agent app by pressing <kbd>Shift + F5</kbd>.
+From VS Code, stop the agent app by pressing <kbd>Shift + F5</kbd>.
 
 ## Implement Semantic Search
 
@@ -73,7 +73,7 @@ In this section, you will implement semantic search using the Model Context Prot
 3. Enter the following question in the chat:
 
     ```text
-    How did different stores perform with 18 amp breakers?
+    What 18 amp circuit breakers do we sell?
     ```
 
     The agent now understands the semantic meaning of the question and responds accordingly with relevant sales data.
@@ -84,6 +84,14 @@ In this section, you will implement semantic search using the Model Context Prot
         1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
         2. This vector is used to search for similar product vectors in the PostgreSQL database.
         3. The agent receives the results and uses them to generate a response.
+
+## Write an Executive Report
+
+The final prompt for this workshop is as follows:
+
+```plaintext
+Write an executive report on the sales performance of different stores for these circuit breakers.
+```
 
 ## Leave the Agent App Running
 
