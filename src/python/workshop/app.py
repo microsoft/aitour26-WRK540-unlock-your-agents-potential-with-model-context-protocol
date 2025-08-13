@@ -37,8 +37,7 @@ Utilities.suppress_logs()
 
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
-INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
-INSTRUCTIONS_FILE = "instructions/zava_sales_analysis_agent_optimized.md"
+# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
 
 RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
@@ -54,8 +53,8 @@ class AgentManager:
         """Setup MCP tools and code interpreter."""
 
         # Add code interpreter tool
-        code_interpreter = CodeInterpreterTool()
-        self.toolset.add(code_interpreter)
+        # code_interpreter = CodeInterpreterTool()
+        # self.toolset.add(code_interpreter)
 
         logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:

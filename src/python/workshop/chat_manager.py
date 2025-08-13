@@ -213,7 +213,7 @@ class ChatManager:
                     # Limit context to last 3 messages (instead of default auto truncation)
                     truncation_strategy = TruncationObject(
                         type=TruncationStrategy.LAST_MESSAGES,  # or "last_messages"
-                        last_messages=3
+                        last_messages=5
                     )
 
                     try:

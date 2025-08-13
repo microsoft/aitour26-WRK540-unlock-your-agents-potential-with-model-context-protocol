@@ -105,8 +105,6 @@ def get_app_context() -> AppContext:
     raise RuntimeError("Invalid lifespan context type")
 
 # @mcp.tool()
-
-
 async def semantic_search_products(
     ctx: Context,
     query_description: Annotated[str, Field(
