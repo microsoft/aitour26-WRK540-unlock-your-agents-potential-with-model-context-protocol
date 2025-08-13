@@ -13,10 +13,14 @@ From the previous lab you can ask the agent questions about sales data, but it w
 1. Paste the following question into the Web Chat tab in your browser:
 
     ```text
-    How did different stores perform with 18A breakers?
+    How did different stores perform with 18 amp breakers?
     ```
 
-    The agent responds: “I couldn’t find any sales data for 18A breakers in our records. 😱 However, here are some suggestions for similar products you might want to explore.” This happens because the agent relies only on matching queries by keywords and does not understand the semantic meaning of your question. The LLM may still make educated product suggestions from any product context it may already have.
+    The agent responds: “I couldn’t find any sales data for 18 amp breakers in our records. 😱 However, here are some suggestions for similar products you might want to explore.” This happens because the agent relies only on matching queries by keywords and does not understand the semantic meaning of your question. The LLM may still make educated product suggestions from any product context it may already have.
+
+## Stop the Agent App
+
+From VS Code, you can stop the agent app by pressing <kbd>Shift + F5</kbd>.
 
 ## Implement Semantic Search
 
@@ -64,13 +68,12 @@ In this section, you will implement semantic search using the Model Context Prot
 
 ## Start the Agent App with the Semantic Search Tool
 
-1. **Stop** the current agent app by pressing <kbd>Shift + F5</kbd>.
-2. **Restart** the agent app by pressing <kbd>F5</kbd>. This will start the agent with the updated instructions and the semantic search tool enabled.
-3. Switch back to the **Web Chat** tab in your browser.
-4. Enter the following question in the chat:
+1. **Start** the agent app by pressing <kbd>F5</kbd>. This will start the agent with the updated instructions and the semantic search tool enabled.
+2. Switch back to the **Web Chat** tab in your browser.
+3. Enter the following question in the chat:
 
     ```text
-    How did different stores perform with 18A breakers?
+    How did different stores perform with 18 amp breakers?
     ```
 
     The agent now understands the semantic meaning of the question and responds accordingly with relevant sales data.
@@ -81,3 +84,7 @@ In this section, you will implement semantic search using the Model Context Prot
         1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
         2. This vector is used to search for similar product vectors in the PostgreSQL database.
         3. The agent receives the results and uses them to generate a response.
+
+## Leave the Agent App Running
+
+Leave the agent app running as you will use it in the next lab to extend the agent with more tools and capabilities.
