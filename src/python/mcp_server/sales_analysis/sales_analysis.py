@@ -5,18 +5,25 @@ Provides comprehensive customer sales database access with individual table sche
 
 import argparse
 import asyncio
+import logging
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Annotated, Optional
 
+from azure.monitor.opentelemetry import configure_azure_monitor
 from mcp.server.fastmcp import Context, FastMCP
+from opentelemetry.instrumentation.starlette import StarletteInstrumentor
+from otel import configure_oltp_grpc_tracing
 from pydantic import Field
 from sales_analysis_postgres import PostgreSQLSchemaProvider
 from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 
 RLS_USER_ID = None
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -36,7 +43,6 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     # Use connection pool instead of single connection for HTTP server
     await db.create_pool()
 
-
     try:
         yield AppContext(db=db, semantic_search=semantic_search)
     finally:
@@ -44,7 +50,7 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
         try:
             await db.close_pool()
         except Exception as e:
-            print(f"⚠️  Error closing database pool: {e}")
+            logger.error("⚠️  Error closing database pool: %s", e)
 
 
 # Create MCP server with lifespan support
@@ -98,7 +104,9 @@ def get_app_context() -> AppContext:
         return app_context
     raise RuntimeError("Invalid lifespan context type")
 
-@mcp.tool()
+# @mcp.tool()
+
+
 async def semantic_search_products(
     ctx: Context,
     query_description: Annotated[str, Field(
@@ -127,9 +135,9 @@ async def semantic_search_products(
 
     rls_user_id = get_rls_user_id(ctx)
 
-    print(f"Semantic search query: {query_description}")
-    print(f"Manager ID: {rls_user_id}")
-    print(f"Max Rows: {max_rows}")
+    logger.info("Semantic search query: %s", query_description)
+    logger.info("Manager ID: %s", rls_user_id)
+    logger.info("Max Rows: %d", max_rows)
 
     try:
         app_context = get_app_context()
@@ -148,7 +156,8 @@ async def semantic_search_products(
         return await app_context.db.search_products_by_similarity(query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold)
 
     except Exception as e:
-        return f"Error executing semantic search: {e!s}"
+        logger.error("Error executing semantic search: %s", e)
+        return "Error executing semantic search"
 
 
 @mcp.tool()
@@ -174,6 +183,8 @@ async def get_multiple_table_schemas(
     rls_user_id = get_rls_user_id(ctx)
 
     if not table_names:
+        logger.error(
+            "Error: table_names parameter is required and cannot be empty")
         return "Error: table_names parameter is required and cannot be empty"
 
     valid_tables = {
@@ -190,15 +201,18 @@ async def get_multiple_table_schemas(
     # Validate table names
     invalid_tables = [name for name in table_names if name not in valid_tables]
     if invalid_tables:
+        logger.error("Error: Invalid table names: %s. Valid tables are: %s",
+                     invalid_tables, sorted(valid_tables))
         return f"Error: Invalid table names: {invalid_tables}. Valid tables are: {sorted(valid_tables)}"
 
-    print(f"Manager ID: {rls_user_id}")
-    print(f"Retrieving schemas for tables: {', '.join(table_names)}")
+    logger.info("Manager ID: %s", rls_user_id)
+    logger.info("Retrieving schemas for tables: %s", ', '.join(table_names))
 
     try:
         provider = get_db_provider()
         return await provider.get_table_metadata_from_list(table_names, rls_user_id=rls_user_id)
     except Exception as e:
+        logger.error("Error retrieving table schemas: %s", e)
         return f"Error retrieving table schemas: {e!s}"
 
 
@@ -217,8 +231,8 @@ async def execute_sales_query(
 
     rls_user_id = get_rls_user_id(ctx)
 
-    print(f"Manager ID: {rls_user_id}")
-    print(f"Executing PostgreSQL query: {postgresql_query}")
+    logger.info("Manager ID: %s", rls_user_id)
+    logger.info("Executing PostgreSQL query: %s", postgresql_query)
 
     try:
         if not postgresql_query:
@@ -229,6 +243,7 @@ async def execute_sales_query(
         return f"Query Results:\n{result}"
 
     except Exception as e:
+        logger.error("Error executing database query: %s", e)
         return f"Error executing database query: {e!s}"
 
 
@@ -239,17 +254,32 @@ async def get_current_utc_date() -> str:
     Returns:
         Current UTC date and time in ISO format (YYYY-MM-DDTHH:MM:SS.fffffZ)
     """
-    print("Retrieving current UTC date and time")
+    logger.info("Retrieving current UTC date and time")
     try:
         current_utc = datetime.now(timezone.utc)
         return f"Current UTC Date/Time: {current_utc.isoformat()}"
     except Exception as e:
+        logger.error("Error retrieving current UTC date: %s", e)
         return f"Error retrieving current UTC date: {e!s}"
 
 
 async def run_http_server() -> None:
     """Run the MCP server in HTTP mode."""
-    print(f"❤️ 📡 MCP endpoint available at: http://{mcp.settings.host}:{mcp.settings.port}/mcp")
+
+    # Only configure azure monitor if running in HTTP mode
+    # when running in STDIO mode, it will already be configured
+    # from the host application
+    configure_azure_monitor(
+        connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
+
+    mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
+    StarletteInstrumentor().instrument_app(mcp.sse_app())
+    StarletteInstrumentor().instrument_app(mcp.streamable_http_app())
+    logger.info(
+        "❤️ 📡 MCP endpoint available at: http://%s:%d/mcp",
+        mcp.settings.host,
+        mcp.settings.port,
+    )
 
     # Run the FastMCP server as HTTP endpoint
     await mcp.run_streamable_http_async()
@@ -260,8 +290,10 @@ def main() -> None:
     global RLS_USER_ID
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stdio", action="store_true", help="Run server in stdio mode")
-    parser.add_argument("--RLS_USER_ID", type=str, default=None, help="Row Level Security User ID")
+    parser.add_argument("--stdio", action="store_true",
+                        help="Run server in stdio mode")
+    parser.add_argument("--RLS_USER_ID", type=str,
+                        default=None, help="Row Level Security User ID")
     args = parser.parse_args()
 
     # if running in stdio mode, set the global RLS_USER_ID

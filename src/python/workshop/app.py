@@ -9,12 +9,13 @@ REST API available at: http://127.0.0.1:8006
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet, CodeInterpreterTool, McpTool
+from azure.ai.agents.models import Agent, AsyncToolSet, CodeInterpreterTool, McpTool
 from azure.ai.projects.aio import AIProjectClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from chat_manager import ChatManager, ChatRequest
@@ -23,12 +24,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from mcp_client import MCPClient
 from opentelemetry import trace
-from terminal_colors import TerminalColors as tc
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from utilities import Utilities
 
-# Configure logging - suppress verbose Azure SDK logs
+trace_scenario = "Zava Agent Initialization"
+tracer = trace.get_tracer("zava_agent.tracing")
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
+
 Utilities.suppress_logs()
 
 # Agent Instructions
@@ -53,7 +57,7 @@ class AgentManager:
         code_interpreter = CodeInterpreterTool()
         self.toolset.add(code_interpreter)
 
-        print("Setting up Agent tools...")
+        logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
             function_tools = await mcp_client.build_function_tools()
             self.toolset.add(function_tools)
@@ -81,7 +85,7 @@ class AgentManager:
         self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
         self.toolset = AsyncToolSet()
-        self.tracer = trace.get_tracer("zava_agent.tracing")
+        self.tracer = tracer
         self.application_insights_connection_string = Config.APPLICATIONINSIGHTS_CONNECTION_STRING
 
     async def initialize(self, instructions_file: str) -> bool:
@@ -101,7 +105,7 @@ class AgentManager:
                 credential=credential,
                 endpoint=Config.PROJECT_ENDPOINT,
             )
-            
+
             self.project_client = AIProjectClient(
                 credential=credential,
                 endpoint=Config.PROJECT_ENDPOINT,
@@ -109,9 +113,8 @@ class AgentManager:
 
             await self._setup_agent_tools()
 
-            # Enable Azure Monitor Telemetry
             configure_azure_monitor(
-                connection_string= self.application_insights_connection_string)
+                connection_string=self.application_insights_connection_string)
 
             with self.tracer.start_as_current_span(trace_scenario):
                 # Create agent
@@ -122,7 +125,7 @@ class AgentManager:
                     toolset=self.toolset,
                     temperature=Config.TEMPERATURE,
                 )
-                print(f"Created agent, ID: {self.agent.id}")
+                logger.info("Created agent, ID: %s", self.agent.id)
 
                 # Enable auto function calls
                 if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
@@ -150,23 +153,25 @@ agent_service = ChatManager(agent_manager)
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     """Handle startup and shutdown events"""
     # Startup
-    print("Initializing agent service on startup...")
+    logger.info("Initializing agent service on startup...")
 
     # Initialize agent
     success = await agent_manager.initialize(INSTRUCTIONS_FILE)
 
     if not success:
-        print(
-            f"{tc.BG_BRIGHT_RED}Agent initialization failed. Check your configuration.{tc.RESET}")
+        logger.warning(
+            "Agent initialization failed. Check your configuration.")
     elif agent_manager.is_initialized and agent_manager.agent:
-        print(
-            f"✅ Agent initialized successfully with ID: {agent_manager.agent.id}")
+        logger.info(
+            "✅ Agent initialized successfully with ID: %s", agent_manager.agent.id)
 
     yield
 
 
 # FastAPI app with lifespan
 app = FastAPI(title="Azure AI Agent Service", lifespan=lifespan)
+FastAPIInstrumentor.instrument_app(app)
+HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 
 @app.get("/health")
@@ -219,7 +224,7 @@ async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"Error clearing chat for session {session_id}: {e}")
+        logger.error("Error clearing chat for session %s: %s", session_id, e)
         raise HTTPException(
             status_code=500, detail=f"Failed to clear chat: {e!s}") from e
 
@@ -245,5 +250,6 @@ async def serve_file(filename: str) -> FileResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    print("Starting agent service...")
-    uvicorn.run(app, host="127.0.0.1", port=8006)
+    port = int(os.getenv("PORT", 8006))
+    logger.info("Starting agent service on port %d", port)
+    uvicorn.run(app, host="127.0.0.1", port=port)

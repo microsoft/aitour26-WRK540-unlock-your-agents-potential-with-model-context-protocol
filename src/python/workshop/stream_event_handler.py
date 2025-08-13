@@ -38,9 +38,9 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         """Clean up resources and drain the queue."""
         if self._is_closed:
             return
-            
+
         self._is_closed = True
-        
+
         # Drain any remaining items in the queue
         try:
             while not self.token_queue.empty():
@@ -49,7 +49,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
                 except asyncio.QueueEmpty:
                     break
         except Exception as e:
-            logger.warning("Error during WebStreamEventHandler cleanup: %s", e)
+            logger.Error("Error during WebStreamEventHandler cleanup: %s", e)
 
     async def put_safely(self, item: dict | str | None) -> bool:
         """Safely put an item in the queue, handling closed state."""
@@ -68,7 +68,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
             return self.token_queue.qsize()
         except Exception:
             return 0
-    
+
     def is_closed(self) -> bool:
         """Check if the handler has been closed."""
         return self._is_closed

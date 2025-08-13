@@ -1,0 +1,25 @@
+# MCP Sales Analysis Server Requirements
+# Dependencies for the Zava Retail sales analysis MCP server
+
+# Core MCP framework
+mcp>=1.10.0,<2.0.0
+
+# Async PostgreSQL database adapter
+asyncpg>=0.30.0,<0.31.0
+
+# Azure OpenAI and authentication
+openai>=1.98.0,<2.0.0
+azure-identity>=1.23.0,<2.0.0
+
+# Data validation and serialization
+pydantic>=2.0.0,<3.0.0
+
+# Environment configuration
+python-dotenv>=1.1.1,<2.0.0
+
+# OpenTelemetry for observability
+opentelemetry-api==1.31.1
+opentelemetry-sdk==1.31.1
+opentelemetry-exporter-otlp-proto-grpc==1.31.1
+opentelemetry-instrumentation-starlette==0.52b1
+opentelemetry-instrumentation-asyncpg==0.52b1

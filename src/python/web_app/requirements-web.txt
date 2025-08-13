@@ -1,7 +1,0 @@
-# Web App specific requirements
-fastapi>=0.115.14,<0.116.0
-httpx>=0.28.1,<0.29.0
-uvicorn[standard]>=0.32.1,<0.33.0
-python-multipart>=0.0.19,<0.1.0
-azure-identity>=1.23.0,<2.0.0
-python-dotenv>=1.0.0,<2.0.0

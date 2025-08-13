@@ -125,9 +125,9 @@
                 "name": "Debug: Web App",
                 "type": "debugpy",
                 "request": "launch",
-                "program": "web_app.py",
+                "program": "app.py",
                 "console": "integratedTerminal",
-                "cwd": "${workspaceFolder:workshop}",
+                "cwd": "${workspaceFolder:shared}/webapp",
                 "args": [],
                 "env": {
                     "PYDEVD_DISABLE_FILE_VALIDATION": "1"
