@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
@@ -33,13 +34,24 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         self.run_status: str | None = None
         self.usage: RunCompletionUsage | None = None
         self.incomplete_details: IncompleteRunDetails | None = None
+        
+        # Buffer for filtering markdown images and links
+        self.text_buffer = ""
+        # Regex patterns for markdown images and links separately
+        self.markdown_image_pattern = re.compile(r'!\[([^\]]*)\]\([^)]+\)')
+        self.markdown_link_pattern = re.compile(r'(?<!!)\[([^\]]*)\]\([^)]+\)')
+        # Maximum buffer size to prevent memory issues
+        self.max_buffer_size = 1000
 
     async def cleanup(self) -> None:
         """Clean up resources and drain the queue."""
         if self._is_closed:
             return
 
-        self._is_closed = True
+        self._is_closed = True        
+        # Clear the text buffer
+        self.text_buffer = ""
+        
 
         # Drain any remaining items in the queue
         try:
@@ -73,12 +85,76 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         """Check if the handler has been closed."""
         return self._is_closed
 
+    async def _process_buffered_text(self) -> None:
+        """Process buffered text, filtering out complete markdown image and link patterns."""
+        if not self.text_buffer:
+            return
+            
+        # Look for complete markdown image and link patterns
+        image_matches = list(self.markdown_image_pattern.finditer(self.text_buffer))
+        link_matches = list(self.markdown_link_pattern.finditer(self.text_buffer))
+        
+        if image_matches or link_matches:
+            # Remove complete markdown image and link patterns
+            filtered_text = self.markdown_image_pattern.sub('', self.text_buffer)
+            filtered_text = self.markdown_link_pattern.sub('', filtered_text)
+            
+            # Send the filtered text if there's any content left
+            if filtered_text:
+                await self.put_safely({"type": "text", "content": filtered_text})
+            
+            # Clear the buffer since we processed complete patterns
+            self.text_buffer = ""
+        else:
+            # Check if buffer might contain a partial markdown pattern
+            # Look for potential start of markdown image: ![ or link: [
+            # Also check for just ! which might be the start of ![
+            image_start_idx = self.text_buffer.rfind('![')
+            link_start_idx = self.text_buffer.rfind('[')
+            exclamation_idx = self.text_buffer.rfind('!')
+            
+            # Determine the partial pattern start index
+            partial_start_idx = -1
+            
+            # If we have ![, it takes precedence
+            if image_start_idx != -1:
+                partial_start_idx = image_start_idx
+            # If we have a standalone [ (not part of ![)
+            elif link_start_idx != -1:
+                if image_start_idx == -1 or link_start_idx > image_start_idx + 1:
+                    partial_start_idx = link_start_idx
+            # If we have a standalone ! that might become ![
+            elif exclamation_idx != -1 and exclamation_idx == len(self.text_buffer) - 1:
+                partial_start_idx = exclamation_idx
+            
+            if partial_start_idx != -1:
+                # Keep potential partial pattern in buffer, send the rest
+                text_to_send = self.text_buffer[:partial_start_idx]
+                self.text_buffer = self.text_buffer[partial_start_idx:]
+                
+                if text_to_send:
+                    await self.put_safely({"type": "text", "content": text_to_send})
+            else:
+                # No potential patterns, send all buffered text
+                await self.put_safely({"type": "text", "content": self.text_buffer})
+                self.text_buffer = ""
+                
+        # Prevent buffer from growing too large
+        if len(self.text_buffer) > self.max_buffer_size:
+            # Send the buffer content and reset to prevent memory issues
+            await self.put_safely({"type": "text", "content": self.text_buffer})
+            self.text_buffer = ""
+
     async def on_message_delta(self, delta: MessageDeltaChunk) -> None:
-        """Override to capture tokens for web streaming instead of terminal output."""
+        """Override to capture tokens for web streaming, filtering out markdown images and links."""
         if delta.text:
             self.assistant_message += delta.text
-            # Put token in queue for web streaming
-            await self.put_safely({"type": "text", "content": delta.text})
+            
+            # Add to buffer for processing
+            self.text_buffer += delta.text
+            
+            # Process the buffer to filter out markdown images and links
+            await self._process_buffered_text()
 
     async def on_thread_message(self, message: ThreadMessage) -> None:
         """Override to capture files and send them to web interface."""
@@ -117,8 +193,15 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         logger.error("An error occurred. Data: %s", data)
 
     async def on_done(self) -> None:
-        """Handle stream completion."""
-        pass
+        """Handle stream completion and flush any remaining buffered content."""
+        # Flush any remaining content in the buffer
+        if self.text_buffer:
+            # For final flush, remove any markdown images and links but send remaining content
+            filtered_text = self.markdown_image_pattern.sub('', self.text_buffer)
+            filtered_text = self.markdown_link_pattern.sub('', filtered_text)
+            if filtered_text:
+                await self.put_safely({"type": "text", "content": filtered_text})
+            self.text_buffer = ""
 
     async def on_unhandled_event(self, event_type: str, event_data: object) -> None:
         """Handle unhandled events."""
