@@ -4,7 +4,9 @@ import logging
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
     AsyncAgentEventHandler,
+    IncompleteRunDetails,
     MessageDeltaChunk,
+    RunCompletionUsage,
     RunStatus,
     RunStep,
     RunStepDeltaChunk,
@@ -28,6 +30,9 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         self.token_queue: asyncio.Queue = asyncio.Queue()
         self._is_closed = False
         self.run_id: str | None = None
+        self.run_status: str | None = None
+        self.usage: RunCompletionUsage | None = None
+        self.incomplete_details: IncompleteRunDetails | None = None
 
     async def cleanup(self) -> None:
         """Clean up resources and drain the queue."""
@@ -44,8 +49,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
                 except asyncio.QueueEmpty:
                     break
         except Exception as e:
-            logger.warning(
-                "⚠️ Warning: Error during WebStreamEventHandler cleanup: %s", e)
+            logger.Error("Error during WebStreamEventHandler cleanup: %s", e)
 
     async def put_safely(self, item: dict | str | None) -> bool:
         """Safely put an item in the queue, handling closed state."""
@@ -55,7 +59,7 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
             await self.token_queue.put(item)
             return True
         except Exception as e:
-            logger.warning("⚠️ Warning: Failed to put item in queue: %s", e)
+            logger.warning("Failed to put item in queue: %s", e)
             return False
 
     def get_queue_size(self) -> int:
@@ -84,19 +88,24 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
         # Send file information to web interface
         if files:
             for file_info in files:
-                logger.debug("🔍 DEBUG: Sending file info: %s", file_info)
+                # logger.debug("Sending file info: %s", file_info)
                 await self.put_safely({"type": "file", "file_info": file_info})
 
     async def on_thread_run(self, run: ThreadRun) -> None:
         """Handle thread run events"""
         # Store the run ID for later access
         self.run_id = run.id
+        self.run_status = run.status
+        self.usage = run.usage
+        self.incomplete_details = run.incomplete_details
 
         logger.info("Run status: %s, ID: %s", run.status, run.id)
-        if run.status == RunStatus.FAILED:
+
+        if run.status == RunStatus.FAILED or run.status == "incomplete":
             logger.error("Run failed. Error: %s", run.last_error)
             logger.error("Thread ID: %s", run.thread_id)
             logger.error("Run ID: %s", run.id)
+            logger.error("Incomplete details: %s", run.incomplete_details)
 
     async def on_run_step(self, step: RunStep) -> None:
         pass
@@ -113,5 +122,4 @@ class WebStreamEventHandler(AsyncAgentEventHandler[str]):
 
     async def on_unhandled_event(self, event_type: str, event_data: object) -> None:
         """Handle unhandled events."""
-        logger.warning("Unhandled Event Type: %s, Data: %s",
-                       event_type, event_data)
+        logger.warning("Unhandled Event Type: %s, Data: %s", event_type, event_data)

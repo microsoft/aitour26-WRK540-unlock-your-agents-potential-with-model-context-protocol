@@ -12,9 +12,22 @@ from datetime import datetime
 from typing import AsyncGenerator, Dict, Protocol, cast
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import Agent, AgentThread, AsyncToolSet
+from azure.ai.agents.models import (
+    Agent,
+    AgentThread,
+    AsyncToolSet,
+    RunCompletionUsage,
+    TruncationObject,
+    TruncationStrategy,
+)
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentEvaluationRequest, EvaluatorConfiguration, EvaluatorIds
+
+# from azure.ai.projects.models import (
+#     AgentEvaluationRedactionConfiguration,
+#     AgentEvaluationRequest,
+#     EvaluatorConfiguration,
+#     EvaluatorIds,
+# )
 from config import Config
 from opentelemetry import trace
 from pydantic import BaseModel
@@ -98,45 +111,48 @@ class ChatManager:
 
         logger.info("Cleared thread for session %s", session_id)
 
-    async def submit_evaluation(self, thread_id: str, run_id: str | None) -> None:
-        """Submit evaluation request for continuous evaluation."""
-        try:
-            if not run_id:
-                logger.warning("⚠️ Warning: run_id is required for evaluation")
-                return
-            if not self.agent_manager.project_client:
-                logger.warning(
-                    "⚠️ Warning: project_client is not available for evaluation")
-                return
+    # async def submit_evaluation(self, thread_id: str, run_id: str | None) -> None:
+    #     """Submit evaluation request for continuous evaluation."""
+    #     try:
+    #         if not run_id:
+    #             print("⚠️ Warning: run_id is required for evaluation")
+    #             return
+    #         if not self.agent_manager.project_client:
+    #             print("⚠️ Warning: project_client is not available for evaluation")
+    #             return
+                
+    #         # Create evaluators for agent evaluation using EvaluatorConfiguration
+    #         evaluators = {
+    #             # "relevance": EvaluatorConfiguration(id=EvaluatorIds.RELEVANCE),
+    #             "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY), 
+    #             # "coherence": EvaluatorConfiguration(id=EvaluatorIds.COHERENCE),
+    #         }
+            
+    #         # Create agent evaluation request
+    #         evaluation_request = AgentEvaluationRequest(
+    #             thread_id=thread_id,
+    #             run_id=run_id,
+    #             evaluators=evaluators,
+    #             redaction_configuration=AgentEvaluationRedactionConfiguration(
+    #                 redact_score_properties=False),
+    #             app_insights_connection_string=self.agent_manager.application_insights_connection_string
+    #         )
 
-            # Create evaluators for agent evaluation using EvaluatorConfiguration
-            evaluators = {
-                "relevance": EvaluatorConfiguration(id=EvaluatorIds.RELEVANCE),
-                "fluency": EvaluatorConfiguration(id=EvaluatorIds.FLUENCY),
-                "coherence": EvaluatorConfiguration(id=EvaluatorIds.COHERENCE),
-            }
+    #         evaluation_response = await self.agent_manager.project_client.evaluations.create_agent_evaluation(evaluation_request)
+    #         print(f"✅ Evaluation submitted for run {run_id}: {evaluation_response.id}")
+            
+    #     except Exception as e:
+    #         print(f"⚠️ Warning: Failed to submit evaluation for run {run_id}: {e}")
+    #         import traceback
+    #         print(f"Full traceback: {traceback.format_exc()}")
+    #         # Don't fail the main flow for evaluation errors
 
-            # Create agent evaluation request
-            evaluation_request = AgentEvaluationRequest(
-                thread_id=thread_id,
-                run_id=run_id,
-                evaluators=evaluators,
-                app_insights_connection_string=self.agent_manager.application_insights_connection_string
-            )
-
-            evaluation_response = await self.agent_manager.project_client.evaluations.create_agent_evaluation(evaluation_request)
-            logger.info("✅ Evaluation submitted for run %s: %s",
-                        run_id, evaluation_response.id)
-
-        except Exception as e:
-            logger.warning(
-                "⚠️ Warning: Failed to submit evaluation for run %s: %s", run_id, e)
-            import traceback
-            logger.error("Full traceback: %s", traceback.format_exc())
-            # Don't fail the main flow for evaluation errors
 
     async def process_chat_message(self, request: ChatRequest) -> AsyncGenerator[ChatResponse, None]:
         """Process chat message and stream responses."""
+        usage: RunCompletionUsage | None = None
+        run_status = None
+
         if not request.message.strip():
             yield ChatResponse(error="Empty message")
             return
@@ -194,6 +210,12 @@ class ChatManager:
                     toolset = cast(
                         AsyncToolSet, self.agent_manager.toolset)
 
+                    # Limit context to last 3 messages (instead of default auto truncation)
+                    truncation_strategy = TruncationObject(
+                        type=TruncationStrategy.LAST_MESSAGES,  # or "last_messages"
+                        last_messages=3
+                    )
+
                     try:
                         async with await agents_client.runs.stream(
                             thread_id=thread.id,
@@ -204,10 +226,21 @@ class ChatManager:
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
                             tool_resources=toolset.resources,
+                            truncation_strategy=truncation_strategy
                         ) as stream:
                             await stream.until_done()
 
-                        # await self.submit_evaluation(thread.id, web_handler.run_id)
+                        print(f"Run status: {web_handler.run_status}")
+                        print(f"Run usage: {web_handler.usage}")
+                        print(f"Incomplete details: {web_handler.incomplete_details}")
+
+                        span.set_attribute("usage", str(web_handler.usage))
+                        span.set_attribute("run_status", str(web_handler.run_status))
+
+                        # Update the method-level variables
+                        nonlocal usage, run_status
+                        usage = web_handler.usage
+                        run_status = web_handler.run_status
 
                     except Exception as e:
                         # cancel the run if it fails
@@ -278,6 +311,8 @@ class ChatManager:
                     await web_handler.cleanup()
 
             # Send completion signal
+            if usage:
+                yield ChatResponse(content=f"</br></br>Token usage: Prompt: {usage.prompt_tokens}, Completion: {usage.completion_tokens}, Total: {usage.total_tokens}")
             yield ChatResponse(done=True)
             logger.info("✅ Processed %d tokens successfully", tokens_processed)
 

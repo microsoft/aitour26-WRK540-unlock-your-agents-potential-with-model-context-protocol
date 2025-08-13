@@ -38,10 +38,12 @@ Utilities.suppress_logs()
 # Agent Instructions
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
+INSTRUCTIONS_FILE = "instructions/zava_sales_analysis_agent_optimized.md"
 
 RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
+trace_scenario = "Zava Agent Initialization"
 mcp_client = MCPClient.create_default(RLS_USER_ID)
 
 
