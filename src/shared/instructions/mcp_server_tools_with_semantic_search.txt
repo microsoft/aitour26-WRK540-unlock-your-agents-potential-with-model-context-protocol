@@ -66,7 +66,7 @@ Only create charts if explicitly requested or user uses visual keywords.
 - **Default**: Markdown tables.  
 - Translate to user’s language.  
 - For downloads: offer `.csv` and show table.  
-- Be extra friendly, especially in reports 😊.  
+- Use friendly, contextual emojis where appropriate (e.g., **🎉** for growth, **😬** for declines), especially in executive summaries.
 - Hide internal IDs.
 
 ---
