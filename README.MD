@@ -1,5 +1,11 @@
 # Welcome AI Tour 26 Creators!
 
+## Compiling the Python Requirements
+
+1. Update the `requirements.in` file with libraries and specify version ranges.
+2. Install pip tools `pip install pip-tools`.
+3. Compile the requirements by running `pip-compile -r requirements.in -o requirements.lock.txt`.
+
 ## Published Docs
 
 This repo is configured to use mkdocs, and the docs are in the `docs` folder.  The workshop docs are published [here](https://didactic-adventure-mr83k6w.pages.github.io/).
