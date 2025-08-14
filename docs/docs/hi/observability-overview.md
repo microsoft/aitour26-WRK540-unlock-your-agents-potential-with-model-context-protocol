@@ -1,14 +1,10 @@
-Observability continuous monitoring और evaluation को enable करके AI systems को reliable, safe, और high-quality सुनिश्चित करती है। Technical leaders और developers के लिए, यह generative AI applications में trust बनाने और performance बनाए रखने की key है।
+Observability सुनिश्चित करता है कि AI सिस्टम विश्वसनीय, सुरक्षित और उच्च गुणवत्ता वाले हों। Azure AI Foundry में इसका अर्थ है:
 
-Azure AI Foundry के साथ, observability का मतलब है:
+- प्रत्येक चरण पर गुणवत्ता, सुरक्षा और विश्वसनीयता के मूल्यांकन।
+- परिनियोजन से पहले मूल्यांकन और बाद में रियल‑टाइम मॉनिटरिंग।
+- relevance, groundedness, safety जैसे मेट्रिक्स ट्रैक करना।
+- एकीकृत डैशबोर्ड और Azure Monitor अंतर्दृष्टि।
 
-- Model selection से production तक हर stage पर quality, safety, और reliability को measure करने के लिए evaluators का उपयोग करना।
-- Deployment से पहले models और applications का assessment करना, और launch के बाद उन्हें real time में monitor करना।
-- Relevance, groundedness, और safety जैसी metrics को track करना ताकि जल्दी से risks को identify और address किया जा सके।
-- Actionable insights के लिए integrated dashboards और Azure Monitor का leverage करना।
+अधिक जानकारी: [Azure AI Foundry Observability Overview](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/observability){:target="_blank"}.
 
-Observability best practices को adopt करना organizations को trustworthy AI deliver करने, risk कम करने, और business goals को meet करने में मदद करता है।
-
-Observability पर अधिक details के लिए, [Azure AI Foundry Observability Overview](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/observability){:target="_blank"} देखें।
-
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*

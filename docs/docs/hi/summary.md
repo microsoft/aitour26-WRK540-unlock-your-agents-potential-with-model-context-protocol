@@ -1,39 +1,31 @@
 # सारांश
 
-इस workshop ने demonstrate किया कि Foundry Agent Service का leverage करके कैसे एक robust conversational agent बनाया जाए जो sales-related प्रश्नों के उत्तर देने, data analysis perform करने, visualizations generate करने, और enhanced insights के लिए external data sources को integrate करने में सक्षम हो। यहां मुख्य takeaways हैं:
+यह वर्कशॉप दर्शाता है कैसे Foundry Agent Service से एक मजबूत संवादात्मक एजेंट बनाएँ जो बिक्री संबंधित प्रश्न, डेटा विश्लेषण, विज़ुअलाइज़ेशन और बाहरी डेटा इंटीग्रेशन संभाले। प्रमुख बिंदु:
 
-## 1. Model Context Protocol (MCP) और Dynamic SQL Queries
+## 1. MCP और डायनेमिक SQL
+- एजेंट PostgreSQL पर डायनेमिक SQL क्वेरी उत्पन्न व निष्पादित करता है।
 
-- Agent PostgreSQL database के against dynamically SQL queries generate और execute करने के लिए Foundry Agent Service का उपयोग करता है, जिससे यह accurate data retrieval के साथ user questions का जवाब दे सकता है। MCP Server conversation context को manage करने और यह सुनिश्चित करने का structured way प्रदान करता है कि agent complex queries को effectively handle कर सके।
+## 2. संदर्भ प्रबंधन
+- Foundry Agent Service द्वारा संवाद संदर्भ बनाए रखा।
 
-## 2. Context Management
+## 3. डेटा विज़ुअलाइज़ेशन
+- Code Interpreter से चार्ट (Pie आदि) बनते हैं; बहुभाषी फ़ॉन्ट जोड़ सकते हैं।
 
-- Agent Foundry Agent Service का उपयोग करके conversation context को efficiently manage करता है, यह सुनिश्चित करते हुए कि interactions relevant और coherent रहें।
+## 4. फ़ाइल जेनरेशन
+- Excel, CSV, JSON, इमेज आउटपुट।
 
-## 3. Data Visualization
+## 5. मॉनिटरिंग व लॉगिंग
+- बिल्ट‑इन; प्रदर्शन व उपयोग ट्रैक।
 
-- Code Interpreter के साथ, agent user queries के based पर pie charts और tables जैसे visualizations generate कर सकता है, data को अधिक accessible और actionable बनाता है। आप multiple languages को support करने वाले visualizations create करने के लिए Code Interpreter में additional fonts attach कर सकते हैं।
+## 6. सुरक्षा
+- रीड‑ओनली DB एक्सेस, RLS, SQL injection में कमी।
 
-## 4. File Generation
+## 7. बहुभाषी समर्थन
+- एजेंट और LLM कई भाषाओं का समर्थन।
 
-- Agent Excel, CSV, JSON, और image formats सहित downloadable files create कर सकता है, users को data का विश्लेषण और share करने के लिए flexible options प्रदान करता है।
+## 8. अनुकूलनशीलता
+- निर्देश व अतिरिक्त टूल बदलकर अन्य उपयोग केस (कस्टमर सपोर्ट, विश्लेषण)।
 
-## 5. Monitoring और Logging
+यह ज्ञान आपको व्यावसायिक आवश्यकताओं हेतु अनुकूल एजेंट बनाने में सक्षम बनाता है।
 
-- Foundry Agent Service में built-in monitoring और logging capabilities शामिल हैं, जो आपको agent performance, user interactions, और system health को track करने की अनुमति देती हैं। यह production environments में agent की reliability और effectiveness बनाए रखने के लिए crucial है।
-
-## 6. Security Best Practices
-
-- SQL injection जैसे security risks को read-only database access enforce करके और app को secure environment के भीतर run करके कम किया जाता है।
-
-## 7. Multi-Language Support
-
-- Agent और LLM multiple languages को support करते हैं, diverse linguistic backgrounds से users के लिए inclusive experience offer करते हैं।
-
-## 8. Adaptability और Customization
-
-- Workshop Foundry Agent Service की flexibility पर emphasis करती है, आपको instructions modify करके और additional tools integrate करके विभिन्न use cases, जैसे customer support या competitive analysis, के लिए agent को adapt करने की अनुमति देती है।
-
-यह workshop आपको अपनी business needs के अनुरूप conversational agents बनाने और extend करने के लिए knowledge और tools से equip करती है, Foundry Agent Service की full capabilities का leverage करते हुए।
-
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*

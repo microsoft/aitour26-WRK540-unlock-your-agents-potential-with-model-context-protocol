@@ -1,26 +1,24 @@
-workshop document layout से परिचित होने के लिए एक क्षण लें:
+वर्कशॉप दस्तावेज़ लेआउट से परिचित हों:
 
-### Page Navigation Elements
+### पेज नेविगेशन तत्व
 
-- बाईं ओर main navigation menu में documentation के सभी sections के लिए links हैं।
-- ऊपर control panel आपको specific topics या keywords खोजने, light और dark themes के बीच switch करने, और documentation के विभिन्न भाषा versions तक पहुंचने की अनुमति देता है।
-- इस workshop के लिए GitHub repository का link ऊपरी दाएं कोने में उपलब्ध है।
-- प्रत्येक page के bottom में next/previous pages के लिए navigation links हैं।
+- बायें मेनू में सभी सेक्शन लिंक।
+- शीर्ष बार: खोज, थीम टॉगल, भाषा विकल्प।
+- ऊपर दाईं ओर GitHub रिपॉ लिंक।
+- नीचे Previous/Next लिंक।
 
-### Image को Expand करना
+### इमेज बड़ा करना
 
-Documentation में images को बड़े size में देखने के लिए, आप उन पर click कर सकते हैं। यह image को नए tab में खोलेगा, जिससे आप अधिक detail देख सकते हैं।
+किसी भी इमेज पर क्लिक कर नया टैब।
 
-![Workshop documentation layout](media/document-layout.png)
+![लेआउट](media/document-layout.png)
 
-### Code Snippets को Copy करना
+### कोड स्निपेट कॉपी
 
-Workshop का अधिकतम लाभ उठाने के लिए, आपको अक्सर documentation से text code snippets की आवश्यकता होगी।
-
-Text snippets पूरे documentation में gray boxes में highlighted हैं। आप snippet के दाईं ओर hover करने पर दिखाई देने वाले copy icon पर click करके text को copy कर सकते हैं।
+ग्रे बॉक्स में टेक्स्ट; होवर करें, कॉपी आइकन क्लिक करें।
 
 ```text
-# Example text snippet
+# उदाहरण
 ```
 
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*

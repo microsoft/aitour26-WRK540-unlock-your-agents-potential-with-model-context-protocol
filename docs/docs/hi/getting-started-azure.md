@@ -1,4 +1,4 @@
-# शुरुआत करना
+# शुरू करें
 
 अपना वर्कशॉप अनुभव चुनें:
 
@@ -10,4 +10,4 @@
 
     {% include-markdown "includes/hi/introduction-self-guided-azure.md" %}
 
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*

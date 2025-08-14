@@ -8,4 +8,4 @@
 
     {% include-markdown "includes/hi/introduction-self-guided.md" %}
 
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*
