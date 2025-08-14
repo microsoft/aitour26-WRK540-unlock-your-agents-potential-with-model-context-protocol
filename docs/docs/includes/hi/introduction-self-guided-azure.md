@@ -1,67 +1,62 @@
-## Codespace Build पूरा होने का इंतज़ार करें
+!!! danger 
+    आगे बढ़ने से पहले सुनिश्चित करें आपका Codespace या Dev Container पूरी तरह बना है।
 
-आगे बढ़ने से पहले, सुनिश्चित करें कि आपका Codespace या Dev Container पूरी तरह से built और ready है। यह आपके internet connection और download होने वाले resources के आधार पर कई minutes ले सकता है।
+## Azure के साथ प्रमाणन
 
-## Azure के साथ Authenticate करना
+Azure AI Agents Service और मॉडल तक पहुँच हेतु लॉगिन:
 
-Agent app को Azure AI Agents Service और models तक पहुंच देने के लिए Azure के साथ authenticate करें। इन steps को follow करें:
-
-1. Confirm करें कि workshop environment ready है और VS Code में खुला है।
-2. VS Code से, VS Code में **Terminal** > **New Terminal** के माध्यम से terminal खोलें, फिर चलाएं:
+1. VS Code में नया टर्मिनल (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd>) और चलाएँ:
 
     ```shell
     az login --use-device-code
     ```
 
-    !!! note
-        आपको browser खोलने और Azure में log in करने के लिए कहा जाएगा। Authentication code copy करें और:
-
-        1. अपना account type चुनें और **Next** पर click करें।
-        2. अपनी Azure credentials के साथ sign in करें।
-        3. Code को paste करें।
-        4. **OK**, फिर **Done** पर click करें।
-
     !!! warning
-        यदि आपके पास multiple Azure tenants हैं, तो सही tenant specify करें:
+        कई टेनेंट हों तो:
 
         ```shell
         az login --use-device-code --tenant <tenant_id>
         ```
 
-3. इसके बाद, command line से appropriate subscription सेलेक्ट करें।
-4. अगले steps के लिए terminal window को खुला छोड़ दें।
+2. चरण:
+    1. **Authentication Code** कॉपी।
+    2. <kbd>ctrl/cmd</kbd> दबाए रखें।
+    3. URL खोलें।
+    4. कोड पेस्ट → **Next**।
+    5. खाता चुनें, साइन इन।
+    6. **Continue**।
+    7. टर्मिनल पर लौटें।
+    8. सब्सक्रिप्शन चुनें (यदि पूछा जाए)।
 
-## Azure Resources Deploy करना
+3. टर्मिनल खुला छोड़ें।
 
-यह deployment आपकी Azure subscription में **rg-zava-agent-wks-nnnn** resource group के under निम्नलिखित resources create करती है:
+## Azure संसाधन परिनियोजन
 
-- **fdy-zava-agent-wks-nnnn** नाम का एक **Azure AI Foundry hub**
-- **prj-zava-agent-wks-nnnn** नाम का एक **Azure AI Foundry project**
-- दो models deploy किए जाते हैं: **gpt-4o-mini** और **text-embedding-3-small**। [Pricing देखें।](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
+यह स्क्रिप्ट बनाएगी:
 
-!!! warning "सुनिश्चित करें कि आपके पास gpt-4o-mini Global Standard SKU के लिए कम से कम 120K TPM quota है, क्योंकि agent frequent model calls करता है। [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"} में अपना quota check करें।"
+- Resource group **rg-zava-agent-wks-nnnn**
+- **Azure AI Foundry hub** fdy-zava-agent-wks-nnnn
+- **Azure AI Foundry project** prj-zava-agent-wks-nnnn
+- मॉडल: **gpt-4o-mini**, **text-embedding-3-small** ([Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"})
 
-हमने workshop के लिए आवश्यक resources की deployment को automate करने के लिए bash script प्रदान की है।
+!!! warning "न्यूनतम कोटा"
+    - gpt-4o-mini: 120K TPM
+    - text-embedding-3-small: 50K TPM
+    - कोटा देखें: [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}
 
-### Automated Deployment
-
-`deploy.sh` script default रूप से `westus` region में resources deploy करती है। Script चलाने के लिए:
+### स्वचालित परिनियोजन
 
 ```bash
 cd infra && ./deploy.sh
 ```
 
-<!-- !!! note "Windows पर, `deploy.sh` के बजाय `deploy.ps1` चलाएं" -->
-
-### Workshop Configuration
+### वर्कशॉप कॉन्फ़िगरेशन
 
 === "Python"
 
-    #### Azure Resource Configuration
+    #### Azure संसाधन कॉन्फ़िगरेशन
 
-    Deploy script **.env** file generate करती है, जिसमें project और model endpoints, model deployment names, और Application Insights connection string शामिल है। .env file automatically `src/python/workshop` folder में save हो जाएगी।
-    
-    आपकी **.env** file निम्नलिखित के समान दिखेगी, आपकी values के साथ updated:
+    स्क्रिप्ट `.env` फ़ाइल बनाती है (प्रोजेक्ट एंडपॉइंट, मॉडल डिप्लॉयमेंट, App Insights, आदि)। उदाहरण:
 
     ```python
     PROJECT_ENDPOINT="<your_project_endpoint>"
@@ -73,14 +68,11 @@ cd infra && ./deploy.sh
     AZURE_OPENAI_ENDPOINT="<your_azure_openai_endpoint>"
     ```
 
-    #### Azure Resource Names
+    #### Azure संसाधन नाम
 
-    आपको `workshop` folder में `resources.txt` नाम की file भी मिलेगी। इस file में deployment के दौरान create किए गए Azure resources के names शामिल हैं।
-
-    यह निम्नलिखित के समान दिखेगी:
+    `resources.txt` में नाम सूचीबद्ध:
 
     ```plaintext
-    Azure AI Foundry Resources:
     - Resource Group Name: rg-zava-agent-wks-nnnn
     - AI Project Name: prj-zava-agent-wks-nnnn
     - Foundry Resource Name: fdy-zava-agent-wks-nnnn
@@ -89,12 +81,12 @@ cd infra && ./deploy.sh
 
 === "C#"
 
-    Script [ASP.NET Core development secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets){:target="_blank"} के लिए Secret Manager का उपयोग करके project variables को securely store करती है।
+    Secret Manager द्वारा कॉन्फ़िग मान सुरक्षित।
 
-    VS Code में C# workspace खोलने के बाद आप निम्नलिखित command चलाकर secrets देख सकते हैं:
+    देखने हेतु:
 
     ```bash
     dotnet user-secrets list
     ```
 
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*
