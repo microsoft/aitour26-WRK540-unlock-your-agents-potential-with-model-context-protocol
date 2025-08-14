@@ -169,8 +169,8 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
 
 # FastAPI app with lifespan
 app = FastAPI(title="Azure AI Agent Service", lifespan=lifespan)
-FastAPIInstrumentor.instrument_app(app)
-HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
+# FastAPIInstrumentor.instrument_app(app)
+# HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 
 @app.get("/health")
