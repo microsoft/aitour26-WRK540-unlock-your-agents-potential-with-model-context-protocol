@@ -122,6 +122,42 @@ plugins:
             "Home Work": "होम वर्क"
             "Debugging with Dev Tunnel": "Dev Tunnel से डिबगिंग"
             "About": "परिचय"
+        - locale: tl
+          name: Tagalog
+          site_name: I-unlock ang Potensyal ng Iyong Agent gamit ang MCP
+          admonition_translations:
+            tip: Tip
+            warning: Babala
+            info: Impormasyon
+            note: Tala
+            danger: Panganib
+            success: Tagumpay
+            question: Tanong
+          nav_translations:
+            "Workshop Introduction": "Workshop Introduction"
+            "Workshop Navigation": "Pag-navigate sa Workshop"
+            "Getting Started": "Pagsisimula"
+            "Open the Workshop": "Buksan ang Workshop"
+            "Star the GitHub Repo": "I-star ang GitHub Repo"
+            "Architecture Overview": "Pangkalahatang-ideya ng Arkitektura"
+            "Deploy Agent Resources": "I-deploy ang Agent Resources"
+            "Open VS Code Workspace": "Buksan ang VS Code Workspace"
+            "Agent Services Labs": "Agent Services Labs"
+            "AI Foundry Agent Services": "AI Foundry Agent Services"
+            "Lab 1 Agent Instructions": "Lab 1 Mga Tagubilin ng Agent"
+            "Lab 2 Start your Agent": "Lab 2 Simulan ang Iyong Agent"
+            "Lab 3 Semantic Search": "Lab 3 Semantic Search"
+            "Observability Labs": "Observability Labs"
+            "Observability Overview": "Pangkalahatang-ideya ng Observability"
+            "Lab 4 Service Monitoring": "Lab 4 Service Monitoring"
+            "Lab 5 Understand Tracing": "Lab 5 Unawain ang Tracing"
+            "Lab 6 Continuous Evaluation": "Lab 6 Continuous Evaluation"
+            "Finishing Up": "Pagtatapos"
+            "Summary": "Buod"
+            "Resources": "Mga Mapagkukunan"
+            "Home Work": "Home Work"
+            "Debugging with Dev Tunnel": "Pagde-debug gamit ang Dev Tunnel"
+            "About": "Tungkol"
 
 
 theme:
