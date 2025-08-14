@@ -122,6 +122,42 @@ plugins:
             "Home Work": "होम वर्क"
             "Debugging with Dev Tunnel": "Dev Tunnel से डिबगिंग"
             "About": "परिचय"
+        - locale: ja
+          name: 日本語
+          site_name: MCP でエージェントの可能性を解放する
+          admonition_translations:
+            tip: ヒント
+            warning: 警告
+            info: 情報
+            note: 注記
+            danger: 危険
+            success: 成功
+            question: 質問
+          nav_translations:
+            "Workshop Introduction": "ワークショップ紹介"
+            "Workshop Navigation": "ワークショップナビゲーション"
+            "Getting Started": "はじめに"
+            "Open the Workshop": "ワークショップを開く"
+            "Star the GitHub Repo": "GitHub リポジトリにスター"
+            "Architecture Overview": "アーキテクチャ概要"
+            "Deploy Agent Resources": "エージェントリソースをデプロイ"
+            "Open VS Code Workspace": "VS Code ワークスペースを開く"
+            "Agent Services Labs": "エージェントサービス ラボ"
+            "AI Foundry Agent Services": "AI Foundry エージェントサービス"
+            "Lab 1 Agent Instructions": "ラボ 1 エージェント指示"
+            "Lab 2 Start your Agent": "ラボ 2 エージェントを開始"
+            "Lab 3 Semantic Search": "ラボ 3 セマンティック検索"
+            "Observability Labs": "観測可能性ラボ"
+            "Observability Overview": "観測可能性概要"
+            "Lab 4 Service Monitoring": "ラボ 4 サービス監視"
+            "Lab 5 Understand Tracing": "ラボ 5 トレーシングを理解"
+            "Lab 6 Continuous Evaluation": "ラボ 6 継続的評価"
+            "Finishing Up": "終了"
+            "Summary": "まとめ"
+            "Resources": "リソース"
+            "Home Work": "ホームワーク"
+            "Debugging with Dev Tunnel": "Dev Tunnel でのデバッグ"
+            "About": "について"
         
 
 
