@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "🔁🤖Debug Aspire",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj",
+            "launchConfigurationId": "TargetFramework=;http"
+        }
+    ]
+}
