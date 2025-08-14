@@ -20,7 +20,6 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
-from opentelemetry.propagate import inject
 from otel import configure_oltp_grpc_tracing
 
 tracer = configure_oltp_grpc_tracing(tracer_name="zava_web_app")
@@ -236,6 +235,14 @@ class WebApp:
                     with temp_file.open("wb") as f:
                         f.write(response.content)
                     return FileResponse(path=str(temp_file))
+                
+                # Agent service returned non-200 status
+                raise HTTPException(
+                    status_code=response.status_code, 
+                    detail=f"Agent service error: {response.status_code}")
+        except HTTPException:
+            # Re-raise HTTPExceptions to maintain proper error handling
+            raise
         except Exception as err:
             logger.error("Error retrieving file from agent service: %s", err)
             raise HTTPException(

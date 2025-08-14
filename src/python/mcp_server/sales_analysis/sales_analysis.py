@@ -16,7 +16,6 @@ from typing import Annotated, Optional
 from azure.monitor.opentelemetry import configure_azure_monitor
 from mcp.server.fastmcp import Context, FastMCP
 from opentelemetry.instrumentation.starlette import StarletteInstrumentor
-from otel import configure_oltp_grpc_tracing
 from pydantic import Field
 from sales_analysis_postgres import PostgreSQLSchemaProvider
 from sales_analysis_text_embeddings import SemanticSearchTextEmbedding

@@ -1,0 +1,50 @@
+# Build requirements process
+
+# 1. Update the `requirements.in` file with libraries and specify version ranges.
+# 2. Install pip tools `pip install pip-tools`.
+# 3. Compile the requirements by running `pip-compile -r requirements.in -o requirements.lock.txt`.
+
+
+## Formatting tools
+black
+ruff
+pre-commit
+
+# Core MCP framework
+mcp>=1.10.0,<2.0.0
+
+# Database adapters
+asyncpg>=0.30.0,<0.31.0
+psycopg2-binary>=2.9.10, <3.0.0
+
+# Azure AI and authentication
+azure-ai-agents==1.2.0b2
+azure-ai-projects==1.0.0
+
+azure-core-tracing-opentelemetry>=1.0.0b12,<2.0.0
+azure-identity>=1.23.0,<2.0.0
+azure-monitor-opentelemetry>=1.6.10,<2.0.0
+openai>=1.98.0,<2.0.0
+
+# Web framework and HTTP
+fastapi>=0.115.14,<0.116.0
+uvicorn[standard]>=0.35.0,<0.36.0
+httpx>=0.28.1,<0.29.0
+aiohttp>=3.12.13,<4.0.0
+
+# File handling and multipart
+python-multipart>=0.0.20,<0.0.30
+
+# Data processing and utilities
+pandas>=2.3.0,<3.0.0
+pydantic>=2.0.0,<3.0.0
+python-dotenv>=1.1.1,<2.0.0
+Faker>=37.4.0,<38.0.0
+
+# OpenTelemetry for observability
+opentelemetry-api>=1.36.0, <2.0.0
+opentelemetry-sdk>=1.36.0, <2.0.0
+opentelemetry-exporter-otlp-proto-grpc>=1.36.0, <2.0.0
+opentelemetry-instrumentation-starlette>=0.57b0, <1.0.0
+opentelemetry-instrumentation-asyncpg>=0.57b0, <1.0.0
+opentelemetry-instrumentation-httpx>=0.57b0, <1.0.0

@@ -24,7 +24,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from mcp_client import MCPClient
 from opentelemetry import trace
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from utilities import Utilities
 
@@ -169,8 +168,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
 
 # FastAPI app with lifespan
 app = FastAPI(title="Azure AI Agent Service", lifespan=lifespan)
-# FastAPIInstrumentor.instrument_app(app)
-# HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
+HTTPXClientInstrumentor().instrument()  # Instrument httpx client for tracing
 
 
 @app.get("/health")
