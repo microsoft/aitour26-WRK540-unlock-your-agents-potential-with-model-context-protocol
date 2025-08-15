@@ -58,11 +58,6 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
     console_log_exporter = ConsoleLogExporter()
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(console_log_exporter))
 
-    # Create and configure the logging handler if OTEL endpoint is configured
-    if has_otel_endpoint:
-        handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
-        handler.setFormatter(logging.Formatter("%(message)s"))
-
     # Always add a standard console handler for immediate visibility
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
@@ -72,6 +67,8 @@ def configure_oltp_grpc_tracing(logging_level: int = logging.INFO, tracer_name: 
 
     # Add OTLP handler if configured
     if has_otel_endpoint:
+        handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
+        handler.setFormatter(logging.Formatter("%(message)s"))
         root_logger.addHandler(handler)
 
     # Always add console handler
