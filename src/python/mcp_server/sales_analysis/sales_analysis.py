@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from typing import Annotated, Optional
 
 from azure.monitor.opentelemetry import configure_azure_monitor
+from config import Config
 from mcp.server.fastmcp import Context, FastMCP
 from opentelemetry.instrumentation.starlette import StarletteInstrumentor
 from pydantic import Field
@@ -21,8 +22,21 @@ from sales_analysis_postgres import PostgreSQLSchemaProvider
 from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 
 RLS_USER_ID = None
+config = Config()
 
 logger = logging.getLogger(__name__)
+
+for name in [
+        "azure.core.pipeline.policies.http_logging_policy",
+        "azure.ai.agents",
+        "azure.ai.projects",
+        "azure.core",
+        "azure.identity",
+        "uvicorn.access",
+        "azure.monitor.opentelemetry.exporter.export._base"
+    ]:
+        logging.getLogger(name).setLevel(logging.WARNING)
+
 
 
 @dataclass
@@ -267,7 +281,7 @@ async def run_http_server() -> None:
     # when running in STDIO mode, it will already be configured
     # from the host application
     configure_azure_monitor(
-        connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
+        connection_string=config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 
     mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
     StarletteInstrumentor().instrument_app(mcp.sse_app())
