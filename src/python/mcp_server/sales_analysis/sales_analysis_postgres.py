@@ -22,6 +22,7 @@ import os
 from typing import Any, Dict, List, Optional
 
 import asyncpg
+from config import Config
 from dotenv import load_dotenv
 from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
 
@@ -29,13 +30,13 @@ from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
 load_dotenv(override=False)
 
 logger = logging.getLogger(__name__)
+config = Config()
 
 # Initialize AsyncPGInstrumentor with our tracer
 AsyncPGInstrumentor().instrument()
 
 # PostgreSQL connection configuration
-POSTGRES_URL = os.getenv(
-    "POSTGRES_URL", "postgresql://store_manager:StoreManager123!@db:5432/zava")
+POSTGRES_URL = config.POSTGRES_URL
 
 SCHEMA_NAME = "retail"
 MANAGER_ID = ""
