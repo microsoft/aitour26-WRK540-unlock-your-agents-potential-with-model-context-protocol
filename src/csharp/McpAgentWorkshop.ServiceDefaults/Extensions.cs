@@ -47,6 +47,9 @@ public static class Extensions
 
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
+        AppContext.SetSwitch("Azure.Experimental.TraceGenAIMessageContent", true);
+
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;
@@ -60,7 +63,9 @@ public static class Extensions
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddMeter("Experimental.ModelContextProtocol")
-                    .AddMeter("McpAgentWorkshop.McpServer");
+                    .AddMeter("McpAgentWorkshop.McpServer")
+                    .AddMeter("Experimental.Microsoft.Extensions.AI")
+                    .AddMeter("Azure.AI.Agents.Persistent.PersistentAgentsClient");
             })
             .WithTracing(tracing =>
             {
@@ -75,7 +80,9 @@ public static class Extensions
                     //.AddGrpcClientInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSource("Experimental.ModelContextProtocol")
-                    .AddSource("McpAgentWorkshop.McpServer");
+                    .AddSource("McpAgentWorkshop.McpServer")
+                    .AddSource("Experimental.Microsoft.Extensions.AI")
+                    .AddSource("Azure.AI.Agents.Persistent.PersistentAgentsClient");
             });
 
         builder.AddOpenTelemetryExporters();

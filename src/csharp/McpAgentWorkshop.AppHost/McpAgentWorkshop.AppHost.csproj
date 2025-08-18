@@ -13,13 +13,15 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.AIFoundry" Version="9.4.1-preview.1.25408.4" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.4.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Python.Extensions" Version="9.7.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="9.7.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Python.Extensions" Version="9.7.1-beta.344" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="9.7.1-beta.344" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../McpAgentWorkshop.McpServer/McpAgentWorkshop.McpServer.csproj" />
+    <ProjectReference Include="../McpAgentWorkshop.WorkshopApi/McpAgentWorkshop.WorkshopApi.csproj" />
   </ItemGroup>
 
 </Project>
