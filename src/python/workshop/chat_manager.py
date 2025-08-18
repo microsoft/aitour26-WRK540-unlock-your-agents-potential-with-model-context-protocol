@@ -41,7 +41,8 @@ class AgentManagerProtocol(Protocol):
     agents_client: AgentsClient | None
     project_client: AIProjectClient | None
     agent: Agent | None
-    toolset: AsyncToolSet
+    agents_by_rls_user_id: Dict[str, Agent]
+    current_rls_user_id: str
     application_insights_connection_string: str
 
     @property
@@ -159,7 +160,6 @@ class ChatManager:
                     agents_client = cast(AgentsClient, self.agent_manager.agents_client)
                     agent = cast(Agent, self.agent_manager.agent)
                     thread = session_thread  # Use the session-specific thread
-                    toolset = cast(AsyncToolSet, self.agent_manager.toolset)
 
                     # Limit context to last 5 messages (instead of default auto truncation)
                     truncation_strategy = TruncationObject(
@@ -176,7 +176,7 @@ class ChatManager:
                             max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
-                            tool_resources=toolset.resources,
+                            tool_resources=agent.toolset.resources if agent.toolset else None,
                             truncation_strategy=truncation_strategy,
                         ) as stream:
                             await stream.until_done()

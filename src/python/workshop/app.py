@@ -8,6 +8,7 @@ To run: python app.py
 REST API available at: http://127.0.0.1:8006
 """
 
+import asyncio
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -23,6 +24,7 @@ from config import Config
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from mcp_client import MCPClient
+from models import RlsUserRequest, RlsUserResult
 from opentelemetry import trace
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from utilities import Utilities
@@ -38,27 +40,40 @@ Utilities.suppress_logs()
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
 # INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
 
-RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
-mcp_client = MCPClient.create_default(RLS_USER_ID)
+
+# RLS users mapping
+RLS_USERS = {
+    "00000000-0000-0000-0000-000000000000": "Head Office",
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479": "Seattle", 
+    "6ba7b810-9dad-11d1-80b4-00c04fd430c8": "Bellevue",
+    "a1b2c3d4-e5f6-7890-abcd-ef1234567890": "Tacoma",
+    "d8e9f0a1-b2c3-4567-8901-234567890abc": "Spokane",
+    "3b9ac9fa-cd5e-4b92-a7f2-b8c1d0e9f2a3": "Everett",
+    "e7f8a9b0-c1d2-3e4f-5678-90abcdef1234": "Redmond",
+    "9c8b7a65-4321-fed0-9876-543210fedcba": "Kirkland",
+    "2f4e6d8c-1a3b-5c7e-9f0a-b2d4f6e8c0a2": "Online",
+}
 
 
 class AgentManager:
     """Manages Azure AI Agent lifecycle and dependencies."""
 
-    async def _setup_agent_tools(self) -> None:
-        """Setup MCP tools and code interpreter."""
+    async def _setup_agent_tools(self, rls_user_id: str) -> AsyncToolSet:
+        """Setup MCP tools and code interpreter for a specific RLS user."""
+        toolset = AsyncToolSet()
 
         # Add code interpreter tool
         code_interpreter = CodeInterpreterTool()
-        self.toolset.add(code_interpreter)
+        toolset.add(code_interpreter)
 
-        logger.info("Setting up Agent tools...")
+        logger.info("Setting up Agent tools for RLS user: %s", rls_user_id)
         if Config.MAP_MCP_FUNCTIONS:
+            mcp_client = MCPClient.create_default(rls_user_id)
             function_tools = await mcp_client.build_function_tools()
-            self.toolset.add(function_tools)
+            toolset.add(function_tools)
         else:
             mcp_tools = McpTool(
                 server_label="ZavaSalesAnalysisMcpServer",
@@ -71,28 +86,95 @@ class AgentManager:
                 ],
             )
             # PostgreSQL Row Level Security (RLS) User ID header
-            mcp_tools.update_headers("x-rls-user-id", RLS_USER_ID)
+            mcp_tools.update_headers("x-rls-user-id", rls_user_id)
             # Disabled as specified in allowed tools
             mcp_tools.set_approval_mode("never")
-            self.toolset.add(mcp_tools)
+            toolset.add(mcp_tools)
+
+        return toolset
 
     def __init__(self) -> None:
         self.utilities = Utilities()
         self.agents_client: AgentsClient | None = None
         self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
-        self.toolset = AsyncToolSet()
+        self.agents_by_rls_user_id: Dict[str, Agent] = {}
+        self.current_rls_user_id = Config.Rls.ZAVA_HEADOFFICE_USER_ID
         self.tracer = tracer
         self.application_insights_connection_string = Config.APPLICATIONINSIGHTS_CONNECTION_STRING
+        self._agent_lock = asyncio.Lock()
 
-    async def initialize(self, instructions_file: str) -> bool:
+    async def get_or_create_agent_for_rls_user(self, rls_user_id: str, rls_user_name: str) -> Agent:
+        """Get existing agent for RLS user or create a new one."""
+        if rls_user_id in self.agents_by_rls_user_id:
+            return self.agents_by_rls_user_id[rls_user_id]
+
+        # Check if agent already exists in the service
+        target_agent_name = f"{Config.AGENT_NAME} - {rls_user_name}"
+        
+        if self.agents_client:
+            # Note: The Python SDK doesn't have list_agents like C#, so we'll create new agents
+            # In a real implementation, you might want to check for existing agents by name
+            pass
+
+        # Create new agent if not found
+        new_agent = await self.create_agent(rls_user_id, rls_user_name)
+        self.agents_by_rls_user_id[rls_user_id] = new_agent
+        return new_agent
+
+    async def create_agent(self, rls_user_id: str, rls_user_name: str) -> Agent:
+        """Create a new agent for a specific RLS user."""
+        agent_name = f"{Config.AGENT_NAME} - {rls_user_name}"
+        logger.info("Creating new agent: %s", agent_name)
+
+        if not self.agents_client:
+            raise ValueError("AgentsClient is not initialized")
+
+        # Load LLM instructions
+        instructions = self.utilities.load_instructions(INSTRUCTIONS_FILE)
+
+        # Setup tools for this specific RLS user
+        toolset = await self._setup_agent_tools(rls_user_id)
+
+        with self.tracer.start_as_current_span(trace_scenario):
+            # Create agent
+            agent = await self.agents_client.create_agent(
+                model=Config.GPT_MODEL_DEPLOYMENT_NAME,
+                name=agent_name,
+                instructions=instructions,
+                toolset=toolset,
+                temperature=Config.TEMPERATURE,
+            )
+            logger.info("Created agent, ID: %s", agent.id)
+
+            # Enable auto function calls
+            if toolset.definitions and Config.MAP_MCP_FUNCTIONS:
+                self.agents_client.enable_auto_function_calls(tools=toolset)
+
+        return agent
+
+    async def set_rls_user_id(self, rls_user_id: str, rls_user_name: str) -> str:
+        """Set the RLS user ID and switch to appropriate agent."""
+        if not rls_user_id.strip():
+            raise ValueError("RLS User ID cannot be empty")
+
+        async with self._agent_lock:
+            self.current_rls_user_id = rls_user_id
+            await self.get_or_create_agent_for_rls_user(rls_user_id, rls_user_name)
+            self.agent = self.agents_by_rls_user_id[rls_user_id]
+
+            logger.info("Switched to agent for RLS User ID: %s", rls_user_id)
+            return f"Successfully switched to agent for RLS User ID: {rls_user_id}"
+
+    def get_current_rls_user_id(self) -> str:
+        """Get the current RLS user ID."""
+        return self.current_rls_user_id
+
+    async def initialize(self) -> bool:
         """Initialize the agent with tools and instructions."""
         try:
             # Validate configuration
             Config.validate_required_env_vars()
-
-            # Load LLM instructions
-            instructions = self.utilities.load_instructions(instructions_file)
 
             # Validate Azure Entra ID Authentication
             credential = await self.utilities.validate_azure_authentication()
@@ -108,24 +190,14 @@ class AgentManager:
                 endpoint=Config.PROJECT_ENDPOINT,
             )
 
-            await self._setup_agent_tools()
-
             configure_azure_monitor(connection_string=self.application_insights_connection_string)
 
-            with self.tracer.start_as_current_span(trace_scenario):
-                # Create agent
-                self.agent = await self.agents_client.create_agent(
-                    model=Config.GPT_MODEL_DEPLOYMENT_NAME,
-                    name=Config.AGENT_NAME,
-                    instructions=instructions,
-                    toolset=self.toolset,
-                    temperature=Config.TEMPERATURE,
-                )
-                logger.info("Created agent, ID: %s", self.agent.id)
-
-                # Enable auto function calls
-                if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
-                    self.agents_client.enable_auto_function_calls(tools=self.toolset)
+            # Initialize with default RLS user ID
+            await self.get_or_create_agent_for_rls_user(
+                self.current_rls_user_id, 
+                RLS_USERS.get(self.current_rls_user_id, "Head Office")
+            )
+            self.agent = self.agents_by_rls_user_id[self.current_rls_user_id]
 
             return True
 
@@ -151,7 +223,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Initializing agent service on startup...")
 
     # Initialize agent
-    success = await agent_manager.initialize(INSTRUCTIONS_FILE)
+    success = await agent_manager.initialize()
 
     if not success:
         logger.warning("Agent initialization failed. Check your configuration.")
@@ -218,6 +290,47 @@ async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
     except Exception as e:
         logger.error("Error clearing chat for session %s: %s", session_id, e)
         raise HTTPException(status_code=500, detail=f"Failed to clear chat: {e!s}") from e
+
+
+@app.post("/agent/rls-user")
+async def set_rls_user(request: RlsUserRequest) -> RlsUserResult:
+    """Set the RLS user ID for the agent service."""
+    try:
+        if not agent_manager.is_initialized:
+            raise HTTPException(status_code=500, detail="Agent not initialized")
+
+        message = await agent_manager.set_rls_user_id(request.id, request.name)
+        return RlsUserResult(message=message, rls_user_id=request.id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        logger.error("Error setting RLS user ID: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to set RLS user ID: {e!s}") from e
+
+
+@app.get("/agent/rls-user")
+async def get_rls_user() -> Dict[str, str]:
+    """Get the current RLS user ID from the agent service."""
+    try:
+        if not agent_manager.is_initialized:
+            raise HTTPException(status_code=500, detail="Agent not initialized")
+
+        current_rls_user_id = agent_manager.get_current_rls_user_id()
+        return {"rls_user_id": current_rls_user_id}
+    except Exception as e:
+        logger.error("Error getting RLS user ID: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to get RLS user ID: {e!s}") from e
+
+
+@app.get("/agent/rls-users")
+async def get_rls_users() -> Dict[str, Any]:
+    """Get the list of available RLS users."""
+    try:
+        users_list = [{"id": user_id, "name": name} for user_id, name in RLS_USERS.items()]
+        return {"users": users_list}
+    except Exception as e:
+        logger.error("Error getting RLS users list: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to get RLS users: {e!s}") from e
 
 
 @app.get("/files/{filename}")

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from azure.ai.agents.models import AsyncFunctionTool
-from mcp import CallToolResult, ClientSession, StdioServerParameters
+from mcp import ClientSession, StdioServerParameters, types
 from mcp.client.stdio import stdio_client
 from terminal_colors import TerminalColors as tc
 
@@ -53,7 +53,7 @@ class MCPClient:
                     await self._session.__aenter__()
                     await self._session.initialize()
                 except Exception as e:
-                    logging.error(f"Failed to establish MCP session: {e}")
+                    logging.error("Failed to establish MCP session: %s", e)
                     await self.close_session()
                     raise
 
@@ -65,12 +65,12 @@ class MCPClient:
                     try:
                         await context.__aexit__(None, None, None)
                     except Exception as e:
-                        logging.warning(f"Error closing MCP {name}: {e}")
+                        logging.warning("Error closing MCP %s: %s", name, e)
 
             self._session = None
             self._client_context = None
 
-    def _extract_content(self, result: CallToolResult) -> str:
+    def _extract_content(self, result: types.CallToolResult) -> str:
         """Extract text content from MCP result."""
         if not result.content:
             return "No result returned from tool"
@@ -120,7 +120,7 @@ class MCPClient:
                 for tool in tools_result.tools
             ]
         except Exception as e:
-            logging.error(f"Error fetching tools from MCP server: {e}")
+            logging.error("Error fetching tools from MCP server: %s", e)
             await self.close_session()
             return []
 
