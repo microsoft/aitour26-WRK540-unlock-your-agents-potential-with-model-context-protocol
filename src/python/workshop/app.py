@@ -44,20 +44,6 @@ RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
 
-# RLS users mapping
-RLS_USERS = {
-    "00000000-0000-0000-0000-000000000000": "Head Office",
-    "f47ac10b-58cc-4372-a567-0e02b2c3d479": "Seattle", 
-    "6ba7b810-9dad-11d1-80b4-00c04fd430c8": "Bellevue",
-    "a1b2c3d4-e5f6-7890-abcd-ef1234567890": "Tacoma",
-    "d8e9f0a1-b2c3-4567-8901-234567890abc": "Spokane",
-    "3b9ac9fa-cd5e-4b92-a7f2-b8c1d0e9f2a3": "Everett",
-    "e7f8a9b0-c1d2-3e4f-5678-90abcdef1234": "Redmond",
-    "9c8b7a65-4321-fed0-9876-543210fedcba": "Kirkland",
-    "2f4e6d8c-1a3b-5c7e-9f0a-b2d4f6e8c0a2": "Online",
-}
-
-
 class AgentManager:
     """Manages Azure AI Agent lifecycle and dependencies."""
 
@@ -113,8 +99,11 @@ class AgentManager:
         target_agent_name = f"{Config.AGENT_NAME} - {rls_user_name}"
         
         if self.agents_client:
-            # Note: The Python SDK doesn't have list_agents like C#, so we'll create new agents
-            # In a real implementation, you might want to check for existing agents by name
+            known_agents = await self.agents_client.list_agents()
+            for agent in known_agents:
+                if agent.name == target_agent_name:
+                    self.agents_by_rls_user_id[rls_user_id] = agent
+                    return agent
             pass
 
         # Create new agent if not found
@@ -195,7 +184,7 @@ class AgentManager:
             # Initialize with default RLS user ID
             await self.get_or_create_agent_for_rls_user(
                 self.current_rls_user_id, 
-                RLS_USERS.get(self.current_rls_user_id, "Head Office")
+                "Head Office"
             )
             self.agent = self.agents_by_rls_user_id[self.current_rls_user_id]
 
@@ -320,18 +309,6 @@ async def get_rls_user() -> Dict[str, str]:
     except Exception as e:
         logger.error("Error getting RLS user ID: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to get RLS user ID: {e!s}") from e
-
-
-@app.get("/agent/rls-users")
-async def get_rls_users() -> Dict[str, Any]:
-    """Get the list of available RLS users."""
-    try:
-        users_list = [{"id": user_id, "name": name} for user_id, name in RLS_USERS.items()]
-        return {"users": users_list}
-    except Exception as e:
-        logger.error("Error getting RLS users list: %s", e)
-        raise HTTPException(status_code=500, detail=f"Failed to get RLS users: {e!s}") from e
-
 
 @app.get("/files/{filename}")
 async def serve_file(filename: str) -> FileResponse:

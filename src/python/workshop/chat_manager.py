@@ -176,7 +176,6 @@ class ChatManager:
                             max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
-                            tool_resources=agent.toolset.resources if agent.toolset else None,
                             truncation_strategy=truncation_strategy,
                         ) as stream:
                             await stream.until_done()
