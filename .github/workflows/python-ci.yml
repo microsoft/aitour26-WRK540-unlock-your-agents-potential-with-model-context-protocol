@@ -6,12 +6,16 @@ on:
     paths:
       - "src/python/**"
       - "pyproject.toml"
+      - "requirements.lock.txt"
+      - "requirements.in"
       - ".github/workflows/python-ci.yml"
   pull_request:
     branches: [main, develop]
     paths:
       - "src/python/**"
       - "pyproject.toml"
+      - "requirements.lock.txt"
+      - "requirements.in"
       - ".github/workflows/python-ci.yml"
 
 jobs:
@@ -34,20 +38,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ matrix.component }}-${{ hashFiles('src/python/${{ matrix.component }}/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements.lock.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ matrix.component }}-
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
 
-      - name: Install dependencies for ${{ matrix.component }}
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r src/python/${{ matrix.component }}/requirements.txt
+          pip install -r requirements.lock.txt
 
-      - name: Install dev dependencies
+      - name: Install linting tools
         run: |
-          pip install ruff black isort pytest
+          pip install isort pytest
 
       - name: Lint with ruff
         run: |
@@ -74,17 +77,11 @@ jobs:
           import os
           sys.path.insert(0, '.')
 
-          # Try to import main modules to verify dependencies
-          try:
-              import requirements
-              print('Requirements parsing available')
-          except ImportError:
-              print('Requirements parsing not available, skipping')
-
-          # Test core dependencies
+          # Test core dependencies from requirements.lock.txt
           test_imports = [
-              'asyncio', 'json', 'os', 'sys', 'logging', 
-              'asyncpg', 'openai', 'azure.identity', 'mcp'
+              'asyncio', 'json', 'os', 'sys', 'logging',
+              'asyncpg', 'openai', 'azure.identity', 'mcp',
+              'fastapi', 'pydantic', 'httpx', 'aiohttp'
           ]
 
           failed_imports = []
@@ -110,19 +107,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.13
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Check for dependency conflicts
         run: |
           python -m pip install --upgrade pip pip-tools
 
-          echo "Checking workshop dependencies..."
-          pip-compile --dry-run --no-emit src/python/workshop/requirements.txt > /dev/null
+          echo "Checking requirements.lock.txt..."
+          pip-compile --dry-run --no-emit requirements.in > /dev/null
 
-          echo "Checking MCP server dependencies..."
-          pip-compile --dry-run --no-emit src/python/mcp_server/sales_analysis/requirements.txt > /dev/null
+          echo "Verifying requirements.lock.txt can be installed..."
+          pip install --dry-run -r requirements.lock.txt
 
           echo "All dependency files are valid!"

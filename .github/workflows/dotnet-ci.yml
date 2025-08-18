@@ -42,13 +42,13 @@ jobs:
           dotnet restore McpAgentWorkshop.slnx
 
       - name: Build solution
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet build McpAgentWorkshop.slnx --no-restore --configuration Release
 
       - name: Check for build warnings
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet build McpAgentWorkshop.slnx --no-restore --configuration Release --verbosity normal
 
   test:
@@ -68,13 +68,13 @@ jobs:
           include-prerelease: true
 
       - name: Restore dependencies
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet restore McpAgentWorkshop.slnx
 
       - name: Run tests (if any exist)
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           # Check if test projects exist
           if find . -name "*.Tests.csproj" -o -name "*Tests.csproj" -o -name "Test*.csproj" | grep -q .; then
             echo "Found test projects, running tests..."
@@ -103,13 +103,13 @@ jobs:
           include-prerelease: true
 
       - name: Restore dependencies
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet restore McpAgentWorkshop.slnx
 
       - name: Check code formatting
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet format McpAgentWorkshop.slnx --verify-no-changes --verbosity diagnostic
 
   security-analysis:
@@ -124,13 +124,13 @@ jobs:
           include-prerelease: true
 
       - name: Restore dependencies
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           dotnet restore McpAgentWorkshop.slnx
 
       - name: Run security analysis
+        working-directory: src/csharp
         run: |
-          cd src/csharp
           # Check for vulnerable packages
           dotnet list McpAgentWorkshop.slnx package --vulnerable --include-transitive 2>&1 | tee vulnerable-packages.txt
 
