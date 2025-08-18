@@ -1,11 +1,11 @@
-using Azure.AI.Agents.Persistent;
+using McpAgentWorkshop.WorkshopApi.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-internal class AgentAvailableHealthCheck(PersistentAgent? agent) : IHealthCheck
+internal class AgentAvailableHealthCheck(AgentService agentService) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        if (agent is null)
+        if (!agentService.IsAgentAvailable)
         {
             return Task.FromResult(HealthCheckResult.Unhealthy("Agent is not available"));
         }

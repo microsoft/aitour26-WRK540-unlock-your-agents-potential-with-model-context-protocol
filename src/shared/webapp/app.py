@@ -16,7 +16,7 @@ from typing import AsyncGenerator, Dict
 
 import httpx
 from fastapi import FastAPI, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -241,29 +241,22 @@ class WebApp:
             raise HTTPException(
                 status_code=500, detail="Error retrieving file from agent service") from err
 
-    async def health_check(self) -> Dict:
+    async def health_check(self) -> Response:
         """Check health of web app and agent service."""
-        web_status = {"status": "healthy", "service": "web_interface"}
-
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.get(f"{AGENT_SERVICE_URL}/health")
                 if response.status_code == 200:
-                    agent_status = response.json()
-                    return {
-                        **web_status,
-                        "agent_service": agent_status
-                    }
-                return {
-                    **web_status,
-                    "agent_service": {"status": "error", "code": response.status_code}
-                }
+                    # Both web app and agent service are healthy
+                    return Response(status_code=200)
+                # Agent service is unhealthy
+                logger.warning(
+                    "Agent service health check failed with status: %d", response.status_code)
+                return Response(status_code=503)
         except Exception as e:
+            # Cannot reach agent service
             logger.error("Error checking health of agent service: %s", e)
-            return {
-                **web_status,
-                "agent_service": {"status": "error", "error": str(e)}
-            }
+            return Response(status_code=503)
 
 
 # FastAPI app

@@ -21,7 +21,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from chat_manager import ChatManager, ChatRequest
 from config import Config
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from mcp_client import MCPClient
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -53,8 +53,8 @@ class AgentManager:
         """Setup MCP tools and code interpreter."""
 
         # Add code interpreter tool
-        # code_interpreter = CodeInterpreterTool()
-        # self.toolset.add(code_interpreter)
+        code_interpreter = CodeInterpreterTool()
+        self.toolset.add(code_interpreter)
 
         logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
@@ -174,13 +174,14 @@ app = FastAPI(title="Azure AI Agent Service", lifespan=lifespan)
 
 
 @app.get("/health")
-async def health_check() -> Dict[str, Any]:
+async def health_check() -> Response:
     """Health check endpoint."""
-    return {
-        "status": "healthy",
-        "agent_initialized": agent_manager.is_initialized,
-        "agent_id": agent_manager.agent.id if agent_manager.agent else None,
-    }
+    if agent_manager.is_initialized:
+        # Agent is properly initialized - healthy
+        return Response(status_code=200)
+    # Agent is not initialized - unhealthy
+    logger.warning("Health check failed: Agent manager is not initialized")
+    return Response(status_code=503)
 
 
 @app.post("/chat/stream")
