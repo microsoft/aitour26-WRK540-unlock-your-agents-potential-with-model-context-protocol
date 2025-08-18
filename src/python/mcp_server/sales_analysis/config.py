@@ -30,4 +30,3 @@ class Config:
 
         if not cls.APPLICATIONINSIGHTS_CONNECTION_STRING:
             raise ValueError("APPLICATIONINSIGHTS_CONNECTION_STRING environment variable is required")
-

@@ -27,16 +27,15 @@ config = Config()
 logger = logging.getLogger(__name__)
 
 for name in [
-        "azure.core.pipeline.policies.http_logging_policy",
-        "azure.ai.agents",
-        "azure.ai.projects",
-        "azure.core",
-        "azure.identity",
-        "uvicorn.access",
-        "azure.monitor.opentelemetry.exporter.export._base"
-    ]:
-        logging.getLogger(name).setLevel(logging.WARNING)
-
+    "azure.core.pipeline.policies.http_logging_policy",
+    "azure.ai.agents",
+    "azure.ai.projects",
+    "azure.core",
+    "azure.identity",
+    "uvicorn.access",
+    "azure.monitor.opentelemetry.exporter.export._base",
+]:
+    logging.getLogger(name).setLevel(logging.WARNING)
 
 
 @dataclass
@@ -117,15 +116,23 @@ def get_app_context() -> AppContext:
         return app_context
     raise RuntimeError("Invalid lifespan context type")
 
+
 # @mcp.tool()
 async def semantic_search_products(
     ctx: Context,
-    query_description: Annotated[str, Field(
-        description="Describe the Zava product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'.")],
-    max_rows: Annotated[int, Field(
-        description="The maximum number of products to return. Defaults to 20.")] = 20,
-    similarity_threshold: Annotated[float, Field(
-        description="A value between 20 and 80 that sets the minimum similarity threshold. Products below this value are excluded. Defaults to 30.0.")] = 30.0
+    query_description: Annotated[
+        str,
+        Field(
+            description="Describe the Zava product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'."
+        ),
+    ],
+    max_rows: Annotated[int, Field(description="The maximum number of products to return. Defaults to 20.")] = 20,
+    similarity_threshold: Annotated[
+        float,
+        Field(
+            description="A value between 20 and 80 that sets the minimum similarity threshold. Products below this value are excluded. Defaults to 30.0."
+        ),
+    ] = 30.0,
 ) -> str:
     """
     Search for Zava products using natural language descriptions to find matches based on semantic similarity—considering functionality, form, use, and other attributes.
@@ -158,13 +165,14 @@ async def semantic_search_products(
             return "Error: Semantic search is not available. Azure OpenAI endpoint not configured."
 
         # Generate embedding for the query
-        query_embedding = app_context.semantic_search.generate_query_embedding(
-            query_description)
+        query_embedding = app_context.semantic_search.generate_query_embedding(query_description)
         if not query_embedding:
             return "Error: Failed to generate embedding for the query. Please try again."
 
         # Search for similar products using the embedding
-        return await app_context.db.search_products_by_similarity(query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold)
+        return await app_context.db.search_products_by_similarity(
+            query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold
+        )
 
     except Exception as e:
         logger.error("Error executing semantic search: %s", e)
@@ -194,8 +202,7 @@ async def get_multiple_table_schemas(
     rls_user_id = get_rls_user_id(ctx)
 
     if not table_names:
-        logger.error(
-            "Error: table_names parameter is required and cannot be empty")
+        logger.error("Error: table_names parameter is required and cannot be empty")
         return "Error: table_names parameter is required and cannot be empty"
 
     valid_tables = {
@@ -212,12 +219,11 @@ async def get_multiple_table_schemas(
     # Validate table names
     invalid_tables = [name for name in table_names if name not in valid_tables]
     if invalid_tables:
-        logger.error("Error: Invalid table names: %s. Valid tables are: %s",
-                     invalid_tables, sorted(valid_tables))
+        logger.error("Error: Invalid table names: %s. Valid tables are: %s", invalid_tables, sorted(valid_tables))
         return f"Error: Invalid table names: {invalid_tables}. Valid tables are: {sorted(valid_tables)}"
 
     logger.info("Manager ID: %s", rls_user_id)
-    logger.info("Retrieving schemas for tables: %s", ', '.join(table_names))
+    logger.info("Retrieving schemas for tables: %s", ", ".join(table_names))
 
     try:
         provider = get_db_provider()
@@ -280,8 +286,7 @@ async def run_http_server() -> None:
     # Only configure azure monitor if running in HTTP mode
     # when running in STDIO mode, it will already be configured
     # from the host application
-    configure_azure_monitor(
-        connection_string=config.APPLICATIONINSIGHTS_CONNECTION_STRING)
+    configure_azure_monitor(connection_string=config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 
     mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
     StarletteInstrumentor().instrument_app(mcp.sse_app())
@@ -301,10 +306,8 @@ def main() -> None:
     global RLS_USER_ID
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stdio", action="store_true",
-                        help="Run server in stdio mode")
-    parser.add_argument("--RLS_USER_ID", type=str,
-                        default=None, help="Row Level Security User ID")
+    parser.add_argument("--stdio", action="store_true", help="Run server in stdio mode")
+    parser.add_argument("--RLS_USER_ID", type=str, default=None, help="Row Level Security User ID")
     args = parser.parse_args()
 
     # if running in stdio mode, set the global RLS_USER_ID
