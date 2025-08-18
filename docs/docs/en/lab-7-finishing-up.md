@@ -1,4 +1,4 @@
-<!-- === "@Build Workshop"
+<!-- === "@skillable Workshop"
 
     {% include-markdown "includes/en/lab-6-finishing-up-event.md" %} -->
 

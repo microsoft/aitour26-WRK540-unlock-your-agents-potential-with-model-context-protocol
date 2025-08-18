@@ -27,10 +27,11 @@ nav:
     - Lab 1 Agent Instructions: lab-1-agent-instructions.md
     - Lab 2 Start your Agent: lab-2-start-the-agent.md
     - Lab 3 Semantic Search: lab-3-mcp-semantic-search.md
+    - Lab 4 Securing Agent Data: lab-4-secure-agent-data.md
   - Observability Labs:
     - Observability Overview: observability-overview.md
-    - Lab 4 Service Monitoring: lab-4-monitoring.md
-    - Lab 5 Understand Tracing: lab-6-tracing.md
+    - Lab 5 Service Monitoring: lab-5-monitoring.md
+    - Lab 6 Understand Tracing: lab-6-tracing.md
     # - Lab 6 Continuous Evaluation: lab-5-continuous-evaluation.md
   - Finishing Up: lab-7-finishing-up.md
   - Summary: summary.md

@@ -1,4 +1,4 @@
-<!-- === "@Build ワークショップ"
+<!-- === "@skillable ワークショップ"
 
     {% include-markdown "includes/ja/lab-6-finishing-up-event.md" %} -->
 
