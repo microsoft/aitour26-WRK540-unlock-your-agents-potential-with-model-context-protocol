@@ -44,6 +44,7 @@ RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
 
+
 class AgentManager:
     """Manages Azure AI Agent lifecycle and dependencies."""
 
@@ -97,14 +98,13 @@ class AgentManager:
 
         # Check if agent already exists in the service
         target_agent_name = f"{Config.AGENT_NAME} - {rls_user_name}"
-        
+
         if self.agents_client:
-            known_agents = await self.agents_client.list_agents()
-            for agent in known_agents:
+            known_agents = self.agents_client.list_agents()
+            async for agent in known_agents:
                 if agent.name == target_agent_name:
                     self.agents_by_rls_user_id[rls_user_id] = agent
                     return agent
-            pass
 
         # Create new agent if not found
         new_agent = await self.create_agent(rls_user_id, rls_user_name)
@@ -182,10 +182,7 @@ class AgentManager:
             configure_azure_monitor(connection_string=self.application_insights_connection_string)
 
             # Initialize with default RLS user ID
-            await self.get_or_create_agent_for_rls_user(
-                self.current_rls_user_id, 
-                "Head Office"
-            )
+            await self.get_or_create_agent_for_rls_user(self.current_rls_user_id, "Head Office")
             self.agent = self.agents_by_rls_user_id[self.current_rls_user_id]
 
             return True
@@ -309,6 +306,7 @@ async def get_rls_user() -> Dict[str, str]:
     except Exception as e:
         logger.error("Error getting RLS user ID: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to get RLS user ID: {e!s}") from e
+
 
 @app.get("/files/{filename}")
 async def serve_file(filename: str) -> FileResponse:
