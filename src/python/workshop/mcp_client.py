@@ -37,7 +37,7 @@ class MCPClient:
         await self._ensure_session()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(self, exc_type: Optional[type], exc_val: Optional[Exception], exc_tb: Optional[object]) -> None:
         """Async context manager exit."""
         await self.close_session()
 
