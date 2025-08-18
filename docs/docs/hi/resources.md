@@ -1,26 +1,26 @@
 # संसाधन
 
-## Workshop Repository और Documentation
+## वर्कशॉप रिपॉजिटरी और दस्तावेज़
 
-GitHub पर workshop repository में workshop के लिए आवश्यक सब कुछ शामिल है। Repo में sample application के लिए source code (src folder), MkDocs के साथ built documentation (docs), और workshop के लिए Azure deployment resources (infra) शामिल हैं।
+GitHub पर वर्कशॉप रिपॉजिटरी में सब कुछ है: स्रोत कोड (`src`), दस्तावेज़ (`docs`), Azure परिनियोजन (`infra`).
 
-* Repository: [microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop](https://github.com/microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop){:target="_blank"}
+* रिपॉजिटरी: [microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop](https://github.com/microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop){:target="_blank"}
 
-## Microsoft Learn resources
+## Microsoft Learn संसाधन
 
-* Documentation: [Foundry Agent Service](https://learn.microsoft.com/azure/ai-services/agents/){:target="_blank"}
-* Module: [Fundamentals of AI agents on Azure](https://learn.microsoft.com/training/modules/ai-agent-fundamentals/){:target="_blank"}
-* Documentation: [Tracing using Application Insights](https://learn.microsoft.com/azure/ai-services/agents/concepts/tracing){:target="_blank"}, [Evaluating your AI agents with Azure AI Evaluation SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk){:target="_blank"}
+* प्रलेखन: [Foundry Agent Service](https://learn.microsoft.com/azure/ai-services/agents/){:target="_blank"}
+* मॉड्यूल: [Fundamentals of AI agents on Azure](https://learn.microsoft.com/training/modules/ai-agent-fundamentals/){:target="_blank"}
+* प्रलेखन: [Tracing using Application Insights](https://learn.microsoft.com/azure/ai-services/agents/concepts/tracing){:target="_blank"}, [Evaluating your AI agents with Azure AI Evaluation SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/agent-evaluate-sdk){:target="_blank"}
 
-## Zava Sales Assistant sample
+## Zava Sales Assistant नमूना
 
-यह end-to-end demo web agent Foundry Agent Service की capabilities को showcase करता है। यह web-based chat interface प्रदान करने के लिए Chainlit conversational UI framework का उपयोग करता है। Assistant को users को sales data का विश्लेषण करने और इससे संबंधित प्रश्नों के उत्तर देने में मदद करने के लिए बनाया गया है।
+यह एंड‑टू‑एंड डेमो वेब एजेंट Foundry Agent Service क्षमताएँ दिखाता है (Chainlit UI)।
 
-* [Zava Sales Assistant App docs (Chainlit)](https://azure-samples.github.io/Zava-sales-azure-openai-assistants-api/){:target="_blank"}
-* [Zava Sales Assistant App repo](https://github.com/Azure-Samples/Zava-sales-azure-openai-assistants-api){:target="_blank"}
+* [ऐप docs](https://azure-samples.github.io/Zava-sales-azure-openai-assistants-api/){:target="_blank"}
+* [ऐप repo](https://github.com/Azure-Samples/Zava-sales-azure-openai-assistants-api){:target="_blank"}
 
 ## धन्यवाद
 
-इस workshop में भाग लेने के लिए धन्यवाद! यदि आपके पास सुधार के लिए कोई सुझाव हैं या इस workshop को चलाते समय कोई समस्या आई है, तो कृपया [GitHub Issues](https://github.com/microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop/issues){:target="_blank"} के माध्यम से हमें बताएं।
+भाग लेने के लिए धन्यवाद! सुझाव या समस्या हो तो [GitHub Issues](https://github.com/microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop/issues){:target="_blank"}。
 
-*GitHub Copilot का उपयोग करके अनुवादित।*
+*GitHub Copilot द्वारा अनुवादित.*

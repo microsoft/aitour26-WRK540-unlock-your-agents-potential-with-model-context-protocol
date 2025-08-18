@@ -27,10 +27,11 @@ nav:
     - Lab 1 Agent Instructions: lab-1-agent-instructions.md
     - Lab 2 Start your Agent: lab-2-start-the-agent.md
     - Lab 3 Semantic Search: lab-3-mcp-semantic-search.md
+    - Lab 4 Securing Agent Data: lab-4-secure-agent-data.md
   - Observability Labs:
     - Observability Overview: observability-overview.md
-    - Lab 4 Service Monitoring: lab-4-monitoring.md
-    - Lab 5 Understand Tracing: lab-6-tracing.md
+    - Lab 5 Service Monitoring: lab-5-monitoring.md
+    - Lab 6 Understand Tracing: lab-6-tracing.md
     # - Lab 6 Continuous Evaluation: lab-5-continuous-evaluation.md
   - Finishing Up: lab-7-finishing-up.md
   - Summary: summary.md
@@ -52,82 +53,149 @@ plugins:
         - locale: en
           name: English
           default: true
-        - locale: es
-          name: Español
-          site_name: Desbloquea el Potencial de tu Agente con MCP
+          site_name: Unlock your Agents Potential with MCP
           admonition_translations:
-            tip: Consejo
-            warning: Advertencia
-            info: Información
-            note: Nota
-            danger: Peligro
-            success: Éxito
-            question: Pregunta
+            tip: tip
+            warning: Warning
+            info: Information
+            note: Note
+            danger: Danger
+            success: Success
+            question: Question
           nav_translations:
-            "Workshop Introduction": "Introducción al Taller"
-            "Workshop Navigation": "Navegación del Taller"
-            "Getting Started": "Comenzando"
-            "Open the Workshop": "Abrir el Taller"
-            "Star the GitHub Repo": "Marcar con Estrella el Repositorio GitHub"
-            "Solution Architecture": "Arquitectura de la Solución"
-            "What is an MCP Server": "Qué es un Servidor MCP"
-            "Deploy Azure Resources": "Desplegar Recursos de Azure"
-            "Open Workspace": "Abrir Espacio de Trabajo"
-            "Agent Services Labs": "Laboratorios de Servicios de Agentes"
-            "AI Foundry Agent Services": "Servicios de Agentes AI Foundry"
-            "Lab 1 Agent Instructions": "Lab 1 Instrucciones del Agente"
-            "Lab 2 Start your Agent": "Lab 2 Iniciar tu Agente"
-            "Lab 3 Semantic Search MCP Tool": "Lab 3 Herramienta MCP de Búsqueda Semántica"
-            "Observability Labs": "Laboratorios de Observabilidad"
-            "Observability Overview": "Visión General de Observabilidad"
-            "Lab 4 Service Monitoring": "Lab 4 Monitoreo de Servicios"
-            "Lab 5 Continuous Evaluation": "Lab 5 Evaluación Continua"
-            "Lab 6 Understand Tracing": "Lab 6 Entender el Trazado"
-            "Security": "Seguridad"
-            "Finishing Up": "Finalizando"
-            "Home Work": "Tarea"
-            "Debugging with Dev Tunnel": "Depuración con Dev Tunnel"
-            "Summary": "Resumen"
-            "Resources": "Recursos"
-            "About": "Acerca de"
+            "Workshop Introduction": "Workshop Introduction"
+            "Workshop Navigation": "Workshop Navigation"
+            "Getting Started": "Getting Started"
+            "Open the Workshop": "Open the Workshop"
+            "Star the GitHub Repo": "Star the GitHub Repo"
+            "Architecture Overview": "Architecture Overview"
+            "Deploy Agent Resources": "Deploy Agent Resources"
+            "Open VS Code Workspace": "Open VS Code Workspace"
+            "Agent Services Labs": "Agent Services Labs"
+            "AI Foundry Agent Services": "AI Foundry Agent Services"
+            "Lab 1 Agent Instructions": "Lab 1 Agent Instructions"
+            "Lab 2 Start your Agent": "Lab 2 Start your Agent"
+            "Lab 3 Semantic Search": "Lab 3 Semantic Search"
+            "Observability Labs": "Observability Labs"
+            "Observability Overview": "Observability Overview"
+            "Lab 4 Service Monitoring": "Lab 4 Service Monitoring"
+            "Lab 5 Understand Tracing": "Lab 5 Understand Tracing"
+            "Lab 6 Continuous Evaluation": "Lab 6 Continuous Evaluation"
+            "Finishing Up": "Finishing Up"
+            "Summary": "Summary"
+            "Resources": "Resources"
+            "Home Work": "Home Work"
+            "Debugging with Dev Tunnel": "Debugging with Dev Tunnel"
+            "About": "About"
         - locale: hi
           name: हिंदी
-          site_name: Model Context Protocol के साथ अपने Agent की क्षमता को अनलॉक करें
+          site_name: MCP के साथ अपने एजेंट की क्षमता अनलॉक करें
           admonition_translations:
-            tip: टिप
+            tip: सुझाव
             warning: चेतावनी
             info: जानकारी
             note: नोट
             danger: खतरा
-            success: सफलता
+            success: सफल
             question: प्रश्न
           nav_translations:
             "Workshop Introduction": "वर्कशॉप परिचय"
             "Workshop Navigation": "वर्कशॉप नेविगेशन"
-            "Getting Started": "शुरुआत करना"
-            "Open the Workshop": "वर्कशॉप खोलना"
-            "Star the GitHub Repo": "GitHub रिपो को स्टार करना"
-            "Solution Architecture": "समाधान आर्किटेक्चर"
-            "What is an MCP Server": "MCP सर्वर क्या है"
-            "Deploy Azure Resources": "Azure संसाधन तैनात करना"
-            "Open Workspace": "वर्कस्पेस खोलना"
-            "Agent Services Labs": "एजेंट सेवाएं लैब्स"
-            "AI Foundry Agent Services": "AI Foundry एजेंट सेवाएं"
+            "Getting Started": "शुरू करें"
+            "Open the Workshop": "वर्कशॉप खोलें"
+            "Star the GitHub Repo": "GitHub रेपो को स्टार करें"
+            "Architecture Overview": "आर्किटेक्चर अवलोकन"
+            "Deploy Agent Resources": "एजेंट संसाधन परिनियोजित करें"
+            "Open VS Code Workspace": "VS Code वर्कस्पेस खोलें"
+            "Agent Services Labs": "एजेंट सर्विस लैब्स"
+            "AI Foundry Agent Services": "AI Foundry एजेंट सर्विस"
             "Lab 1 Agent Instructions": "लैब 1 एजेंट निर्देश"
-            "Lab 2 Start your Agent": "लैब 2 अपना एजेंट शुरू करना"
-            "Lab 3 Semantic Search": "लैब 3 सिमेंटिक सर्च"
-            "Observability Labs": "ऑब्जर्वेबिलिटी लैब्स"
-            "Observability Overview": "ऑब्जर्वेबिलिटी ओवरव्यू"
-            "Lab 4 Service Monitoring": "लैब 4 सेवा निगरानी"
-            "Lab 5 Continuous Evaluation": "लैब 5 निरंतर मूल्यांकन"
-            "Lab 6 Understand Tracing": "लैब 6 ट्रेसिंग को समझना"
-            "Security": "सुरक्षा"
-            "Finishing Up": "समाप्ति"
-            "Home Work": "होम वर्क"
-            "Debugging with Dev Tunnel": "Dev Tunnel के साथ डिबगिंग"
+            "Lab 2 Start your Agent": "लैब 2 एजेंट शुरू करें"
+            "Lab 3 Semantic Search": "लैब 3 सेमान्टिक सर्च"
+            "Observability Labs": "ऑब्ज़रवेबिलिटी लैब्स"
+            "Observability Overview": "ऑब्ज़रवेबिलिटी अवलोकन"
+            "Lab 4 Service Monitoring": "लैब 4 सेवा मॉनिटरिंग"
+            "Lab 5 Understand Tracing": "लैब 5 ट्रेसिंग समझें"
+            "Lab 6 Continuous Evaluation": "लैब 6 सतत मूल्यांकन"
+            "Finishing Up": "समापन"
             "Summary": "सारांश"
             "Resources": "संसाधन"
-            "About": "के बारे में"
+            "Home Work": "होम वर्क"
+            "Debugging with Dev Tunnel": "Dev Tunnel से डिबगिंग"
+            "About": "परिचय"
+        - locale: ja
+          name: 日本語
+          site_name: MCP でエージェントの可能性を解放する
+          admonition_translations:
+            tip: ヒント
+            warning: 警告
+            info: 情報
+            note: 注記
+            danger: 危険
+            success: 成功
+            question: 質問
+          nav_translations:
+            "Workshop Introduction": "ワークショップ紹介"
+            "Workshop Navigation": "ワークショップナビゲーション"
+            "Getting Started": "はじめに"
+            "Open the Workshop": "ワークショップを開く"
+            "Star the GitHub Repo": "GitHub リポジトリにスター"
+            "Architecture Overview": "アーキテクチャ概要"
+            "Deploy Agent Resources": "エージェントリソースをデプロイ"
+            "Open VS Code Workspace": "VS Code ワークスペースを開く"
+            "Agent Services Labs": "エージェントサービス ラボ"
+            "AI Foundry Agent Services": "AI Foundry エージェントサービス"
+            "Lab 1 Agent Instructions": "ラボ 1 エージェント指示"
+            "Lab 2 Start your Agent": "ラボ 2 エージェントを開始"
+            "Lab 3 Semantic Search": "ラボ 3 セマンティック検索"
+            "Observability Labs": "観測可能性ラボ"
+            "Observability Overview": "観測可能性概要"
+            "Lab 4 Service Monitoring": "ラボ 4 サービス監視"
+            "Lab 5 Understand Tracing": "ラボ 5 トレーシングを理解"
+            "Lab 6 Continuous Evaluation": "ラボ 6 継続的評価"
+            "Finishing Up": "終了"
+            "Summary": "まとめ"
+            "Resources": "リソース"
+            "Home Work": "ホームワーク"
+            "Debugging with Dev Tunnel": "Dev Tunnel でのデバッグ"
+            "About": "について"
+        - locale: ko
+          name: 한국어
+          site_name: MCP로 에이전트의 잠재력 발휘하기
+          admonition_translations:
+            tip: 팁
+            warning: 경고
+            info: 정보
+            note: 참고
+            danger: 위험
+            success: 성공
+            question: 질문
+          nav_translations:
+            "Workshop Introduction": "워크샵 소개"
+            "Workshop Navigation": "워크샵 내비게이션"
+            "Getting Started": "시작하기"
+            "Open the Workshop": "워크샵 열기"
+            "Star the GitHub Repo": "GitHub 저장소에 별표"
+            "Architecture Overview": "아키텍처 개요"
+            "Deploy Agent Resources": "에이전트 리소스 배포"
+            "Open VS Code Workspace": "VS Code 워크스페이스 열기"
+            "Agent Services Labs": "에이전트 서비스 랩"
+            "AI Foundry Agent Services": "AI Foundry 에이전트 서비스"
+            "Lab 1 Agent Instructions": "랩 1 에이전트 지침"
+            "Lab 2 Start your Agent": "랩 2 에이전트 시작"
+            "Lab 3 Semantic Search": "랩 3 의미 검색"
+            "Observability Labs": "관찰 가능성 랩"
+            "Observability Overview": "관찰 가능성 개요"
+            "Lab 4 Service Monitoring": "랩 4 서비스 모니터링"
+            "Lab 5 Understand Tracing": "랩 5 추적 이해"
+            "Lab 6 Continuous Evaluation": "랩 6 지속적 평가"
+            "Finishing Up": "마무리"
+            "Summary": "요약"
+            "Resources": "리소스"
+            "Home Work": "과제"
+            "Debugging with Dev Tunnel": "Dev Tunnel로 디버깅"
+            "About": "정보"
+        
 
 
 theme:
