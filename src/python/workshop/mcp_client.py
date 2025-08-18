@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from azure.ai.agents.models import AsyncFunctionTool
-from mcp import ClientSession, StdioServerParameters
+from mcp import CallToolResult, ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from terminal_colors import TerminalColors as tc
 
@@ -69,7 +69,7 @@ class MCPClient:
             self._session = None
             self._client_context = None
 
-    def _extract_content(self, result) -> str:
+    def _extract_content(self, result: CallToolResult) -> str:
         """Extract text content from MCP result."""
         if not result.content:
             return "No result returned from tool"
