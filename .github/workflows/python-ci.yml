@@ -56,9 +56,9 @@ jobs:
         run: |
           ruff check src/python/${{ matrix.component }}/ --output-format=github
 
-      - name: Check formatting with black
+      - name: Check formatting with ruff
         run: |
-          black --check src/python/${{ matrix.component }}/
+          ruff format --check src/python/${{ matrix.component }}/
 
       - name: Check import sorting with isort
         run: |

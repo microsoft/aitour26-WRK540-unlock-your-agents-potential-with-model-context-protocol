@@ -13,6 +13,7 @@ from terminal_colors import TerminalColors as tc
 
 logger = logging.getLogger(__name__)
 
+
 class MCPClient:
     """Client for communicating with MCP servers."""
 
@@ -172,7 +173,9 @@ class MCPClient:
 
             elif tool_name == "semantic_search_products":
 
-                async def semantic_search_products(query_description: str, max_rows: int = 10, similarity_threshold: float = 30.0) -> str:
+                async def semantic_search_products(
+                    query_description: str, max_rows: int = 10, similarity_threshold: float = 30.0
+                ) -> str:
                     return await self.call_tool_async(
                         "semantic_search_products",
                         {
@@ -200,7 +203,7 @@ class MCPClient:
                 functions_set.add(generic_func)
 
         tool_names = [tool["function"]["name"] for tool in tools]
-        logger.info("📋 Available MCP tools: %s", ', '.join(tool_names))
+        logger.info("📋 Available MCP tools: %s", ", ".join(tool_names))
 
         return AsyncFunctionTool(functions_set)
 
@@ -211,7 +214,7 @@ if __name__ == "__main__":
         client = MCPClient.create_default("00000000-0000-0000-0000-000000000000")  # Example RLS user ID
         async with client:
             tools = await client.fetch_tools_async()
-            logger.info("Available tools: %s", [tool['function']['name'] for tool in tools])
+            logger.info("Available tools: %s", [tool["function"]["name"] for tool in tools])
 
             if tools:
                 tool_name = tools[0]["function"]["name"]

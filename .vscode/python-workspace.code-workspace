@@ -35,7 +35,18 @@
             "titleBar.inactiveForeground": "#e7e7e799"
         },
         "peacock.color": "#3776AB",
-        "workbench.startupEditor": "none"
+        "workbench.startupEditor": "none",
+        "python.analysis.extraPaths": [
+            "./src/python/workshop"
+        ],
+        "[python]": {
+            "editor.defaultFormatter": "charliermarsh.ruff",
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": "explicit",
+                "source.fixAll.ruff": "explicit"
+            }
+        }
     },
     "extensions": {
         "recommendations": [
