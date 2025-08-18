@@ -4,6 +4,13 @@ const sendBtn = document.getElementById("sendBtn");
 const fileBtn = document.getElementById("fileBtn");
 const fileInput = document.getElementById("fileInput");
 const clearBtn = document.getElementById("clearBtn");
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsModal = document.getElementById("settingsModal");
+const closeModal = document.querySelector(".close");
+const rlsUserSelect = document.getElementById("rlsUserSelect");
+const saveRlsUserBtn = document.getElementById("saveRlsUser");
+const rlsUserStatus = document.getElementById("rlsUserStatus");
+const currentUserDiv = document.getElementById("currentUser");
 
 const chatState = {
   isStreaming: false,
@@ -46,6 +53,8 @@ async function checkServiceStatus() {
       messageInput.disabled = false;
       messageInput.placeholder =
         "Type your message or type help for some suggestions....";
+      // Update current user display
+      await updateCurrentUserDisplay();
     } else {
       if (chatState.serviceReady) {
         chatState.serviceReady = false;
@@ -121,6 +130,10 @@ function showServiceNotReadyMessage() {
 async function startServiceMonitoring() {
   showServiceNotReadyMessage();
   await checkServiceStatus();
+  // Load current user info once service is ready
+  if (chatState.serviceReady) {
+    await updateCurrentUserDisplay();
+  }
 }
 
 // Add message to chat
@@ -756,6 +769,218 @@ fileInput.addEventListener("change", handleFileSelection);
 
 // Clear chat event listener
 clearBtn.addEventListener("click", clearChat);
+
+// Settings modal event listeners
+settingsBtn.addEventListener("click", openSettings);
+closeModal.addEventListener("click", closeSettings);
+saveRlsUserBtn.addEventListener("click", saveRlsUser);
+
+// Close modal when clicking outside of it
+window.addEventListener("click", (event) => {
+  if (event.target === settingsModal) {
+    closeSettings();
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener("keydown", (event) => {
+  // Escape key to close modal
+  if (event.key === "Escape" && settingsModal.style.display === "block") {
+    closeSettings();
+    event.preventDefault();
+  }
+  
+  // Ctrl/Cmd + , to open settings
+  if ((event.ctrlKey || event.metaKey) && event.key === ",") {
+    openSettings();
+    event.preventDefault();
+  }
+});
+
+// Settings functionality
+async function openSettings() {
+  if (!chatState.serviceReady) {
+    alert("Please wait - the agent service is still starting up.");
+    return;
+  }
+  
+  if (chatState.isStreaming) {
+    alert("Please wait for the current response to finish before accessing settings.");
+    return;
+  }
+  
+  settingsModal.style.display = "block";
+  await loadRlsUsers();
+  await loadCurrentRlsUser();
+}
+
+function closeSettings() {
+  settingsModal.style.display = "none";
+  hideStatusMessage();
+}
+
+async function loadRlsUsers() {
+  try {
+    const response = await fetch("/agent/rls-users");
+    const data = await response.json();
+    
+    if (data.status === "success" && data.users) {
+      rlsUserSelect.innerHTML = "";
+      
+      data.users.forEach(user => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = `${user.name} (${user.id})`;
+        rlsUserSelect.appendChild(option);
+      });
+    } else {
+      rlsUserSelect.innerHTML = '<option value="">Error loading users</option>';
+    }
+  } catch (error) {
+    console.error("Error loading RLS users:", error);
+    rlsUserSelect.innerHTML = '<option value="">Error loading users</option>';
+  }
+}
+
+async function loadCurrentRlsUser() {
+  try {
+    const response = await fetch("/agent/rls-user");
+    const data = await response.json();
+    
+    if (data.status === "success" && data.rls_user_id) {
+      rlsUserSelect.value = data.rls_user_id;
+    }
+  } catch (error) {
+    console.error("Error loading current RLS user:", error);
+  }
+}
+
+async function saveRlsUser() {
+  const selectedUserId = rlsUserSelect.value;
+  
+  if (!selectedUserId) {
+    showStatusMessage("Please select a user", "error");
+    return;
+  }
+
+  saveRlsUserBtn.disabled = true;
+  saveRlsUserBtn.textContent = "Saving...";
+  hideStatusMessage();
+
+  try {
+    const formData = new FormData();
+    formData.append("rls_user_id", selectedUserId);
+    
+    const response = await fetch("/agent/rls-user", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      showStatusMessage(data.message || "RLS user updated successfully", "success");
+      
+      // Clear current chat session since we're switching agents
+      await clearChatSession();
+      
+      setTimeout(() => {
+        closeSettings();
+        // Update current user display
+        updateCurrentUserDisplay();
+        // Optionally show a message to the user about the agent switch
+        addSystemMessage(`Switched to agent for user: ${getSelectedUserName()}`);
+      }, 1500);
+    } else {
+      showStatusMessage(data.message || "Failed to update RLS user", "error");
+    }
+  } catch (error) {
+    console.error("Error saving RLS user:", error);
+    showStatusMessage("Error saving RLS user: " + error.message, "error");
+  } finally {
+    saveRlsUserBtn.disabled = false;
+    saveRlsUserBtn.textContent = "Save Changes";
+  }
+}
+
+function getSelectedUserName() {
+  const selectedOption = rlsUserSelect.options[rlsUserSelect.selectedIndex];
+  return selectedOption ? selectedOption.textContent : "Unknown User";
+}
+
+function showStatusMessage(message, type) {
+  rlsUserStatus.textContent = message;
+  rlsUserStatus.className = `status-message ${type}`;
+}
+
+function hideStatusMessage() {
+  rlsUserStatus.className = "status-message";
+  rlsUserStatus.textContent = "";
+}
+
+async function clearChatSession() {
+  try {
+    // Generate new session ID for fresh start
+    chatState.sessionId = generateSessionId();
+    localStorage.setItem("chat_session_id", chatState.sessionId);
+
+    // Clear the messages display
+    messagesDiv.innerHTML = "";
+    
+    // Clear any uploaded file state
+    chatState.uploadedFile = null;
+    fileInput.value = "";
+    messageInput.placeholder = "Type your message or type help for some suggestions....";
+  } catch (error) {
+    console.error("Error clearing chat session:", error);
+  }
+}
+
+function addSystemMessage(message) {
+  const systemDiv = document.createElement("div");
+  systemDiv.className = "message assistant";
+  systemDiv.textContent = message;
+  systemDiv.style.background = "#e3f2fd";
+  systemDiv.style.color = "#1565c0";
+  systemDiv.style.border = "1px solid #bbdefb";
+  systemDiv.style.fontStyle = "italic";
+  messagesDiv.appendChild(systemDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+  // Remove system message after 5 seconds
+  setTimeout(() => {
+    if (systemDiv.parentNode) {
+      systemDiv.parentNode.removeChild(systemDiv);
+    }
+  }, 5000);
+}
+
+// Update current user display
+async function updateCurrentUserDisplay() {
+  try {
+    const response = await fetch("/agent/rls-user");
+    const data = await response.json();
+    
+    if (data.status === "success" && data.rls_user_id) {
+      // Get user name from the users list
+      const usersResponse = await fetch("/agent/rls-users");
+      const usersData = await usersResponse.json();
+      
+      if (usersData.status === "success" && usersData.users) {
+        const currentUser = usersData.users.find(user => user.id === data.rls_user_id);
+        const displayName = currentUser ? currentUser.name : "Unknown User";
+        currentUserDiv.textContent = `Current User: ${displayName}`;
+      } else {
+        currentUserDiv.textContent = `Current User: ${data.rls_user_id}`;
+      }
+    } else {
+      currentUserDiv.textContent = "Current User: Unknown";
+    }
+  } catch (error) {
+    console.error("Error loading current user:", error);
+    currentUserDiv.textContent = "Current User: Error";
+  }
+}
 
 // Clear chat on page refresh/unload to clean up agent thread
 window.addEventListener("beforeunload", (e) => {

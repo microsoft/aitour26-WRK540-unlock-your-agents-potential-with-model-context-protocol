@@ -25,9 +25,20 @@ from otel import configure_oltp_grpc_tracing
 tracer = configure_oltp_grpc_tracing(tracer_name="zava_web_app")
 logger = logging.getLogger(__name__)
 
+rls_users = {
+    "00000000-0000-0000-0000-000000000000": "Head Office",
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479": "Seattle",
+    "6ba7b810-9dad-11d1-80b4-00c04fd430c8": "Bellevue",
+    "a1b2c3d4-e5f6-7890-abcd-ef1234567890": "Tacoma",
+    "d8e9f0a1-b2c3-4567-8901-234567890abc": "Spokane",
+    "3b9ac9fa-cd5e-4b92-a7f2-b8c1d0e9f2a3": "Everett",
+    "e7f8a9b0-c1d2-3e4f-5678-90abcdef1234": "Redmond",
+    "9c8b7a65-4321-fed0-9876-543210fedcba": "Kirkland",
+    "2f4e6d8c-1a3b-5c7e-9f0a-b2d4f6e8c0a2": "Online",
+}
+
 # Agent service configuration
-AGENT_SERVICE_URL = os.environ.get(
-    "services__dotnet-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
+AGENT_SERVICE_URL = os.environ.get("services__dotnet-agent-app__http__0", "http://127.0.0.1:8006")  # noqa: SIM112 - naming controlled by aspire
 
 
 class WebApp:
@@ -44,19 +55,20 @@ class WebApp:
         """Setup static file serving."""
         # Use absolute path since parent navigation isn't working as expected
         static_dir = Path("static")
-        self.app.mount(
-            "/static", StaticFiles(directory=str(static_dir)), name="static")
+        self.app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
     def _setup_routes(self) -> None:
         """Setup all web routes."""
         self.app.get("/", response_class=HTMLResponse)(self.get_chat_page)
-        self.app.get("/favicon.ico",
-                     response_class=FileResponse)(self.get_favicon)
+        self.app.get("/favicon.ico", response_class=FileResponse)(self.get_favicon)
         self.app.post("/upload")(self.upload_file)
         self.app.get("/chat/stream")(self.stream_chat)
         self.app.delete("/chat/clear")(self.clear_chat)
         self.app.get("/files/{filename}")(self.serve_file)
         self.app.get("/health")(self.health_check)
+        self.app.post("/agent/rls-user")(self.set_rls_user)
+        self.app.get("/agent/rls-user")(self.get_rls_user)
+        self.app.get("/agent/rls-users")(self.get_rls_users)
 
     async def get_chat_page(self) -> HTMLResponse:
         """Serve the chat HTML page."""
@@ -75,15 +87,11 @@ class WebApp:
             # Check file size (10MB limit)
             content = await file.read()
             if len(content) > 10 * 1024 * 1024:
-                raise HTTPException(
-                    status_code=413, detail="File too large (max 10MB)")
+                raise HTTPException(status_code=413, detail="File too large (max 10MB)")
 
             # Extract text based on file type
             file_text = ""
-            file_extension = (
-                file.filename.lower().split(
-                    ".")[-1] if file.filename and "." in file.filename else ""
-            )
+            file_extension = file.filename.lower().split(".")[-1] if file.filename and "." in file.filename else ""
 
             if file_extension in ["txt", "md"]:
                 file_text = content.decode("utf-8")
@@ -127,7 +135,7 @@ class WebApp:
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no",
                 "Access-Control-Allow-Origin": "*",
-                "Content-Encoding": "identity"
+                "Content-Encoding": "identity",
             },
         )
 
@@ -136,16 +144,13 @@ class WebApp:
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 # Make request to agent service
-                request_data = {
-                    "message": message,
-                    "session_id": session_id
-                }
+                request_data = {"message": message, "session_id": session_id}
 
                 async with client.stream(
                     "POST",
                     f"{AGENT_SERVICE_URL}/chat/stream",
                     json=request_data,
-                    headers={"Accept": "text/event-stream"}
+                    headers={"Accept": "text/event-stream"},
                 ) as response:
                     if response.status_code != 200:
                         yield f"data: {json.dumps({'error': f'Agent service error: {response.status_code}'})}\n\n"
@@ -155,9 +160,9 @@ class WebApp:
                     async for chunk in response.aiter_text():
                         if chunk.strip():
                             # Parse and forward each chunk
-                            lines = chunk.strip().split('\n')
+                            lines = chunk.strip().split("\n")
                             for line in lines:
-                                if line.startswith('data: '):
+                                if line.startswith("data: "):
                                     # Remove 'data: ' prefix
                                     data_str = line[6:]
                                     try:
@@ -193,35 +198,22 @@ class WebApp:
         try:
             # Call agent service to clear thread for this session
             async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.delete(
-                    f"{AGENT_SERVICE_URL}/chat/clear",
-                    params={"session_id": session_id}
-                )
+                response = await client.delete(f"{AGENT_SERVICE_URL}/chat/clear", params={"session_id": session_id})
 
                 if response.status_code == 200:
                     result = response.json()
                     return {
                         "status": "success",
                         "message": f"Chat session '{session_id}' cleared successfully",
-                        "agent_response": result
+                        "agent_response": result,
                     }
-                return {
-                    "status": "error",
-                    "message": f"Agent service error: {response.status_code}"
-                }
+                return {"status": "error", "message": f"Agent service error: {response.status_code}"}
         except httpx.RequestError as e:
             logger.error("Connection error to agent service: %s", e)
-            return {
-                "status": "error",
-                "message": f"Connection error to agent service: {e!s}"
-            }
+            return {"status": "error", "message": f"Connection error to agent service: {e!s}"}
         except Exception as e:
-            logger.error(
-                "Error clearing chat for session %s: %s", session_id, e)
-            return {
-                "status": "error",
-                "message": f"Error clearing chat: {e!s}"
-            }
+            logger.error("Error clearing chat for session %s: %s", session_id, e)
+            return {"status": "error", "message": f"Error clearing chat: {e!s}"}
 
     async def serve_file(self, filename: str) -> FileResponse:
         """Proxy file serving to agent service or serve locally."""
@@ -235,18 +227,70 @@ class WebApp:
                     with temp_file.open("wb") as f:
                         f.write(response.content)
                     return FileResponse(path=str(temp_file))
-                
+
                 # Agent service returned non-200 status
                 raise HTTPException(
-                    status_code=response.status_code, 
-                    detail=f"Agent service error: {response.status_code}")
+                    status_code=response.status_code, detail=f"Agent service error: {response.status_code}"
+                )
         except HTTPException:
             # Re-raise HTTPExceptions to maintain proper error handling
             raise
         except Exception as err:
             logger.error("Error retrieving file from agent service: %s", err)
-            raise HTTPException(
-                status_code=500, detail="Error retrieving file from agent service") from err
+            raise HTTPException(status_code=500, detail="Error retrieving file from agent service") from err
+
+    async def set_rls_user(self, rls_user_id: str = Form(...)) -> Dict:
+        """Set the RLS user ID for the agent service."""
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    f"{AGENT_SERVICE_URL}/agent/rls-user",
+                    json={"id": rls_user_id, "name": rls_users.get(rls_user_id)},
+                )
+
+                if response.status_code == 200:
+                    result = response.json()
+                    return {
+                        "status": "success",
+                        "message": result.get("message", "RLS user ID updated successfully"),
+                        "rls_user_id": result.get("rls_user_id"),
+                    }
+                error_detail = "Failed to update RLS user ID"
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get("error", error_detail)
+                except:
+                    pass
+                return {"status": "error", "message": f"Agent service error: {error_detail}"}
+        except httpx.RequestError as e:
+            logger.error("Connection error to agent service: %s", e)
+            return {"status": "error", "message": f"Connection error to agent service: {e!s}"}
+        except Exception as e:
+            logger.error("Error setting RLS user ID: %s", e)
+            return {"status": "error", "message": f"Error setting RLS user ID: {e!s}"}
+
+    async def get_rls_user(self) -> Dict:
+        """Get the current RLS user ID from the agent service."""
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.get(f"{AGENT_SERVICE_URL}/agent/rls-user")
+
+                if response.status_code == 200:
+                    result = response.json()
+                    return {"status": "success", "rls_user_id": result.get("rls_user_id")}
+                return {"status": "error", "message": f"Agent service error: {response.status_code}"}
+        except httpx.RequestError as e:
+            logger.error("Connection error to agent service: %s", e)
+            return {"status": "error", "message": f"Connection error to agent service: {e!s}"}
+        except Exception as e:
+            logger.error("Error getting RLS user ID: %s", e)
+            return {"status": "error", "message": f"Error getting RLS user ID: {e!s}"}
+
+    async def get_rls_users(self) -> Dict:
+        """Get the list of available RLS users (placeholder implementation)."""
+        # Convert dictionary to list format expected by frontend
+        users_list = [{"id": user_id, "name": name} for user_id, name in rls_users.items()]
+        return {"status": "success", "users": users_list}
 
     async def health_check(self) -> Response:
         """Check health of web app and agent service."""
@@ -257,8 +301,7 @@ class WebApp:
                     # Both web app and agent service are healthy
                     return Response(status_code=200)
                 # Agent service is unhealthy
-                logger.warning(
-                    "Agent service health check failed with status: %d", response.status_code)
+                logger.warning("Agent service health check failed with status: %d", response.status_code)
                 return Response(status_code=503)
         except Exception as e:
             # Cannot reach agent service
