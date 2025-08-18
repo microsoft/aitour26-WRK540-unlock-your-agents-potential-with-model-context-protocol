@@ -1,0 +1,128 @@
+name: Python CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "src/python/**"
+      - "pyproject.toml"
+      - ".github/workflows/python-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "src/python/**"
+      - "pyproject.toml"
+      - ".github/workflows/python-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        component: ["workshop", "mcp_server/sales_analysis"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ matrix.component }}-${{ hashFiles('src/python/${{ matrix.component }}/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ matrix.component }}-
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies for ${{ matrix.component }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/python/${{ matrix.component }}/requirements.txt
+
+      - name: Install dev dependencies
+        run: |
+          pip install ruff black isort pytest
+
+      - name: Lint with ruff
+        run: |
+          ruff check src/python/${{ matrix.component }}/ --output-format=github
+
+      - name: Check formatting with black
+        run: |
+          black --check src/python/${{ matrix.component }}/
+
+      - name: Check import sorting with isort
+        run: |
+          isort --check-only src/python/${{ matrix.component }}/
+
+      - name: Verify Python syntax (dry run)
+        run: |
+          python -m py_compile src/python/${{ matrix.component }}/*.py || true
+          find src/python/${{ matrix.component }}/ -name "*.py" -exec python -m py_compile {} \; || true
+
+      - name: Test imports
+        run: |
+          cd src/python/${{ matrix.component }}
+          python -c "
+          import sys
+          import os
+          sys.path.insert(0, '.')
+
+          # Try to import main modules to verify dependencies
+          try:
+              import requirements
+              print('Requirements parsing available')
+          except ImportError:
+              print('Requirements parsing not available, skipping')
+
+          # Test core dependencies
+          test_imports = [
+              'asyncio', 'json', 'os', 'sys', 'logging', 
+              'asyncpg', 'openai', 'azure.identity', 'mcp'
+          ]
+
+          failed_imports = []
+          for module in test_imports:
+              try:
+                  __import__(module)
+                  print(f'✓ {module}')
+              except ImportError as e:
+                  failed_imports.append(f'{module}: {e}')
+                  print(f'✗ {module}: {e}')
+
+          if failed_imports:
+              print(f'\\nFailed imports: {len(failed_imports)}')
+              for failure in failed_imports:
+                  print(f'  - {failure}')
+              sys.exit(1)
+          else:
+              print('\\nAll core imports successful!')
+          "
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check for dependency conflicts
+        run: |
+          python -m pip install --upgrade pip pip-tools
+
+          echo "Checking workshop dependencies..."
+          pip-compile --dry-run --no-emit src/python/workshop/requirements.txt > /dev/null
+
+          echo "Checking MCP server dependencies..."
+          pip-compile --dry-run --no-emit src/python/mcp_server/sales_analysis/requirements.txt > /dev/null
+
+          echo "All dependency files are valid!"

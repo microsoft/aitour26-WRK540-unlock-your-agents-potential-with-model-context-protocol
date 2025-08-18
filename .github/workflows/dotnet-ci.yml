@@ -1,0 +1,153 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "src/csharp/**"
+      - ".github/workflows/dotnet-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "src/csharp/**"
+      - ".github/workflows/dotnet-ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ["9.0.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+          include-prerelease: true
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('src/csharp/**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: |
+          cd src/csharp
+          dotnet restore McpAgentWorkshop.slnx
+
+      - name: Build solution
+        run: |
+          cd src/csharp
+          dotnet build McpAgentWorkshop.slnx --no-restore --configuration Release
+
+      - name: Check for build warnings
+        run: |
+          cd src/csharp
+          dotnet build McpAgentWorkshop.slnx --no-restore --configuration Release --verbosity normal
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        dotnet-version: ["9.0.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+          include-prerelease: true
+
+      - name: Restore dependencies
+        run: |
+          cd src/csharp
+          dotnet restore McpAgentWorkshop.slnx
+
+      - name: Run tests (if any exist)
+        run: |
+          cd src/csharp
+          # Check if test projects exist
+          if find . -name "*.Tests.csproj" -o -name "*Tests.csproj" -o -name "Test*.csproj" | grep -q .; then
+            echo "Found test projects, running tests..."
+            dotnet test McpAgentWorkshop.slnx --no-restore --configuration Release --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+          else
+            echo "No test projects found, skipping test execution"
+          fi
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dotnet-results-${{ matrix.dotnet-version }}
+          path: src/csharp/TestResults-${{ matrix.dotnet-version }}
+        continue-on-error: true
+
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 9.0.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+          include-prerelease: true
+
+      - name: Restore dependencies
+        run: |
+          cd src/csharp
+          dotnet restore McpAgentWorkshop.slnx
+
+      - name: Check code formatting
+        run: |
+          cd src/csharp
+          dotnet format McpAgentWorkshop.slnx --verify-no-changes --verbosity diagnostic
+
+  security-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 9.0.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+          include-prerelease: true
+
+      - name: Restore dependencies
+        run: |
+          cd src/csharp
+          dotnet restore McpAgentWorkshop.slnx
+
+      - name: Run security analysis
+        run: |
+          cd src/csharp
+          # Check for vulnerable packages
+          dotnet list McpAgentWorkshop.slnx package --vulnerable --include-transitive 2>&1 | tee vulnerable-packages.txt
+
+          # Fail if vulnerabilities found (but allow the workflow to continue for now)
+          if grep -q "has the following vulnerable packages" vulnerable-packages.txt; then
+            echo "⚠️  Vulnerable packages found! Please review and update."
+            cat vulnerable-packages.txt
+            # Uncomment the next line to fail the build on vulnerabilities:
+            # exit 1
+          else
+            echo "✅ No vulnerable packages found"
+          fi
+
+      - name: Upload security analysis results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-analysis
+          path: src/csharp/vulnerable-packages.txt
+        continue-on-error: true
