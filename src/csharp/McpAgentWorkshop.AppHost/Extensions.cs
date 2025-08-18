@@ -69,7 +69,11 @@ public static class Extensions
         return builder.AddPythonApp(name, Path.Combine(sourceFolder, "shared", "webapp"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
             .WithHttpEndpoint(env: "PORT")
             .WithOtlpExporter()
-            .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true");
+            .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
+            .WithUrlForEndpoint("http", annotations =>
+            {
+                annotations.DisplayText = "Workshop Frontend";
+            });
     }
 
     public static IResourceBuilder<T> WithDevTunnelEnvironmentVariable<T>(
