@@ -117,7 +117,7 @@ jobs:
           python -m pip install --upgrade pip pip-tools
 
           echo "Checking requirements.lock.txt..."
-          pip-compile --dry-run --no-emit requirements.in > /dev/null
+          pip-compile --dry-run --no-emit-url requirements.in > /dev/null
 
           echo "Verifying requirements.lock.txt can be installed..."
           pip install --dry-run -r requirements.lock.txt
