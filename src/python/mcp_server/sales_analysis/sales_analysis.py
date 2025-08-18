@@ -48,7 +48,7 @@ class AppContext:
 
 
 @asynccontextmanager
-async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
+async def app_lifespan() -> AsyncIterator[AppContext]:
     """Manage application lifecycle with type-safe context"""
 
     db = PostgreSQLSchemaProvider()
