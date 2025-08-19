@@ -1,0 +1,269 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "components_appi_name": {
+            "type": "String"
+        },
+        "accounts_fdy_name": {
+            "type": "String"
+        },
+        "flexibleServers_pg_name": {
+            "type": "String"
+        },
+        "workspaces_law_appi_name": {
+            "type": "String"
+        },
+        "administratorLoginPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "Password for the PostgreSQL administrator login"
+            }
+        },
+        "projectName": {
+            "type": "String",
+            "metadata": {
+                "description": "Name of the AI Foundry project"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2025-06-01",
+            "name": "[parameters('accounts_fdy_name')]",
+            "location": "westus",
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "AIServices",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "apiProperties": {},
+                "customSubDomainName": "[parameters('accounts_fdy_name')]",
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "virtualNetworkRules": [],
+                    "ipRules": []
+                },
+                "allowProjectManagement": true,
+                "defaultProject": "[parameters('projectName')]",
+                "associatedProjects": [
+                    "[parameters('projectName')]"
+                ],
+                "publicNetworkAccess": "Enabled",
+                "disableLocalAuth": true
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+            "apiVersion": "2025-01-01-preview",
+            "name": "[parameters('flexibleServers_pg_name')]",
+            "location": "West US",
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "sku": {
+                "name": "Standard_B1ms",
+                "tier": "Burstable"
+            },
+            "properties": {
+                "replica": {
+                    "role": "Primary"
+                },
+                "storage": {
+                    "iops": 120,
+                    "tier": "P4",
+                    "storageSizeGB": 32,
+                    "autoGrow": "Disabled"
+                },
+                "network": {
+                    "publicNetworkAccess": "Enabled"
+                },
+                "dataEncryption": {
+                    "type": "SystemManaged"
+                },
+                "authConfig": {
+                    "activeDirectoryAuth": "Disabled",
+                    "passwordAuth": "Enabled"
+                },
+                "version": "17",
+                "administratorLogin": "azureuser",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "backup": {
+                    "backupRetentionDays": 7,
+                    "geoRedundantBackup": "Disabled"
+                },
+                "highAvailability": {
+                    "mode": "Disabled"
+                },
+                "maintenanceWindow": {
+                    "customWindow": "Disabled",
+                    "dayOfWeek": 0,
+                    "startHour": 0,
+                    "startMinute": 0
+                },
+                "replicationRole": "Primary"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers/configurations",
+            "apiVersion": "2025-01-01-preview",
+            "name": "[concat(parameters('flexibleServers_pg_name'), '/azure.extensions')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_pg_name'))]"
+            ],
+            "properties": {
+                "value": "vector",
+                "source": "user-override"
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2025-02-01",
+            "name": "[parameters('workspaces_law_appi_name')]",
+            "location": "westus",
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "properties": {
+                "sku": {
+                    "name": "PerGB2018"
+                },
+                "retentionInDays": 30,
+                "features": {
+                    "legacy": 0,
+                    "searchVersion": 1,
+                    "enableLogAccessUsingOnlyResourcePermissions": true
+                },
+                "workspaceCapping": {
+                    "dailyQuotaGb": -1
+                },
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts/deployments",
+            "apiVersion": "2025-06-01",
+            "name": "[concat(parameters('accounts_fdy_name'), '/gpt-4o-mini')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_fdy_name'))]"
+            ],
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "sku": {
+                "name": "GlobalStandard",
+                "capacity": 120
+            },
+            "properties": {
+                "model": {
+                    "format": "OpenAI",
+                    "name": "gpt-4o-mini",
+                    "version": "2024-07-18"
+                },
+                "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+                "currentCapacity": 120
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts/deployments",
+            "apiVersion": "2025-06-01",
+            "name": "[concat(parameters('accounts_fdy_name'), '/text-embedding-3-small')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_fdy_name'))]",
+                "[resourceId('Microsoft.CognitiveServices/accounts/deployments', parameters('accounts_fdy_name'), 'gpt-4o-mini')]"
+            ],
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "sku": {
+                "name": "GlobalStandard",
+                "capacity": 50
+            },
+            "properties": {
+                "model": {
+                    "format": "OpenAI",
+                    "name": "text-embedding-3-small",
+                    "version": "1"
+                },
+                "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+                "currentCapacity": 50
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts/projects",
+            "apiVersion": "2025-06-01",
+            "name": "[concat(parameters('accounts_fdy_name'), '/', parameters('projectName'))]",
+            "location": "westus",
+            "dependsOn": [
+                "[resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_fdy_name'))]",
+                "[resourceId('Microsoft.CognitiveServices/accounts/deployments', parameters('accounts_fdy_name'), 'gpt-4o-mini')]",
+                "[resourceId('Microsoft.CognitiveServices/accounts/deployments', parameters('accounts_fdy_name'), 'text-embedding-3-small')]"
+            ],
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "kind": "AIServices",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Project resources required for the Zava Agent Workshop.",
+                "displayName": "Agents standard project resource"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers/advancedThreatProtectionSettings",
+            "apiVersion": "2025-01-01-preview",
+            "name": "[concat(parameters('flexibleServers_pg_name'), '/Default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_pg_name'))]"
+            ],
+            "properties": {
+                "state": "Disabled"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+            "apiVersion": "2025-01-01-preview",
+            "name": "[concat(parameters('flexibleServers_pg_name'), '/allow-all-azure-internal-IPs')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_pg_name'))]",
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/advancedThreatProtectionSettings', parameters('flexibleServers_pg_name'), 'Default')]"
+            ],
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+            }
+        },
+        {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2020-02-02",
+            "name": "[parameters('components_appi_name')]",
+            "location": "westus",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaces_law_appi_name'))]"
+            ],
+            "tags": {
+                "source": "Azure AI Foundry Agents Service lab"
+            },
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web",
+                "RetentionInDays": 90,
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaces_law_appi_name'))]",
+                "IngestionMode": "LogAnalytics",
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        }
+    ]
+}

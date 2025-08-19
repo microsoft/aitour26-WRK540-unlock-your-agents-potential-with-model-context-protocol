@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "components_appi_name": {
+            "value": "appi-zava-agent-wks-kit"
+        },
+        "accounts_fdy_name": {
+            "value": "fdy-zava-agent-wks-kit"
+        },
+        "flexibleServers_pg_name": {
+            "value": "pg-zava-agent-wks-kit"
+        },
+        "workspaces_law_appi_name": {
+            "value": "law-appi-zava-agent-wks-kit"
+        },
+        "administratorLoginPassword": {
+            "value": "TempPassword123!"
+        },
+        "projectName": {
+            "value": "prj-zava-agent-wks-glov"
+        }
+    }
+}
