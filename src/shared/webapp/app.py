@@ -116,7 +116,7 @@ class WebApp:
             logging.error(f"Error processing file {file.filename}: {e}")
             return {"error": f"Error processing file: {e!s}"}
 
-    async def stream_chat(self, message: str = "", session_id: str | None = None) -> StreamingResponse:
+    async def stream_chat(self, message: str = "", session_id: str | None = None, rls_user_id: str | None = None) -> StreamingResponse:
         """Stream chat responses by proxying to the agent service."""
         if not message.strip():
             return StreamingResponse(
@@ -124,11 +124,18 @@ class WebApp:
                 media_type="text/event-stream",
             )
 
+        # Validate RLS user ID is provided
+        if not rls_user_id:
+            return StreamingResponse(
+                iter([f"data: {json.dumps({'error': 'RLS User ID is required'})}\n\n"]),
+                media_type="text/event-stream",
+            )
+
         # Get or create session - use provided session_id or default
         session_id = session_id or "default"
 
         return StreamingResponse(
-            self._generate_stream(message, session_id),
+            self._generate_stream(message, session_id, rls_user_id),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
@@ -139,12 +146,16 @@ class WebApp:
             },
         )
 
-    async def _generate_stream(self, message: str, session_id: str) -> AsyncGenerator[str, None]:
+    async def _generate_stream(self, message: str, session_id: str, rls_user_id: str) -> AsyncGenerator[str, None]:
         """Generate streaming response by proxying to agent service."""
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 # Make request to agent service
-                request_data = {"message": message, "session_id": session_id}
+                request_data = {
+                    "message": message, 
+                    "session_id": session_id,
+                    "rls_user_id": rls_user_id
+                }
 
                 async with client.stream(
                     "POST",
@@ -240,51 +251,26 @@ class WebApp:
             raise HTTPException(status_code=500, detail="Error retrieving file from agent service") from err
 
     async def set_rls_user(self, rls_user_id: str = Form(...)) -> Dict:
-        """Set the RLS user ID for the agent service."""
+        """Set the RLS user ID for the session (stored locally for frontend)."""
         try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.post(
-                    f"{AGENT_SERVICE_URL}/agent/rls-user",
-                    json={"id": rls_user_id, "name": rls_users.get(rls_user_id)},
-                )
-
-                if response.status_code == 200:
-                    result = response.json()
-                    return {
-                        "status": "success",
-                        "message": result.get("message", "RLS user ID updated successfully"),
-                        "rls_user_id": result.get("rls_user_id"),
-                    }
-                error_detail = "Failed to update RLS user ID"
-                try:
-                    error_data = response.json()
-                    error_detail = error_data.get("error", error_detail)
-                except:
-                    pass
-                return {"status": "error", "message": f"Agent service error: {error_detail}"}
-        except httpx.RequestError as e:
-            logger.error("Connection error to agent service: %s", e)
-            return {"status": "error", "message": f"Connection error to agent service: {e!s}"}
+            # Validate that the RLS user ID is in our known list
+            if rls_user_id not in rls_users:
+                return {"status": "error", "message": "Invalid RLS User ID"}
+            
+            # Store in session/memory - in a real app you might use sessions or a database
+            # For now, we'll just validate it exists and let the frontend handle the state
+            user_name = rls_users[rls_user_id]
+            return {"status": "success", "message": f"RLS User set to {user_name}", "rls_user_id": rls_user_id}
+            
         except Exception as e:
             logger.error("Error setting RLS user ID: %s", e)
             return {"status": "error", "message": f"Error setting RLS user ID: {e!s}"}
 
     async def get_rls_user(self) -> Dict:
-        """Get the current RLS user ID from the agent service."""
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.get(f"{AGENT_SERVICE_URL}/agent/rls-user")
-
-                if response.status_code == 200:
-                    result = response.json()
-                    return {"status": "success", "rls_user_id": result.get("rls_user_id")}
-                return {"status": "error", "message": f"Agent service error: {response.status_code}"}
-        except httpx.RequestError as e:
-            logger.error("Connection error to agent service: %s", e)
-            return {"status": "error", "message": f"Connection error to agent service: {e!s}"}
-        except Exception as e:
-            logger.error("Error getting RLS user ID: %s", e)
-            return {"status": "error", "message": f"Error getting RLS user ID: {e!s}"}
+        """Get the default RLS user ID (since we no longer maintain server-side state)."""
+        # Return the default/first user as a fallback
+        default_user_id = "00000000-0000-0000-0000-000000000000"
+        return {"status": "success", "rls_user_id": default_user_id}
 
     async def get_rls_users(self) -> Dict:
         """Get the list of available RLS users (placeholder implementation)."""

@@ -12,13 +12,11 @@ public class AgentService(
     ILogger<AgentService> logger) : IAsyncDisposable
 {
     private PersistentAgent? persistentAgent;
-    private readonly IDictionary<string, PersistentAgent> agentsByRlsUserId = new Dictionary<string, PersistentAgent>();
     private readonly IDictionary<string, PersistentAgentThread> sessionThreads = new Dictionary<string, PersistentAgentThread>();
     private readonly SemaphoreSlim sessionLock = new(1, 1);
     private readonly SemaphoreSlim agentLock = new(1, 1);
     private const string AgentName = "Zava DIY Sales Analysis Agent";
     private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
-    private string currentRlsUserId = "00000000-0000-0000-0000-000000000000";
 
     private readonly string sharedPath = Path.Combine(hostEnvironment.ContentRootPath, "..", "..", "shared");
 
@@ -31,9 +29,9 @@ public class AgentService(
             await persistentAgentsClient.Threads.DeleteThreadAsync(thread.Id);
         }
 
-        foreach (var agent in agentsByRlsUserId.Values)
+        if (persistentAgent is not null)
         {
-            await persistentAgentsClient.Administration.DeleteAgentAsync(agent.Id);
+            await persistentAgentsClient.Administration.DeleteAgentAsync(persistentAgent.Id);
         }
 
         sessionLock.Dispose();
@@ -44,69 +42,32 @@ public class AgentService(
     {
         logger.LogInformation("Initialising agent service...");
 
-        // Initialize with default RLS user ID
-        await GetOrCreateAgentForRlsUserAsync(currentRlsUserId, "Head Office");
-        persistentAgent = agentsByRlsUserId[currentRlsUserId];
+        // Create or find the single agent
+        persistentAgent = await GetOrCreateAgentAsync();
     }
 
-    public async Task<string> SetRlsUserIdAsync(string rlsUserId, string rlsUserName)
+
+
+    private async Task<PersistentAgent> GetOrCreateAgentAsync()
     {
-        if (string.IsNullOrWhiteSpace(rlsUserId))
-        {
-            throw new ArgumentException("RLS User ID cannot be empty", nameof(rlsUserId));
-        }
-
-        await agentLock.WaitAsync();
-        try
-        {
-            currentRlsUserId = rlsUserId;
-            await GetOrCreateAgentForRlsUserAsync(rlsUserId, rlsUserName);
-            persistentAgent = agentsByRlsUserId[rlsUserId];
-
-            logger.LogInformation("Switched to agent for RLS User ID: {RlsUserId}", rlsUserId);
-            return $"Successfully switched to agent for RLS User ID: {rlsUserId}";
-        }
-        finally
-        {
-            agentLock.Release();
-        }
-    }
-
-    public string GetCurrentRlsUserId()
-    {
-        return currentRlsUserId;
-    }
-
-    private async Task<PersistentAgent> GetOrCreateAgentForRlsUserAsync(string rlsUserId, string rlsUserName)
-    {
-        if (agentsByRlsUserId.TryGetValue(rlsUserId, out var existingAgent))
-        {
-            return existingAgent;
-        }
-
         var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
-        var targetAgentName = $"{AgentName} - {rlsUserName}";
 
         await foreach (var agent in agentsList)
         {
-            if (agent.Name == targetAgentName)
+            if (agent.Name == AgentName)
             {
                 logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
-                agentsByRlsUserId[rlsUserId] = agent;
                 return agent;
             }
         }
 
         // Create new agent if not found
-        var newAgent = await CreateAgentAsync(rlsUserId, rlsUserName);
-        agentsByRlsUserId[rlsUserId] = newAgent;
-        return newAgent;
+        return await CreateAgentAsync();
     }
 
-    private async Task<PersistentAgent> CreateAgentAsync(string rlsUserId, string rlsUserName)
+    private async Task<PersistentAgent> CreateAgentAsync()
     {
-        var agentName = $"{AgentName} - {rlsUserName}";
-        logger.LogInformation("Creating new agent: {AgentName}", agentName);
+        logger.LogInformation("Creating new agent: {AgentName}", AgentName);
 
         var instructions = Path.Combine(sharedPath, "instructions", InstructionsFile);
 
@@ -125,20 +86,14 @@ public class AgentService(
         devtunnelUrl = devtunnelUrl.EndsWith('/') ? devtunnelUrl : devtunnelUrl + "/";
 
         var mcpTool = new MCPToolDefinition("ZavaSalesAnalysisMcpServer", devtunnelUrl + "mcp");
-        var mcpToolResource = new MCPToolResource(mcpTool.ServerLabel, new Dictionary<string, string>
-        {
-            { "x-rls-user-id", rlsUserId }
-        });
-        var toolResources = new ToolResources();
-        toolResources.Mcp.Add(mcpToolResource);
 
+        // Create agent without tool resources - we'll set them per run
         PersistentAgent pa = await persistentAgentsClient.Administration.CreateAgentAsync(
-                name: agentName,
+                name: AgentName,
                 model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
                 instructions: instructionsContent,
                 temperature: 0.1f,
-                tools: [mcpTool, new CodeInterpreterToolDefinition()],
-                toolResources: toolResources);
+                tools: [mcpTool, new CodeInterpreterToolDefinition()]);
 
         logger.LogInformation("Agent created with ID: {AgentId}", pa.Id);
 
@@ -276,6 +231,12 @@ public class AgentService(
             yield break;
         }
 
+        if (string.IsNullOrWhiteSpace(request.RlsUserId))
+        {
+            yield return new ChatErrorResponse("RLS User ID is required");
+            yield break;
+        }
+
         var sessionId = request.SessionId ?? "default";
 
         // Create a span for this chat request  
@@ -301,6 +262,7 @@ public class AgentService(
             activity?.SetTag("agent_id", persistentAgent!.Id);
             activity?.SetTag("thread_id", sessionThread.Id);
             activity?.SetTag("session_id", sessionId);
+            activity?.SetTag("rls_user_id", request.RlsUserId);
 
             // Create message in thread  
             await persistentAgentsClient.Messages.CreateMessageAsync(
@@ -309,15 +271,30 @@ public class AgentService(
                 content: request.Message,
                 cancellationToken: cancellationToken);
 
-            // Start streaming run (equivalent to the Python run_stream() function)
+            // Create tool resources for this RLS user
+            var mcpToolResource = new MCPToolResource("ZavaSalesAnalysisMcpServer", new Dictionary<string, string>
+            {
+                { "x-rls-user-id", request.RlsUserId }
+            });
+            var toolResources = new ToolResources();
+            toolResources.Mcp.Add(mcpToolResource);
+
+            // Create run options with dynamic tool resources
+            var runOptions = new CreateRunStreamingOptions
+            {
+                MaxCompletionTokens = 2 * 10240,
+                MaxPromptTokens = 6 * 10240,
+                Temperature = 0.1f,
+                TopP = 0.1f,
+                TruncationStrategy = new Truncation(TruncationStrategy.LastMessages) { LastMessages = 5 },
+                ToolResources = toolResources
+            };
+
+            // Start streaming run with dynamic tool resources
             streamingUpdates = persistentAgentsClient.Runs.CreateRunStreamingAsync(
                 threadId: sessionThread.Id,
                 agentId: persistentAgent.Id,
-                maxCompletionTokens: 2 * 10240,
-                maxPromptTokens: 6 * 10240,
-                temperature: 0.1f,
-                topP: 0.1f,
-                truncationStrategy: new Truncation(TruncationStrategy.LastMessages) { LastMessages = 5 },
+                options: runOptions,
                 cancellationToken: cancellationToken
             );
         }

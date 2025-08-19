@@ -17,6 +17,7 @@ const chatState = {
   uploadedFile: null,
   serviceReady: false,
   sessionId: null,
+  currentRlsUserId: null,
 };
 
 // Generate or retrieve session ID
@@ -130,7 +131,37 @@ function showServiceNotReadyMessage() {
 async function startServiceMonitoring() {
   showServiceNotReadyMessage();
   await checkServiceStatus();
-  // Load current user info once service is ready
+  // Get current RLS user ID
+async function getCurrentRlsUserId() {
+  // Check if we have it cached first
+  if (chatState.currentRlsUserId) {
+    return chatState.currentRlsUserId;
+  }
+  
+  // Try to get from select dropdown if settings are open
+  if (rlsUserSelect && rlsUserSelect.value) {
+    chatState.currentRlsUserId = rlsUserSelect.value;
+    return rlsUserSelect.value;
+  }
+  
+  // Fall back to server default
+  try {
+    const response = await fetch("/agent/rls-user");
+    const data = await response.json();
+    
+    if (data.status === "success" && data.rls_user_id) {
+      chatState.currentRlsUserId = data.rls_user_id;
+      return data.rls_user_id;
+    }
+  } catch (error) {
+    console.error("Error getting current RLS user:", error);
+  }
+  
+  // Final fallback to default Head Office user
+  const defaultUserId = "00000000-0000-0000-0000-000000000000";
+  chatState.currentRlsUserId = defaultUserId;
+  return defaultUserId;
+}
   if (chatState.serviceReady) {
     await updateCurrentUserDisplay();
   }
@@ -369,6 +400,13 @@ async function sendMessage() {
   // Check if we have a message or a file
   if ((!message && !chatState.uploadedFile) || chatState.isStreaming) return;
 
+  // Get current RLS user ID
+  const rlsUserId = await getCurrentRlsUserId();
+  if (!rlsUserId) {
+    addMessage("❌ Error: No RLS user selected. Please select a user in settings.", false);
+    return;
+  }
+
   // Disable input
   chatState.isStreaming = true;
   sendBtn.disabled = true;
@@ -445,7 +483,8 @@ async function sendMessage() {
       await handleStreamingResponse(
         finalMessage,
         originalSendText,
-        typingIndicator
+        typingIndicator,
+        rlsUserId
       );
 
       // Success, exit loop
@@ -486,13 +525,14 @@ async function sendMessage() {
 }
 
 // Handle streaming response with optimized rendering
-function handleStreamingResponse(message, originalSendText, typingIndicator) {
+function handleStreamingResponse(message, originalSendText, typingIndicator, rlsUserId) {
   return new Promise((resolve, reject) => {
     const eventSource = new EventSource(
       "/chat/stream?" +
         new URLSearchParams({
           message: message,
           session_id: chatState.sessionId,
+          rls_user_id: rlsUserId,
         })
     );
 
@@ -880,6 +920,9 @@ async function saveRlsUser() {
 
     if (data.status === "success") {
       showStatusMessage(data.message || "RLS user updated successfully", "success");
+      
+      // Update cached RLS user ID
+      chatState.currentRlsUserId = selectedUserId;
       
       // Clear current chat session since we're switching agents
       await clearChatSession();
