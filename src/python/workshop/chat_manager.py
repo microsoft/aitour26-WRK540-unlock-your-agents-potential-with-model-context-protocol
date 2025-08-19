@@ -44,6 +44,7 @@ class AgentManagerProtocol(Protocol):
     agents_by_rls_user_id: Dict[str, Agent]
     current_rls_user_id: str
     application_insights_connection_string: str
+    toolset: AsyncToolSet
 
     @property
     def is_initialized(self) -> bool: ...
@@ -167,6 +168,8 @@ class ChatManager:
                         last_messages=5,
                     )
 
+                    toolset = cast(AsyncToolSet, self.agent_manager.toolset)
+
                     try:
                         async with await agents_client.runs.stream(
                             thread_id=thread.id,
@@ -176,6 +179,7 @@ class ChatManager:
                             max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
+                            tool_resources=toolset.resources,
                             truncation_strategy=truncation_strategy,
                         ) as stream:
                             await stream.until_done()

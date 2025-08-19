@@ -48,19 +48,19 @@ trace_scenario = "Zava Agent Initialization"
 class AgentManager:
     """Manages Azure AI Agent lifecycle and dependencies."""
 
-    async def _setup_agent_tools(self, rls_user_id: str) -> AsyncToolSet:
+    async def _setup_agent_tools(self, rls_user_id: str) -> None:
         """Setup MCP tools and code interpreter for a specific RLS user."""
-        toolset = AsyncToolSet()
+        self.toolset = AsyncToolSet()
 
         # Add code interpreter tool
         code_interpreter = CodeInterpreterTool()
-        toolset.add(code_interpreter)
+        self.toolset.add(code_interpreter)
 
         logger.info("Setting up Agent tools for RLS user: %s", rls_user_id)
         if Config.MAP_MCP_FUNCTIONS:
             mcp_client = MCPClient.create_default(rls_user_id)
             function_tools = await mcp_client.build_function_tools()
-            toolset.add(function_tools)
+            self.toolset.add(function_tools)
         else:
             mcp_tools = McpTool(
                 server_label="ZavaSalesAnalysisMcpServer",
@@ -76,9 +76,7 @@ class AgentManager:
             mcp_tools.update_headers("x-rls-user-id", rls_user_id)
             # Disabled as specified in allowed tools
             mcp_tools.set_approval_mode("never")
-            toolset.add(mcp_tools)
-
-        return toolset
+            self.toolset.add(mcp_tools)
 
     def __init__(self) -> None:
         self.utilities = Utilities()
@@ -123,7 +121,7 @@ class AgentManager:
         instructions = self.utilities.load_instructions(INSTRUCTIONS_FILE)
 
         # Setup tools for this specific RLS user
-        toolset = await self._setup_agent_tools(rls_user_id)
+        await self._setup_agent_tools(rls_user_id)
 
         with self.tracer.start_as_current_span(trace_scenario):
             # Create agent
@@ -131,14 +129,14 @@ class AgentManager:
                 model=Config.GPT_MODEL_DEPLOYMENT_NAME,
                 name=agent_name,
                 instructions=instructions,
-                toolset=toolset,
+                toolset=self.toolset,
                 temperature=Config.TEMPERATURE,
             )
             logger.info("Created agent, ID: %s", agent.id)
 
             # Enable auto function calls
-            if toolset.definitions and Config.MAP_MCP_FUNCTIONS:
-                self.agents_client.enable_auto_function_calls(tools=toolset)
+            if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
+                self.agents_client.enable_auto_function_calls(tools=self.toolset)
 
         return agent
 
