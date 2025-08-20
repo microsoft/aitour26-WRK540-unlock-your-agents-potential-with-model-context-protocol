@@ -7,15 +7,20 @@
     This script sets up a PostgreSQL database on Azure with the zava schema and data.
 .PARAMETER UniqueSuffix
     The unique suffix to use for Azure resource naming
+.PARAMETER AzurePgPassword
+    The password for the PostgreSQL database connection
 .EXAMPLE
-    ./init-db-azure.ps1 -UniqueSuffix "myunique123"
+    ./init-db-azure.ps1 -UniqueSuffix "myunique123" -AzurePgPassword "YourPassword123!"
 .EXAMPLE
-    $env:UNIQUE_SUFFIX = "myunique123"; ./init-db-azure.ps1
+    $env:UNIQUE_SUFFIX = "myunique123"; $env:AZURE_PG_PASSWORD = "YourPassword123!"; ./init-db-azure.ps1
 #>
 
 param(
     [Parameter(Position = 0)]
-    [string]$UniqueSuffix
+    [string]$UniqueSuffix,
+    
+    [Parameter(Position = 1)]
+    [string]$AzurePgPassword
 )
 
 # Set error action preference to stop on any error
@@ -34,8 +39,24 @@ elseif ($env:UNIQUE_SUFFIX) {
 }
 else {
     Write-Host "❌ UNIQUE_SUFFIX is required" -ForegroundColor Red
-    Write-Host "💡 Usage: ./init-db-azure.ps1 -UniqueSuffix your_suffix" -ForegroundColor Cyan
+    Write-Host "💡 Usage: ./init-db-azure.ps1 -UniqueSuffix your_suffix [-AzurePgPassword your_password]" -ForegroundColor Cyan
     Write-Host "💡 Or set environment variable: `$env:UNIQUE_SUFFIX = 'your_suffix'" -ForegroundColor Cyan
+    exit 1
+}
+
+# Check if AZURE_PG_PASSWORD is provided as parameter or environment variable
+if ($AzurePgPassword) {
+    $env:AZURE_PG_PASSWORD = $AzurePgPassword
+    Write-Host "🔑 Using AZURE_PG_PASSWORD from parameter:  $AzurePgPassword" -ForegroundColor Yellow
+}
+elseif ($env:AZURE_PG_PASSWORD) {
+    $AzurePgPassword = $env:AZURE_PG_PASSWORD
+    Write-Host "🔑 Using AZURE_PG_PASSWORD from environment:  $AzurePgPassword" -ForegroundColor Yellow
+}
+else {
+    Write-Host "❌ AZURE_PG_PASSWORD is required" -ForegroundColor Red
+    Write-Host "💡 Usage: ./init-db-azure.ps1 -UniqueSuffix your_suffix -AzurePgPassword your_password" -ForegroundColor Cyan
+    Write-Host "💡 Or set environment variable: `$env:AZURE_PG_PASSWORD = 'your_password'" -ForegroundColor Cyan
     exit 1
 }
 
@@ -122,19 +143,19 @@ Write-Host "✅ PostgreSQL client tools found: $PsqlVersion" -ForegroundColor Gr
 # Set up Azure PostgreSQL connection parameters using naming convention
 $AzurePgHost = "pg-zava-agent-wks-$UniqueSuffix.postgres.database.azure.com"
 $AzurePgUser = if ($env:AZURE_PG_USER) { $env:AZURE_PG_USER } else { "azureuser" }
-$AzurePgPassword = $env:AZURE_PG_PASSWORD
-$AzurePgDatabase = if ($env:AZURE_PG_DATABASE) { $env:AZURE_PG_DATABASE } else { "postgres" }
+$AzurePgPassword = if ($AzurePgPassword) { $AzurePgPassword } elseif ($env:AZURE_PG_PASSWORD) { $env:AZURE_PG_PASSWORD } else { $null }
+$AzurePgDatabase = if ($env:AZURE_PG_DATABASE) { $env:AZURE_PG_DATABASE } else { "defaultdb" }
 $AzurePgPort = if ($env:AZURE_PG_PORT) { $env:AZURE_PG_PORT } else { "5432" }
 
 Write-Host "📡 Host: $AzurePgHost" -ForegroundColor Yellow
 Write-Host "👤 User: $AzurePgUser" -ForegroundColor Yellow
-Write-Host "🔒 Database: $AzurePgDatabase" -ForegroundColor Yellow
 Write-Host ""
 
 # Validate required parameters
 if (-not $AzurePgPassword) {
-    Write-Host "❌ Error: AZURE_PG_PASSWORD environment variable is required" -ForegroundColor Red
-    Write-Host "💡 Usage: `$env:AZURE_PG_PASSWORD = 'your_password'; ./init-db-azure.ps1" -ForegroundColor Cyan
+    Write-Host "❌ Error: AZURE_PG_PASSWORD is required" -ForegroundColor Red
+    Write-Host "💡 Usage: ./init-db-azure.ps1 -UniqueSuffix your_suffix -AzurePgPassword your_password" -ForegroundColor Cyan
+    Write-Host "💡 Or set environment variable: `$env:AZURE_PG_PASSWORD = 'your_password'" -ForegroundColor Cyan
     exit 1
 }
 
@@ -314,6 +335,10 @@ Write-Host "🔌 Extensions: pgvector" -ForegroundColor Gray
 Write-Host "🔒 SSL: Required" -ForegroundColor Gray
 Write-Host ""
 Write-Host "🔧 Connect using:" -ForegroundColor Cyan
+Write-Host "   Environment variables:" -ForegroundColor Gray
 Write-Host "   `$env:PGHOST = '$AzurePgHost'; `$env:PGPORT = '$AzurePgPort'; `$env:PGUSER = '$AzurePgUser'" -ForegroundColor Gray
 Write-Host "   `$env:PGPASSWORD = '$AzurePgPassword'; `$env:PGDATABASE = 'zava'; `$env:PGSSLMODE = 'require'" -ForegroundColor Gray
 Write-Host "   psql" -ForegroundColor Gray
+Write-Host "" -ForegroundColor Gray
+Write-Host "   PostgreSQL Connection URL (store_manager):" -ForegroundColor Gray
+Write-Host "   postgresql://store_manager:StoreManager123!@$AzurePgHost`:$AzurePgPort/zava?sslmode=require" -ForegroundColor Gray
