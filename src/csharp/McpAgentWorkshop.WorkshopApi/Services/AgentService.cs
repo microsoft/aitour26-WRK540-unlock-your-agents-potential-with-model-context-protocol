@@ -17,7 +17,7 @@ public class AgentService(
     private readonly SemaphoreSlim agentLock = new(1, 1);
     private const string AgentName = "Zava DIY Sales Analysis Agent";
     private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
-
+    private const string ZavaMcpToolLabel = "ZavaSalesAnalysisMcpServer";
     private readonly string sharedPath = Path.Combine(hostEnvironment.ContentRootPath, "..", "..", "shared");
 
     public bool IsAgentAvailable => persistentAgent is not null;
@@ -46,20 +46,18 @@ public class AgentService(
         persistentAgent = await GetOrCreateAgentAsync();
     }
 
-
-
     private async Task<PersistentAgent> GetOrCreateAgentAsync()
     {
-        var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
+        // var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
 
-        await foreach (var agent in agentsList)
-        {
-            if (agent.Name == AgentName)
-            {
-                logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
-                return agent;
-            }
-        }
+        // await foreach (var agent in agentsList)
+        // {
+        //     if (agent.Name == AgentName)
+        //     {
+        //         logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
+        //         return agent;
+        //     }
+        // }
 
         // Create new agent if not found
         return await CreateAgentAsync();
@@ -85,7 +83,7 @@ public class AgentService(
 
         devtunnelUrl = devtunnelUrl.EndsWith('/') ? devtunnelUrl : devtunnelUrl + "/";
 
-        var mcpTool = new MCPToolDefinition("ZavaSalesAnalysisMcpServer", devtunnelUrl + "mcp");
+        var mcpTool = new MCPToolDefinition(ZavaMcpToolLabel, devtunnelUrl + "mcp");
 
         // Create agent without tool resources - we'll set them per run
         PersistentAgent pa = await persistentAgentsClient.Administration.CreateAgentAsync(
@@ -152,7 +150,7 @@ public class AgentService(
         logger.LogInformation("Cleared thread for session {SessionId}", sessionId);
     }
 
-    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update)
+    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update, ToolResources toolResources)
     {
         switch (update.UpdateKind)
         {
@@ -168,12 +166,17 @@ public class AgentService(
                 logger.LogInformation("Approving MCP tool call: {Name}, Arguments: {Arguments}", submitToolApprovalUpdate.Name, submitToolApprovalUpdate.Arguments);
                 List<ToolApproval> toolApprovals = [];
 
-                toolApprovals.Add(new ToolApproval(submitToolApprovalUpdate.ToolCallId, approve: true));
+                ToolApproval toolApproval = PersistentAgentsModelFactory.ToolApproval(
+                    submitToolApprovalUpdate.ToolCallId,
+                    true,
+                    toolResources.Mcp.SelectMany(mcp => mcp.Headers).ToDictionary(h => h.Key, h => h.Value));
+
+                toolApprovals.Add(toolApproval);
 
                 var toolOutputStream = persistentAgentsClient.Runs.SubmitToolOutputsToStreamAsync(submitToolApprovalUpdate, toolOutputs: [], toolApprovals: toolApprovals);
                 await foreach (var toolUpdate in toolOutputStream)
                 {
-                    var response = HandleStreamingUpdateAsync(toolUpdate);
+                    var response = HandleStreamingUpdateAsync(toolUpdate, toolResources);
                     await foreach (var res in response)
                     {
                         yield return res;
@@ -250,6 +253,14 @@ public class AgentService(
         PersistentAgentThread sessionThread;
         AsyncCollectionResult<StreamingUpdate>? streamingUpdates = null;
         string? errorMessage = null;
+        // Create tool resources for this RLS user
+        var mcpToolResource = new MCPToolResource(ZavaMcpToolLabel, new Dictionary<string, string>
+        {
+            { "x-rls-user-id", request.RlsUserId }
+        });
+        var toolResources = new ToolResources();
+        toolResources.Mcp.Add(mcpToolResource);
+
 
         try
         {
@@ -270,14 +281,6 @@ public class AgentService(
                 role: MessageRole.User,
                 content: request.Message,
                 cancellationToken: cancellationToken);
-
-            // Create tool resources for this RLS user
-            var mcpToolResource = new MCPToolResource("ZavaSalesAnalysisMcpServer", new Dictionary<string, string>
-            {
-                { "x-rls-user-id", request.RlsUserId }
-            });
-            var toolResources = new ToolResources();
-            toolResources.Mcp.Add(mcpToolResource);
 
             // Create run options with dynamic tool resources
             var runOptions = new CreateRunStreamingOptions
@@ -312,7 +315,7 @@ public class AgentService(
 
         await foreach (var update in streamingUpdates!)
         {
-            var response = HandleStreamingUpdateAsync(update);
+            var response = HandleStreamingUpdateAsync(update, toolResources);
             await foreach (var res in response)
             {
                 yield return res;
