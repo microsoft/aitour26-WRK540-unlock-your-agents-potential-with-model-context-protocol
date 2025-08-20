@@ -1,6 +1,8 @@
 using Aspire.Hosting.Python;
 using AspireDevTunnels.AppHost.Extensions;
 using AspireDevTunnels.AppHost.Resources;
+using McpAgentWorkshop.AppHost;
+using McpAgentWorkshop.AppHost.Integrations;
 
 namespace Aspire.Hosting;
 
@@ -97,5 +99,11 @@ public static class Extensions
             if (activePort.PortUri is not null)
                 ctx.EnvironmentVariables[variableName] = activePort.PortUri;
         });
+    }
+
+    public static IResourceBuilder<PostgresAccountResource> AddPostgresAccount(this IResourceBuilder<PostgresDatabaseResource> builder, [ResourceName] string accountName, IResourceBuilder<ParameterResource> username, IResourceBuilder<ParameterResource> password)
+    {
+        return builder.ApplicationBuilder.AddResource(new PostgresAccountResource(accountName, builder.Resource, username.Resource, password.Resource))
+            .WithParentRelationship(builder.Resource);
     }
 }
