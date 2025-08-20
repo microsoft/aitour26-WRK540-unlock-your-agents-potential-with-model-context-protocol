@@ -66,8 +66,6 @@ class WebApp:
         self.app.delete("/chat/clear")(self.clear_chat)
         self.app.get("/files/{filename}")(self.serve_file)
         self.app.get("/health")(self.health_check)
-        self.app.post("/agent/rls-user")(self.set_rls_user)
-        self.app.get("/agent/rls-user")(self.get_rls_user)
         self.app.get("/agent/rls-users")(self.get_rls_users)
 
     async def get_chat_page(self) -> HTMLResponse:
@@ -116,7 +114,9 @@ class WebApp:
             logging.error(f"Error processing file {file.filename}: {e}")
             return {"error": f"Error processing file: {e!s}"}
 
-    async def stream_chat(self, message: str = "", session_id: str | None = None, rls_user_id: str | None = None) -> StreamingResponse:
+    async def stream_chat(
+        self, message: str = "", session_id: str | None = None, rls_user_id: str | None = None
+    ) -> StreamingResponse:
         """Stream chat responses by proxying to the agent service."""
         if not message.strip():
             return StreamingResponse(
@@ -151,11 +151,7 @@ class WebApp:
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 # Make request to agent service
-                request_data = {
-                    "message": message, 
-                    "session_id": session_id,
-                    "rls_user_id": rls_user_id
-                }
+                request_data = {"message": message, "session_id": session_id, "rls_user_id": rls_user_id}
 
                 async with client.stream(
                     "POST",
@@ -250,30 +246,8 @@ class WebApp:
             logger.error("Error retrieving file from agent service: %s", err)
             raise HTTPException(status_code=500, detail="Error retrieving file from agent service") from err
 
-    async def set_rls_user(self, rls_user_id: str = Form(...)) -> Dict:
-        """Set the RLS user ID for the session (stored locally for frontend)."""
-        try:
-            # Validate that the RLS user ID is in our known list
-            if rls_user_id not in rls_users:
-                return {"status": "error", "message": "Invalid RLS User ID"}
-            
-            # Store in session/memory - in a real app you might use sessions or a database
-            # For now, we'll just validate it exists and let the frontend handle the state
-            user_name = rls_users[rls_user_id]
-            return {"status": "success", "message": f"RLS User set to {user_name}", "rls_user_id": rls_user_id}
-            
-        except Exception as e:
-            logger.error("Error setting RLS user ID: %s", e)
-            return {"status": "error", "message": f"Error setting RLS user ID: {e!s}"}
-
-    async def get_rls_user(self) -> Dict:
-        """Get the default RLS user ID (since we no longer maintain server-side state)."""
-        # Return the default/first user as a fallback
-        default_user_id = "00000000-0000-0000-0000-000000000000"
-        return {"status": "success", "rls_user_id": default_user_id}
-
     async def get_rls_users(self) -> Dict:
-        """Get the list of available RLS users (placeholder implementation)."""
+        """Get the list of available RLS users."""
         # Convert dictionary to list format expected by frontend
         users_list = [{"id": user_id, "name": name} for user_id, name in rls_users.items()]
         return {"status": "success", "users": users_list}

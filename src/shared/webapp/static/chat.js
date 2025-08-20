@@ -126,42 +126,41 @@ function showServiceNotReadyMessage() {
   messageInput.disabled = true;
   messageInput.placeholder = "Please wait - agent service is starting up...";
 }
-
-// Start service status monitoring
-async function startServiceMonitoring() {
-  showServiceNotReadyMessage();
-  await checkServiceStatus();
-  // Get current RLS user ID
 async function getCurrentRlsUserId() {
   // Check if we have it cached first
   if (chatState.currentRlsUserId) {
     return chatState.currentRlsUserId;
   }
-  
+
+  // Try to load from localStorage
+  const savedRlsUserId = localStorage.getItem("current_rls_user_id");
+  if (savedRlsUserId) {
+    chatState.currentRlsUserId = savedRlsUserId;
+    return savedRlsUserId;
+  }
+
   // Try to get from select dropdown if settings are open
   if (rlsUserSelect && rlsUserSelect.value) {
     chatState.currentRlsUserId = rlsUserSelect.value;
+    // Save to localStorage
+    localStorage.setItem("current_rls_user_id", rlsUserSelect.value);
     return rlsUserSelect.value;
   }
-  
-  // Fall back to server default
-  try {
-    const response = await fetch("/agent/rls-user");
-    const data = await response.json();
-    
-    if (data.status === "success" && data.rls_user_id) {
-      chatState.currentRlsUserId = data.rls_user_id;
-      return data.rls_user_id;
-    }
-  } catch (error) {
-    console.error("Error getting current RLS user:", error);
-  }
-  
+
   // Final fallback to default Head Office user
   const defaultUserId = "00000000-0000-0000-0000-000000000000";
   chatState.currentRlsUserId = defaultUserId;
+  // Save default to localStorage
+  localStorage.setItem("current_rls_user_id", defaultUserId);
   return defaultUserId;
 }
+
+// Start service status monitoring
+async function startServiceMonitoring() {
+  showServiceNotReadyMessage();
+  await checkServiceStatus();
+  await getCurrentRlsUserId();
+
   if (chatState.serviceReady) {
     await updateCurrentUserDisplay();
   }
@@ -403,7 +402,10 @@ async function sendMessage() {
   // Get current RLS user ID
   const rlsUserId = await getCurrentRlsUserId();
   if (!rlsUserId) {
-    addMessage("❌ Error: No RLS user selected. Please select a user in settings.", false);
+    addMessage(
+      "❌ Error: No RLS user selected. Please select a user in settings.",
+      false
+    );
     return;
   }
 
@@ -525,7 +527,12 @@ async function sendMessage() {
 }
 
 // Handle streaming response with optimized rendering
-function handleStreamingResponse(message, originalSendText, typingIndicator, rlsUserId) {
+function handleStreamingResponse(
+  message,
+  originalSendText,
+  typingIndicator,
+  rlsUserId
+) {
   return new Promise((resolve, reject) => {
     const eventSource = new EventSource(
       "/chat/stream?" +
@@ -829,7 +836,7 @@ document.addEventListener("keydown", (event) => {
     closeSettings();
     event.preventDefault();
   }
-  
+
   // Ctrl/Cmd + , to open settings
   if ((event.ctrlKey || event.metaKey) && event.key === ",") {
     openSettings();
@@ -843,12 +850,14 @@ async function openSettings() {
     alert("Please wait - the agent service is still starting up.");
     return;
   }
-  
+
   if (chatState.isStreaming) {
-    alert("Please wait for the current response to finish before accessing settings.");
+    alert(
+      "Please wait for the current response to finish before accessing settings."
+    );
     return;
   }
-  
+
   settingsModal.style.display = "block";
   await loadRlsUsers();
   await loadCurrentRlsUser();
@@ -863,19 +872,15 @@ async function loadRlsUsers() {
   try {
     const response = await fetch("/agent/rls-users");
     const data = await response.json();
-    
-    if (data.status === "success" && data.users) {
-      rlsUserSelect.innerHTML = "";
-      
-      data.users.forEach(user => {
-        const option = document.createElement("option");
-        option.value = user.id;
-        option.textContent = `${user.name} (${user.id})`;
-        rlsUserSelect.appendChild(option);
-      });
-    } else {
-      rlsUserSelect.innerHTML = '<option value="">Error loading users</option>';
-    }
+
+    rlsUserSelect.innerHTML = "";
+
+    data.users.forEach((user) => {
+      const option = document.createElement("option");
+      option.value = user.id;
+      option.textContent = `${user.name} (${user.id})`;
+      rlsUserSelect.appendChild(option);
+    });
   } catch (error) {
     console.error("Error loading RLS users:", error);
     rlsUserSelect.innerHTML = '<option value="">Error loading users</option>';
@@ -884,11 +889,11 @@ async function loadRlsUsers() {
 
 async function loadCurrentRlsUser() {
   try {
-    const response = await fetch("/agent/rls-user");
-    const data = await response.json();
-    
-    if (data.status === "success" && data.rls_user_id) {
-      rlsUserSelect.value = data.rls_user_id;
+    // Use local cached RLS user ID instead of asking server
+    const currentRlsUserId = await getCurrentRlsUserId();
+
+    if (currentRlsUserId) {
+      rlsUserSelect.value = currentRlsUserId;
     }
   } catch (error) {
     console.error("Error loading current RLS user:", error);
@@ -897,7 +902,7 @@ async function loadCurrentRlsUser() {
 
 async function saveRlsUser() {
   const selectedUserId = rlsUserSelect.value;
-  
+
   if (!selectedUserId) {
     showStatusMessage("Please select a user", "error");
     return;
@@ -908,35 +913,38 @@ async function saveRlsUser() {
   hideStatusMessage();
 
   try {
-    const formData = new FormData();
-    formData.append("rls_user_id", selectedUserId);
-    
-    const response = await fetch("/agent/rls-user", {
-      method: "POST",
-      body: formData
-    });
+    // Validate that the selected user ID exists in our list
+    const usersResponse = await fetch("/agent/rls-users");
+    const usersData = await usersResponse.json();
 
-    const data = await response.json();
-
-    if (data.status === "success") {
-      showStatusMessage(data.message || "RLS user updated successfully", "success");
-      
-      // Update cached RLS user ID
-      chatState.currentRlsUserId = selectedUserId;
-      
-      // Clear current chat session since we're switching agents
-      await clearChatSession();
-      
-      setTimeout(() => {
-        closeSettings();
-        // Update current user display
-        updateCurrentUserDisplay();
-        // Optionally show a message to the user about the agent switch
-        addSystemMessage(`Switched to agent for user: ${getSelectedUserName()}`);
-      }, 1500);
-    } else {
-      showStatusMessage(data.message || "Failed to update RLS user", "error");
+    const validUser = usersData.users?.find(
+      (user) => user.id === selectedUserId
+    );
+    if (!validUser) {
+      throw new Error("Invalid RLS user ID selected");
     }
+
+    showStatusMessage(
+      `RLS user updated successfully to ${validUser.name}`,
+      "success"
+    );
+
+    // Update cached RLS user ID
+    chatState.currentRlsUserId = selectedUserId;
+    // Save to localStorage for persistence
+    localStorage.setItem("current_rls_user_id", selectedUserId);
+
+    // Clear current chat session since we're switching agents
+    await clearChatSession();
+
+    // Update current user display immediately
+    await updateCurrentUserDisplay();
+
+    setTimeout(() => {
+      closeSettings();
+      // Optionally show a message to the user about the agent switch
+      addSystemMessage(`Switched to agent for user: ${validUser.name}`);
+    }, 1500);
   } catch (error) {
     console.error("Error saving RLS user:", error);
     showStatusMessage("Error saving RLS user: " + error.message, "error");
@@ -969,11 +977,12 @@ async function clearChatSession() {
 
     // Clear the messages display
     messagesDiv.innerHTML = "";
-    
+
     // Clear any uploaded file state
     chatState.uploadedFile = null;
     fileInput.value = "";
-    messageInput.placeholder = "Type your message or type help for some suggestions....";
+    messageInput.placeholder =
+      "Type your message or type help for some suggestions....";
   } catch (error) {
     console.error("Error clearing chat session:", error);
   }
@@ -989,7 +998,7 @@ function addSystemMessage(message) {
   systemDiv.style.fontStyle = "italic";
   messagesDiv.appendChild(systemDiv);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  
+
   // Remove system message after 5 seconds
   setTimeout(() => {
     if (systemDiv.parentNode) {
@@ -1001,23 +1010,21 @@ function addSystemMessage(message) {
 // Update current user display
 async function updateCurrentUserDisplay() {
   try {
-    const response = await fetch("/agent/rls-user");
-    const data = await response.json();
-    
-    if (data.status === "success" && data.rls_user_id) {
-      // Get user name from the users list
-      const usersResponse = await fetch("/agent/rls-users");
-      const usersData = await usersResponse.json();
-      
-      if (usersData.status === "success" && usersData.users) {
-        const currentUser = usersData.users.find(user => user.id === data.rls_user_id);
-        const displayName = currentUser ? currentUser.name : "Unknown User";
-        currentUserDiv.textContent = `Current User: ${displayName}`;
-      } else {
-        currentUserDiv.textContent = `Current User: ${data.rls_user_id}`;
-      }
+    // Use local cached RLS user ID instead of asking server
+    const currentRlsUserId = await getCurrentRlsUserId();
+
+    // Get user name from the users list
+    const usersResponse = await fetch("/agent/rls-users");
+    const usersData = await usersResponse.json();
+
+    if (usersData.status === "success" && usersData.users) {
+      const currentUser = usersData.users.find(
+        (user) => user.id === currentRlsUserId
+      );
+      const displayName = currentUser ? currentUser.name : "Unknown User";
+      currentUserDiv.textContent = `Current User: ${displayName}`;
     } else {
-      currentUserDiv.textContent = "Current User: Unknown";
+      currentUserDiv.textContent = `Current User: ${currentRlsUserId}`;
     }
   } catch (error) {
     console.error("Error loading current user:", error);
