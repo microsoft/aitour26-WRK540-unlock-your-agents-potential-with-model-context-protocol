@@ -86,10 +86,7 @@ class PostgreSQLSchemaProvider:
                     },
                 )
                 # Don't preload schemas here to avoid connection exhaustion
-                logger.info(
-                    "✅ PostgreSQL connection pool created: %s",
-                    self.postgres_config
-                )
+                logger.info("✅ PostgreSQL connection pool created: %s", self.postgres_config)
             except Exception as e:
                 logger.error("❌ Failed to create PostgreSQL pool: %s", e)
                 raise
@@ -111,15 +108,13 @@ class PostgreSQLSchemaProvider:
     async def get_connection(self) -> asyncpg.Connection:
         """Get a connection from pool."""
         if not self.connection_pool:
-            raise RuntimeError(
-                "No database connection pool available. Call create_pool() first.")
+            raise RuntimeError("No database connection pool available. Call create_pool() first.")
 
         try:
             return await self.connection_pool.acquire()
         except Exception as e:
             logger.error("Failed to acquire connection from pool: %s", e)
-            raise RuntimeError(
-                f"Connection pool exhausted or unavailable: {e}") from e
+            raise RuntimeError(f"Connection pool exhausted or unavailable: {e}") from e
 
     async def release_connection(self, conn: asyncpg.Connection) -> None:
         """Release connection back to pool."""
@@ -129,26 +124,22 @@ class PostgreSQLSchemaProvider:
     def _parse_table_name(self, table: str) -> tuple[str, str]:
         """Parse table name and return (schema, table_name) tuple. Always assumes table is fully qualified with schema.table format."""
         if "." not in table:
-            raise ValueError(
-                f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
+            raise ValueError(f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
 
         parts = table.split(".", 1)
         if len(parts) != 2:
-            raise ValueError(
-                f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
+            raise ValueError(f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
 
         schema, table_name = parts
         if not schema or not table_name:
-            raise ValueError(
-                f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
+            raise ValueError(f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
 
         return schema, table_name
 
     def _get_qualified_table_name(self, table: str) -> str:
         """Get fully qualified table name with schema. Expects input to be already qualified."""
         if "." not in table:
-            raise ValueError(
-                f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
+            raise ValueError(f"Table name '{table}' must be in 'schema.table' format (e.g., 'retail.customers')")
 
         # Validate the format is correct
         schema, table_name = self._parse_table_name(table)
@@ -203,8 +194,7 @@ class PostgreSQLSchemaProvider:
         if not await self.table_exists(table):
             raise ValueError(f"Table '{table}' does not exist")
         if not await self.column_exists(table, column):
-            raise ValueError(
-                f"Column '{column}' does not exist in table '{table}'")
+            raise ValueError(f"Column '{column}' does not exist in table '{table}'")
 
         conn = None
         try:
@@ -249,8 +239,7 @@ class PostgreSQLSchemaProvider:
         try:
             conn = await self.get_connection()
 
-            await conn.execute(
-                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
+            await conn.execute("SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
 
             # Get column information
             columns = await conn.fetch(
@@ -303,8 +292,7 @@ class PostgreSQLSchemaProvider:
                 parsed_table_name,
             )
 
-            columns_format = ", ".join(
-                f"{col['column_name']}:{col['data_type']}" for col in columns)
+            columns_format = ", ".join(f"{col['column_name']}:{col['data_type']}" for col in columns)
             lower_table = parsed_table_name.lower()
 
             # Define enum queries for each table to get unique values
@@ -339,14 +327,12 @@ class PostgreSQLSchemaProvider:
                             rows = await conn.fetch(
                                 f"SELECT DISTINCT {column} as year FROM {qualified_table} WHERE order_date IS NOT NULL ORDER BY year"
                             )
-                            years = [str(row["year"])
-                                     for row in rows if row["year"]]
+                            years = [str(row["year"]) for row in rows if row["year"]]
                             enum_data[key] = years
                         else:
                             enum_data[key] = await self.fetch_distinct_values(column, qualified_table)
                     except Exception as e:
-                        logger.debug(
-                            f"Failed to fetch {key} for {qualified_table}: {e}")
+                        logger.debug(f"Failed to fetch {key} for {qualified_table}: {e}")
                         enum_data[key] = []
 
             schema_data = {
@@ -428,16 +414,13 @@ class PostgreSQLSchemaProvider:
 
         # Extract just table name for description
         try:
-            _, table_name_only = self._parse_table_name(
-                table_display) if table_display else ("", "unknown")
+            _, table_name_only = self._parse_table_name(table_display) if table_display else ("", "unknown")
             table_description = table_name_only.replace("_", " ")
         except ValueError:
-            table_description = table_display.replace(
-                "_", " ") if table_display else "unknown"
+            table_description = table_display.replace("_", " ") if table_display else "unknown"
 
         lines = [f"# Table: {table_display}", ""]
-        lines.append(
-            f"**Purpose:** {schema.get('description', 'No description available')}")
+        lines.append(f"**Purpose:** {schema.get('description', 'No description available')}")
         lines.append("\n## Schema")
         lines.append(schema.get("columns_format", "N/A"))
 
@@ -468,16 +451,14 @@ class PostgreSQLSchemaProvider:
             if schema.get(field_key):
                 values = schema[field_key]
                 # Always show the full list, no truncation
-                enum_lines.append(
-                    f"**{label}:** {', '.join(values) if isinstance(values, list) else values}")
+                enum_lines.append(f"**{label}:** {', '.join(values) if isinstance(values, list) else values}")
 
         if enum_lines:
             lines.append("\n## Valid Values")
             lines.extend(enum_lines)
 
         lines.append("\n## Query Hints")
-        lines.append(
-            f"- Use `{table_display}` for queries about {table_description}")
+        lines.append(f"- Use `{table_display}` for queries about {table_description}")
         if schema.get("foreign_keys"):
             for fk in schema["foreign_keys"]:
                 # Use the schema from the current table being processed
@@ -487,8 +468,7 @@ class PostgreSQLSchemaProvider:
                 else:
                     # Fallback to just the table name if no schema available
                     fk_table_ref = fk["references_table"]
-                lines.append(
-                    f"- Join with `{fk_table_ref}` using `{fk['column']}`")
+                lines.append(f"- Join with `{fk_table_ref}` using `{fk['column']}`")
 
         return "\n".join(lines) + "\n"
 
@@ -509,15 +489,13 @@ class PostgreSQLSchemaProvider:
             conn = await self.get_connection()
 
             # Set rls_user_id once for the connection
-            await conn.execute(
-                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
+            await conn.execute("SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
 
             schemas = []
             for table_name in table_names:
                 try:
                     # Check if table exists first
-                    schema_name, parsed_table_name = self._parse_table_name(
-                        table_name)
+                    schema_name, parsed_table_name = self._parse_table_name(table_name)
                     table_exists_result = await conn.fetchval(
                         """SELECT EXISTS (
                             SELECT 1 FROM information_schema.tables 
@@ -528,20 +506,17 @@ class PostgreSQLSchemaProvider:
                     )
 
                     if not table_exists_result:
-                        schemas.append(
-                            f"**ERROR:** Table '{table_name}' not found\n")
+                        schemas.append(f"**ERROR:** Table '{table_name}' not found\n")
                         continue
 
                     # Get schema data efficiently within the same connection
                     # Use the original method but with our existing connection
                     schema_data = await self._get_table_metadata(conn, table_name)
-                    formatted_schema = self.format_schema_metadata_for_ai(
-                        schema_data)
+                    formatted_schema = self.format_schema_metadata_for_ai(schema_data)
                     schemas.append(f"\n\n{formatted_schema}")
 
                 except Exception as e:
-                    schemas.append(
-                        f"Error retrieving {table_name} schema: {e!s}\n")
+                    schemas.append(f"Error retrieving {table_name} schema: {e!s}\n")
 
             return "".join(schemas)
 
@@ -608,8 +583,7 @@ class PostgreSQLSchemaProvider:
             parsed_table_name,
         )
 
-        columns_format = ", ".join(
-            f"{col['column_name']}:{col['data_type']}" for col in columns)
+        columns_format = ", ".join(f"{col['column_name']}:{col['data_type']}" for col in columns)
         lower_table = parsed_table_name.lower()
 
         # Define enum queries for each table to get unique values
@@ -620,9 +594,7 @@ class PostgreSQLSchemaProvider:
             PRODUCTS_TABLE: {
                 # Removed available_product_names to avoid lengthy output
             },
-            ORDERS_TABLE: {
-                "available_years": ("EXTRACT(YEAR FROM order_date)::text", f"{schema_name}.{ORDERS_TABLE}")
-            },
+            ORDERS_TABLE: {"available_years": ("EXTRACT(YEAR FROM order_date)::text", f"{schema_name}.{ORDERS_TABLE}")},
             ORDER_ITEMS_TABLE: {
                 # "price_range": ("unit_price", f"{schema_name}.{ORDER_ITEMS_TABLE}")
             },
@@ -637,8 +609,7 @@ class PostgreSQLSchemaProvider:
                         rows = await conn.fetch(
                             f"SELECT DISTINCT {column} as year FROM {qualified_table} WHERE order_date IS NOT NULL ORDER BY year"
                         )
-                        years = [str(row["year"])
-                                 for row in rows if row["year"]]
+                        years = [str(row["year"]) for row in rows if row["year"]]
                         enum_data[key] = years
                     else:
                         # Use existing connection for fetch_distinct_values-like operation
@@ -647,8 +618,7 @@ class PostgreSQLSchemaProvider:
                         )
                         enum_data[key] = [row[0] for row in rows if row[0]]
                 except Exception as e:
-                    logger.debug(
-                        f"Failed to fetch {key} for {qualified_table}: {e}")
+                    logger.debug(f"Failed to fetch {key} for {qualified_table}: {e}")
                     enum_data[key] = []
 
         schema_data = {
@@ -698,15 +668,13 @@ class PostgreSQLSchemaProvider:
         conn: Optional[asyncpg.Connection] = None
         try:
             conn = await self.get_connection()
-            await conn.execute(
-                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id
-            )
+            await conn.execute("SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
 
             rows = await conn.fetch(sql_query)
             if not rows:
                 return json.dumps(
                     {"c": [], "r": [], "n": 0, "msg": "No rows"},
-                    separators=(',', ':'),
+                    separators=(",", ":"),
                     default=str,
                 )
 
@@ -714,22 +682,24 @@ class PostgreSQLSchemaProvider:
             data_rows = [[row[col] for col in columns] for row in rows]
             return json.dumps(
                 {"c": columns, "r": data_rows, "n": len(data_rows)},
-                separators=(',', ':'),
+                separators=(",", ":"),
                 default=str,
             )
         except Exception as e:
             return json.dumps(
                 {"err": f"PostgreSQL query failed: {e!s}", "q": sql_query, "c": [], "r": [], "n": 0},
-                separators=(',', ':'),
+                separators=(",", ":"),
                 default=str,
             )
         finally:
             if conn:
                 await self.release_connection(conn)
 
-    async def search_products_by_similarity(self, query_embedding: list[float], rls_user_id: str, max_rows: int = 20, similarity_threshold: float = 30.0) -> str:
+    async def search_products_by_similarity(
+        self, query_embedding: list[float], rls_user_id: str, max_rows: int = 20, similarity_threshold: float = 30.0
+    ) -> str:
         """Search for products by similarity using pgvector cosine similarity.
-        
+
         Args:
             query_embedding: The embedding vector to search for similar products
             max_rows: Maximum number of rows to return
@@ -739,19 +709,18 @@ class PostgreSQLSchemaProvider:
         conn = None
         try:
             max_rows = min(max_rows, 100)  # Limit to 100 for performance
-            
+
             # Convert similarity percentage threshold to distance threshold
             # Similarity percentage = (1 - distance) * 100
             # So distance = 1 - (similarity_percentage / 100)
             distance_threshold = 1.0 - (similarity_threshold / 100.0)
-            
+
             conn = await self.get_connection()
 
-            await conn.execute(
-                "SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
+            await conn.execute("SELECT set_config('app.current_rls_user_id', $1, false)", rls_user_id)
 
             # Convert embedding to string format for PostgreSQL
-            embedding_str = '[' + ','.join(map(str, query_embedding)) + ']'
+            embedding_str = "[" + ",".join(map(str, query_embedding)) + "]"
 
             query = f"""
                 SELECT 
@@ -767,42 +736,35 @@ class PostgreSQLSchemaProvider:
             rows = await conn.fetch(query, embedding_str, max_rows, distance_threshold)
 
             if not rows:
-                return json.dumps({
-                    "c": [],
-                    "r": [],
-                    "n": 0,
-                    "msg": f"No products >= {similarity_threshold}%"
-                }, separators=(',', ':'), default=str)
+                return json.dumps(
+                    {"c": [], "r": [], "n": 0, "msg": f"No products >= {similarity_threshold}%"},
+                    separators=(",", ":"),
+                    default=str,
+                )
 
             # Prepare compact columnar data including similarity percent
             base_columns = list(rows[0].keys())  # includes similarity_distance
             # We'll append 'sp' (similarity percent) short key instead of longer name
-            columns = [*base_columns, 'sp']
+            columns = [*base_columns, "sp"]
             data_rows = []
             for row in rows:
-                similarity_distance = row.get('similarity_distance', 1.0)
+                similarity_distance = row.get("similarity_distance", 1.0)
                 similarity_percent = max(0, (1 - similarity_distance) * 100)
                 row_values = [row[col] for col in base_columns]
                 row_values.append(round(similarity_percent, 1))
                 data_rows.append(row_values)
 
-            return json.dumps({
-                "c": columns,
-                "r": data_rows,
-                "n": len(data_rows)
-            }, separators=(',', ':'), default=str)
+            return json.dumps({"c": columns, "r": data_rows, "n": len(data_rows)}, separators=(",", ":"), default=str)
 
         except Exception as e:
-            return json.dumps({
-                "err": f"PostgreSQL semantic search failed: {e!s}",
-                "c": [],
-                "r": [],
-                "n": 0
-            }, separators=(',', ':'), default=str)
+            return json.dumps(
+                {"err": f"PostgreSQL semantic search failed: {e!s}", "c": [], "r": [], "n": 0},
+                separators=(",", ":"),
+                default=str,
+            )
         finally:
             if conn:
                 await self.release_connection(conn)
- 
 
 
 async def test_connection() -> bool:
@@ -826,8 +788,7 @@ async def main() -> None:
 
     # Test connection first
     if not await test_connection():
-        logger.error(
-            "❌ Error: Cannot connect to PostgreSQL using: %s", POSTGRES_URL)
+        logger.error("❌ Error: Cannot connect to PostgreSQL using: %s", POSTGRES_URL)
         logger.error("   Please verify:")
         logger.error("   1. PostgreSQL is running")
         logger.error("   2. Database 'zava' exists")
@@ -843,30 +804,32 @@ async def main() -> None:
             # Preload schemas for testing
             await provider.ensure_schemas_loaded(SCHEMA_NAME, rls_user_id=MANAGER_ID)
 
-            logger.info(
-                "📋 Getting all table schemas from %s schema...", SCHEMA_NAME)
+            logger.info("📋 Getting all table schemas from %s schema...", SCHEMA_NAME)
             if not provider.all_schemas:
-                logger.warning(
-                    "❌ No schemas available in %s schema", SCHEMA_NAME)
-                logger.warning(
-                    "Please run the PostgreSQL database generator first:")
-                logger.warning(
-                    "python shared/data/database/generate_zava_postgres.py")
+                logger.warning("❌ No schemas available in %s schema", SCHEMA_NAME)
+                logger.warning("Please run the PostgreSQL database generator first:")
+                logger.warning("python shared/data/database/generate_zava_postgres.py")
                 return
 
             logger.info("🧪 Testing SQL Query Execution:")
             logger.info("=" * 50)
 
             logger.info("📊 Test 1: Count all customers")
-            result = await provider.execute_query(f"SELECT COUNT(*) as total_customers FROM {SCHEMA_NAME}.customers", rls_user_id=MANAGER_ID)
+            result = await provider.execute_query(
+                f"SELECT COUNT(*) as total_customers FROM {SCHEMA_NAME}.customers", rls_user_id=MANAGER_ID
+            )
             logger.info("Result: %s", result)
 
             logger.info("📊 Test 2: Count stores")
-            result = await provider.execute_query(f"SELECT COUNT(*) as total_stores FROM {SCHEMA_NAME}.stores", rls_user_id=MANAGER_ID)
+            result = await provider.execute_query(
+                f"SELECT COUNT(*) as total_stores FROM {SCHEMA_NAME}.stores", rls_user_id=MANAGER_ID
+            )
             logger.info("Result: %s", result)
 
             logger.info("📊 Test 3: Count categories and types")
-            result = await provider.execute_query(f"SELECT COUNT(*) as total_categories FROM {SCHEMA_NAME}.categories", rls_user_id=MANAGER_ID)
+            result = await provider.execute_query(
+                f"SELECT COUNT(*) as total_categories FROM {SCHEMA_NAME}.categories", rls_user_id=MANAGER_ID
+            )
             logger.info("Result: %s", result)
 
             logger.info("📊 Test 4: Orders with revenue")
@@ -875,7 +838,8 @@ async def main() -> None:
                     SUM(oi.total_amount) as revenue 
                     FROM {SCHEMA_NAME}.orders o 
                     JOIN {SCHEMA_NAME}.order_items oi ON o.order_id = oi.order_id 
-                    LIMIT 1""", rls_user_id=MANAGER_ID
+                    LIMIT 1""",
+                rls_user_id=MANAGER_ID,
             )
             logger.info("Result: %s", result)
 
@@ -892,9 +856,12 @@ async def main() -> None:
                 f"{SCHEMA_NAME}.{CUSTOMERS_TABLE}",
                 f"{SCHEMA_NAME}.{ORDERS_TABLE}",
                 f"{SCHEMA_NAME}.{ORDER_ITEMS_TABLE}",
-                f"{SCHEMA_NAME}.{INVENTORY_TABLE}"
+                f"{SCHEMA_NAME}.{INVENTORY_TABLE}",
             ]
-            logger.info("Database schema info: %s", await provider.get_table_metadata_from_list(all_table_names, rls_user_id=MANAGER_ID))
+            logger.info(
+                "Database schema info: %s",
+                await provider.get_table_metadata_from_list(all_table_names, rls_user_id=MANAGER_ID),
+            )
 
     except Exception as e:
         logger.error("❌ Error during analysis: %s", e)

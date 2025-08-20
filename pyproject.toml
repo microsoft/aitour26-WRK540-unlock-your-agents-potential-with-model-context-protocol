@@ -4,10 +4,9 @@ line-length = 120
 [tool.ruff]
 line-length = 120
 
-# Enable import sorting
-select = ["I"]
-
 [tool.ruff.lint]
+# Enable import sorting and other linting rules
+select = ["I"]
 extend-select = [
   "B",
   "C4",

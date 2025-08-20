@@ -7,7 +7,7 @@ It generates embeddings for user queries and finds similar products using pgvect
 
 Usage:
     from customer_sales_semantic_search import SemanticSearchTool
-    
+
     tool = SemanticSearchTool()
     embedding = tool.generate_query_embedding("waterproof electrical box")
 
@@ -38,16 +38,13 @@ class SemanticSearchTextEmbedding:
         self._load_environment()
 
         # Azure OpenAI configuration
-        self.endpoint = os.getenv(
-            "AZURE_OPENAI_ENDPOINT", "https://fdy-zava-agent-wks-87lc.services.ai.azure.com/")
+        self.endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://fdy-zava-agent-wks-87lc.services.ai.azure.com/")
         self.model_name = "text-embedding-3-small"
-        self.deployment = os.getenv(
-            "EMBEDDING_MODEL_DEPLOYMENT_NAME", "text-embedding-3-small")
+        self.deployment = os.getenv("EMBEDDING_MODEL_DEPLOYMENT_NAME", "text-embedding-3-small")
 
         # Check if Azure OpenAI endpoint is configured
         if self.endpoint == "<ENDPOINT_URL>":
-            logger.warning(
-                "Warning: AZURE_OPENAI_ENDPOINT not configured. Semantic search will not work.")
+            logger.warning("Warning: AZURE_OPENAI_ENDPOINT not configured. Semantic search will not work.")
             self.openai_client = None
             return
 
@@ -63,8 +60,8 @@ class SemanticSearchTextEmbedding:
         script_dir = Path(__file__).parent
         # Try to load .env from script directory first, then parent directories
         env_paths = [
-            script_dir / '.env',
-            script_dir.parent.parent / '..' / 'workshop' / '.env',  # Up to workspace root
+            script_dir / ".env",
+            script_dir.parent.parent / ".." / "workshop" / ".env",  # Up to workspace root
         ]
 
         for env_path in env_paths:
@@ -78,8 +75,7 @@ class SemanticSearchTextEmbedding:
     def _setup_azure_openai_client(self) -> AzureOpenAI:
         """Setup and return Azure OpenAI client with token provider."""
         token_provider = get_bearer_token_provider(
-            DefaultAzureCredential(),
-            "https://cognitiveservices.azure.com/.default"
+            DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
         )
         api_version = "2024-02-01"
 
@@ -100,23 +96,18 @@ class SemanticSearchTextEmbedding:
             List of float values representing the embedding, or None if failed
         """
         if not self.openai_client:
-            logger.error(
-                "Azure OpenAI client not initialized. Cannot generate embeddings.")
+            logger.error("Azure OpenAI client not initialized. Cannot generate embeddings.")
             return None
 
         try:
             logger.info("Generating embedding for query: '%s'", query_text)
 
             # Generate embedding using Azure OpenAI
-            response = self.openai_client.embeddings.create(
-                input=[query_text],
-                model=self.deployment
-            )
+            response = self.openai_client.embeddings.create(input=[query_text], model=self.deployment)
 
             # Extract embedding from response
             embedding = response.data[0].embedding
-            logger.info("✓ Generated embedding (dimension: %d)",
-                        len(embedding))
+            logger.info("✓ Generated embedding (dimension: %d)", len(embedding))
             return embedding
 
         except Exception as e:

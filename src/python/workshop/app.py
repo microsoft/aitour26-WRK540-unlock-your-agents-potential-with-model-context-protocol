@@ -67,12 +67,11 @@ class AgentManager:
                     "get_multiple_table_schemas",
                     "execute_sales_query",
                     "get_current_utc_date",
-                    "semantic_search_products"
+                    "semantic_search_products",
                 ],
             )
             # PostgreSQL Row Level Security (RLS) User ID header
-            mcp_tools.update_headers(
-                "x-rls-user-id", RLS_USER_ID)
+            mcp_tools.update_headers("x-rls-user-id", RLS_USER_ID)
             # Disabled as specified in allowed tools
             mcp_tools.set_approval_mode("never")
             self.toolset.add(mcp_tools)
@@ -111,8 +110,7 @@ class AgentManager:
 
             await self._setup_agent_tools()
 
-            configure_azure_monitor(
-                connection_string=self.application_insights_connection_string)
+            configure_azure_monitor(connection_string=self.application_insights_connection_string)
 
             with self.tracer.start_as_current_span(trace_scenario):
                 # Create agent
@@ -127,8 +125,7 @@ class AgentManager:
 
                 # Enable auto function calls
                 if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
-                    self.agents_client.enable_auto_function_calls(
-                        tools=self.toolset)
+                    self.agents_client.enable_auto_function_calls(tools=self.toolset)
 
             return True
 
@@ -157,11 +154,9 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     success = await agent_manager.initialize(INSTRUCTIONS_FILE)
 
     if not success:
-        logger.warning(
-            "Agent initialization failed. Check your configuration.")
+        logger.warning("Agent initialization failed. Check your configuration.")
     elif agent_manager.is_initialized and agent_manager.agent:
-        logger.info(
-            "✅ Agent initialized successfully with ID: %s", agent_manager.agent.id)
+        logger.info("✅ Agent initialized successfully with ID: %s", agent_manager.agent.id)
 
     yield
 
@@ -208,8 +203,7 @@ async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
     """Clear the chat session and thread for a specific session."""
     try:
         if not agent_manager.is_initialized or not agent_manager.agents_client or not agent_manager.agent:
-            raise HTTPException(
-                status_code=500, detail="Agent not initialized")
+            raise HTTPException(status_code=500, detail="Agent not initialized")
 
         # Clear the specific session and its thread
         await agent_service.clear_session_thread(session_id)
@@ -223,8 +217,7 @@ async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
         raise
     except Exception as e:
         logger.error("Error clearing chat for session %s: %s", session_id, e)
-        raise HTTPException(
-            status_code=500, detail=f"Failed to clear chat: {e!s}") from e
+        raise HTTPException(status_code=500, detail=f"Failed to clear chat: {e!s}") from e
 
 
 @app.get("/files/{filename}")

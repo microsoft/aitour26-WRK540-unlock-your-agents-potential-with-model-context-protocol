@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import Agent, AgentThread, ThreadMessage
+from azure.ai.agents.models import FileInfo, ThreadMessage, VectorStore
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import DefaultAzureCredential
 from terminal_colors import TerminalColors as tc
@@ -28,7 +28,7 @@ class Utilities:
             "azure.core",
             "azure.identity",
             "uvicorn.access",
-            "azure.monitor.opentelemetry.exporter.export._base"
+            "azure.monitor.opentelemetry.exporter.export._base",
         ]:
             logging.getLogger(name).setLevel(logging.WARNING)
 
@@ -41,8 +41,7 @@ class Utilities:
             return credential
         except ClientAuthenticationError as e:
             logger.error("❌ Azure Authentication Failed")
-            logger.error(
-                "🔧 To fix this issue, please run the following command:")
+            logger.error("🔧 To fix this issue, please run the following command:")
             logger.error("Azure CLI:")
             logger.error("   az login --use-device-code")
             logger.error("After authentication, run the program again.")
@@ -120,8 +119,7 @@ class Utilities:
         elif message.attachments:
             for index, attachment in enumerate(message.attachments, start=0):
                 attachment_name = (
-                    "unknown" if not message.file_path_annotations else message.file_path_annotations[
-                        index].text
+                    "unknown" if not message.file_path_annotations else message.file_path_annotations[index].text
                 )
                 if attachment.file_id:
                     file_info = await self.get_file(agents_client, attachment.file_id, attachment_name)
@@ -129,7 +127,7 @@ class Utilities:
 
         return downloaded_files
 
-    async def upload_file(self, agents_client: AgentsClient, file_path: Path, purpose: str = "assistants"):  # type: ignore
+    async def upload_file(self, agents_client: AgentsClient, file_path: Path, purpose: str = "assistants") -> FileInfo:
         """Upload a file to the project."""
         self.log_msg_purple(f"Uploading file: {file_path}")
         file_info = await agents_client.files.upload(file_path=str(file_path), purpose=purpose)
@@ -137,7 +135,9 @@ class Utilities:
         return file_info
 
     # type: ignore
-    async def create_vector_store(self, agents_client: AgentsClient, files: List[str], vector_store_name: str):
+    async def create_vector_store(
+        self, agents_client: AgentsClient, files: List[str], vector_store_name: str
+    ) -> VectorStore:
         """Upload a file to the project."""
 
         file_ids = []
