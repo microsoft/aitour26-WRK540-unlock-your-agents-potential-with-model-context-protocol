@@ -1,24 +1,32 @@
 # Deploy to Azure
 
-This repository contains Azure infrastructure templates for deploying AI Foundry services.
+## Convert main.bicep to main.parameters.json
+
+From VS Code, you can use the Bicep extension to easily convert your Bicep files to JSON parameters files.
+
+1. Open the Command Palette (F1) and search for "Bicep: Export Template".
+2. Select the "Bicep: Export Template" command.
+3. Choose the "Export to parameters file" option.
+4. Save the generated `main.parameters.json` file.
+
+This repository contains Azure infrastructure templates for deploying AI Foundry services with PostgreSQL database support.
+
+**Note**: PostgreSQL deployment is mandatory and will always be included in the infrastructure deployment.
 
 ## Prerequisites
 
 - Azure CLI installed and logged in
 - Appropriate Azure subscription permissions
-- PostgreSQL client (`psql`) for database initialization
-  - **macOS**: `brew install postgresql`
-  - **Windows**: Download from https://www.postgresql.org/download/windows/
-  - **Linux**: `sudo apt-get install postgresql-client` (Ubuntu/Debian) or `sudo yum install postgresql` (RHEL/CentOS)
+- PostgreSQL client tools (for database initialization)
 
 ## Configuration
 
 **First, generate a random 8-character suffix:**
 
 ```powershell
-$chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-$UNIQUE_SUFFIX = -join ((1..8) | ForEach { $chars[(Get-Random -Maximum $chars.Length)] })
+$UNIQUE_SUFFIX = -join ((1..4) | ForEach {'{0:x2}' -f (Get-Random -Max 256)})
 Write-Host "Your unique suffix: $UNIQUE_SUFFIX"
+$POSTGRES_PASSWORD = 'SecurePassword123!'
 ```
 
 ### Required Parameters
@@ -26,7 +34,8 @@ Write-Host "Your unique suffix: $UNIQUE_SUFFIX"
 The following parameters are passed directly on the command line:
 
 - **location**: Azure region for deployment (e.g., "westus")
-- **uniqueSuffix**: Unique 8-character identifier (use the generated `$UNIQUE_SUFFIX` variable)
+- **uniqueSuffix**: Unique 4-character identifier (use the generated `$UNIQUE_SUFFIX` variable)
+- **postgresAdminPassword**: Secure password for PostgreSQL admin user (use the `$POSTGRES_PASSWORD` variable)
 
 ## Deployment Steps
 
@@ -38,103 +47,67 @@ az group create --name "rg-zava-agent-wks-$UNIQUE_SUFFIX" --location "West US"
 
 ### 2. Deploy Infrastructure
 
-### ARM Deployment
-
-From the command line, change to the ARM folder.
-
-Run the following command to deploy the ARM template:
-
 ```powershell
 az deployment group create `
-  --name contoso-agent-deployment-$UNIQUE_SUFFIX `
   --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --template-file template.json `
-  --parameters components_appi_name="appi-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --parameters accounts_fdy_name="fdy-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --parameters flexibleServers_pg_name="pg-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --parameters workspaces_law_appi_name="law-appi-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --parameters projectName="prj-zava-agent-wks-$UNIQUE_SUFFIX" `
-  --parameters administratorLoginPassword="YourSecurePassword123!"
+  --template-file main.bicep `
+  --parameters location="westus" uniqueSuffix="$UNIQUE_SUFFIX" postgresAdminPassword="$POSTGRES_PASSWORD"
 ```
 
-### Bicep Deployment
+### 3. Initialize PostgreSQL Database
+
+After infrastructure deployment, you can initialize the database with sample data. The initialization script will automatically:
+
+- Add your current IP address to the PostgreSQL firewall rules
+- Connect to the Azure PostgreSQL server
+- Create the `zava` database and required users
+- Install the pgvector extension
+- Restore sample data (if backup file exists)
+
+```bash
+# Install PostgreSQL client tools (if not already installed)
+
+# macOS (using Homebrew)
+brew install postgresql@17
+
+# Windows (using winget)
+winget install PostgreSQL.PostgreSQL.17
+```
+
+#### Run Database Initialization
 
 ```powershell
-az deployment group create `
-  --resource-group "rg-contoso-agent-workshop-$UNIQUE_SUFFIX" `
-  --template-file skillable.bicep `
-  --parameters uniqueSuffix="$UNIQUE_SUFFIX"
+# Run database initialization with your unique suffix
+./init-db-azure.ps1 -UniqueSuffix $UNIQUE_SUFFIX -AzurePgPassword $POSTGRES_PASSWORD
 ```
 
-### Infrastructure Components
+**What the script does:**
 
-The ARM template deploys:
+1. **Firewall Configuration**: Automatically detects your current public IP address and adds it to the PostgreSQL server firewall rules
+2. **Database Setup**: Creates the `zava` database and configures users with proper permissions
+3. **Extensions**: Installs the pgvector extension for vector operations
+4. **Data Restoration**: Restores sample retail data if backup files are available
+
+**Note**: The script uses the same `$UNIQUE_SUFFIX` from your deployment to automatically construct the correct server names and connection details.
+
+## Infrastructure Components
+
+The `main-deploy.bicep` template deploys:
 
 - **AI Foundry Hub & Project**: For AI/ML workloads
-- **Model Deployments**: GPT-4o-mini and text-embedding-3-small
-- **PostgreSQL Flexible Server**: Database with security configurations
-- **Log Analytics Workspace**: For monitoring and logging
-- **Application Insights**: For application monitoring
+- **Model Deployments**: GPT-4o and text-embedding-3-small
+- **PostgreSQL Flexible Server**: With pgvector extension support
+- **Application Insights**: For monitoring and telemetry
+- **Storage Account**: For AI Foundry data storage
+- **Key Vault**: For secure credential management
 
 ## Post-Deployment
 
-1. **AI Services**: Access the AI Foundry hub through the Azure portal
+1. **Database Access**: The PostgreSQL server is configured with firewall rules for your current IP
+2. **AI Services**: Access the AI Foundry hub through the Azure portal
+3. **Monitoring**: View metrics and logs in Application Insights
 
 ## Troubleshooting
-
-### PostgreSQL Client (`psql`) Not Found
-
-If you get "Error: psql not found in PATH" when running the database initialization script:
-
-**macOS (Homebrew):**
-```bash
-# Install PostgreSQL client
-brew install postgresql
-
-# Verify installation (in bash/zsh)
-psql --version
-
-# If still not found, add to PATH in bash/zsh
-echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-**macOS (PowerShell):**
-```powershell
-# Add PostgreSQL 17 to PATH for current PowerShell session
-$env:PATH += ":/opt/homebrew/Cellar/postgresql@17/17.6/bin"
-
-# Verify installation
-psql --version
-
-# Make permanent by adding to PowerShell profile
-if (!(Test-Path $PROFILE)) { New-Item -Type File -Path $PROFILE -Force }
-Add-Content $PROFILE '$env:PATH += ":/opt/homebrew/Cellar/postgresql@17/17.6/bin"'
-```
-
-**Windows:**
-1. Download PostgreSQL from <https://www.postgresql.org/download/windows/>
-2. Or use package managers:
-   ```powershell
-   # Using Chocolatey
-   choco install postgresql
-   
-   # Using Scoop
-   scoop install postgresql
-   ```
-
-**Linux:**
-```bash
-# Ubuntu/Debian
-sudo apt-get update && sudo apt-get install postgresql-client
-
-# CentOS/RHEL/Fedora
-sudo yum install postgresql
-# or: sudo dnf install postgresql
-```
-
-**Alternative: Use Azure Cloud Shell**
-If you prefer not to install PostgreSQL locally, use Azure Cloud Shell at <https://shell.azure.com> which has `psql` pre-installed.
 
 ### AI Model Quota Issues
 
@@ -160,7 +133,7 @@ AI models and Cognitive Services accounts are soft-deleted and count against quo
 
 ```powershell
 # List account names and locations of soft-deleted accounts
-az cognitiveservices account list-deleted --output json | jq -r '.[] | "\(.name)\t\(.location)\t\(.id | split("/")[8])"' | column -t -s $'\t' -N "Name,Location,ResourceGroup"
+az cognitiveservices account list-deleted --query "[].{Name:name, Location:location}" --output table
 
 # Purge a soft-deleted Cognitive Services account (permanently removes it)
 az cognitiveservices account purge `
@@ -190,9 +163,10 @@ az cognitiveservices account list-deleted --query "[].{Name:name, Location:locat
 
 # Purge a specific deleted account (replace with your subscription ID, location, and resource name)
 az cognitiveservices account purge `
-  --location "westus" `
+  --location "West US" `
   --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX" `
   --name your-cognitiveservices-account-name
+```
 
 **Note**: Purging permanently deletes the resource and cannot be undone. This is typically needed when redeploying with the same resource names or when hitting subscription quotas.
 
@@ -213,7 +187,21 @@ If you need to delete specific resources while keeping others:
 
 ```powershell
 # Delete AI Foundry resources
+az ml workspace delete --name <workspace-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX"
 az cognitiveservices account delete --name <ai-services-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX"
+
+# Delete PostgreSQL server
+az postgres flexible-server delete --name <postgres-server-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX" --yes
+
+# Delete storage account
+az storage account delete --name <storage-account-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX" --yes
+
+# Delete Application Insights
+az monitor app-insights component delete --app <app-insights-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX"
+
+# Delete Key Vault (with purge protection)
+az keyvault delete --name <keyvault-name> --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX"
+az keyvault purge --name <keyvault-name> --location "West US"
 ```
 
 ### Verify Cleanup
@@ -224,6 +212,9 @@ az resource list --resource-group "rg-zava-agent-wks-$UNIQUE_SUFFIX"
 
 # Check for any remaining Cognitive Services (soft-deleted)
 az cognitiveservices account list-deleted
+
+# Check for any remaining Key Vaults (soft-deleted)
+az keyvault list-deleted
 ```
 
-**Note**: Some Azure services (like Cognitive Services) have soft-delete protection. Use the purge commands from the Troubleshooting section if you need to permanently remove them.
+**Note**: Some Azure services (like Cognitive Services and Key Vault) have soft-delete protection. Use the purge commands from the Troubleshooting section if you need to permanently remove them.

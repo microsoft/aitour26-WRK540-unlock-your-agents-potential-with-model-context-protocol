@@ -1,0 +1,460 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "14381027625171266368"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources"
+      }
+    },
+    "aiProjectFriendlyName": {
+      "type": "string",
+      "defaultValue": "Agents standard project resource",
+      "metadata": {
+        "description": "Friendly name for your Azure AI resource"
+      }
+    },
+    "aiProjectDescription": {
+      "type": "string",
+      "defaultValue": "Project resources required for the Zava Agent Workshop.",
+      "metadata": {
+        "description": "Description of your Azure AI resource displayed in Azure AI Foundry"
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Set of tags to apply to all resources."
+      }
+    },
+    "models": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "gpt-4o-mini",
+          "format": "OpenAI",
+          "version": "2024-07-18",
+          "skuName": "GlobalStandard",
+          "capacity": 120
+        },
+        {
+          "name": "text-embedding-3-small",
+          "format": "OpenAI",
+          "version": "1",
+          "skuName": "GlobalStandard",
+          "capacity": 50
+        }
+      ],
+      "metadata": {
+        "description": "Array of models to deploy"
+      }
+    },
+    "uniqueSuffix": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 8,
+      "metadata": {
+        "description": "Unique suffix for the resources. Must be 8 characters long."
+      }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the Log Analytics workspace (optional)"
+      }
+    },
+    "postgresServerName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "PostgreSQL server name (will be prefixed with unique suffix if not provided)"
+      }
+    },
+    "postgresVersion": {
+      "type": "string",
+      "defaultValue": "17",
+      "metadata": {
+        "description": "PostgreSQL version"
+      }
+    },
+    "postgresAuthType": {
+      "type": "string",
+      "defaultValue": "Password",
+      "allowedValues": [
+        "Password",
+        "EntraOnly"
+      ],
+      "metadata": {
+        "description": "PostgreSQL authentication type"
+      }
+    },
+    "postgresAdminLogin": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+        "description": "PostgreSQL administrator login"
+      }
+    },
+    "postgresAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "PostgreSQL administrator password"
+      }
+    },
+    "postgresSku": {
+      "type": "object",
+      "defaultValue": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "metadata": {
+        "description": "PostgreSQL SKU configuration"
+      }
+    },
+    "postgresStorage": {
+      "type": "object",
+      "defaultValue": {
+        "storageSizeGB": 32,
+        "iops": 120,
+        "autoGrow": "Enabled",
+        "autoIoScaling": "Enabled"
+      },
+      "metadata": {
+        "description": "PostgreSQL storage configuration"
+      }
+    },
+    "postgresDatabaseNames": {
+      "type": "array",
+      "defaultValue": [
+        "defaultdb"
+      ],
+      "metadata": {
+        "description": "Database names to create"
+      }
+    },
+    "postgresAllowAzureIPs": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Allow Azure IPs through firewall"
+      }
+    },
+    "postgresAllowAllIPs": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow all IPs through firewall (not recommended for production)"
+      }
+    },
+    "postgresAllowedIPs": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Specific IP addresses to allow"
+      }
+    }
+  },
+  "variables": {
+    "defaultTags": {
+      "source": "Azure AI Foundry Agents Service lab"
+    },
+    "rootTags": "[union(variables('defaultTags'), parameters('tags'))]",
+    "aiProjectName": "[toLower(format('prj-zava-agent-wks-{0}', parameters('uniqueSuffix')))]",
+    "foundryResourceName": "[toLower(format('fdy-zava-agent-wks-{0}', parameters('uniqueSuffix')))]",
+    "applicationInsightsName": "[toLower(format('appi-zava-agent-wks-{0}', parameters('uniqueSuffix')))]",
+    "postgresServerNameResolved": "[if(empty(parameters('postgresServerName')), toLower(format('pg-zava-agent-wks-{0}', parameters('uniqueSuffix'))), parameters('postgresServerName'))]"
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "postgresServer::database",
+        "count": "[length(parameters('postgresDatabaseNames'))]"
+      },
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "apiVersion": "2022-12-01",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), parameters('postgresDatabaseNames')[copyIndex()])]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
+      "condition": "[empty(parameters('logAnalyticsWorkspaceName'))]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2023-09-01",
+      "name": "[format('law-{0}', variables('applicationInsightsName'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30,
+        "features": {
+          "searchVersion": 1,
+          "legacy": 0,
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        }
+      },
+      "tags": "[variables('rootTags')]"
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('applicationInsightsName')]",
+      "location": "[parameters('location')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[if(empty(parameters('logAnalyticsWorkspaceName')), resourceId('Microsoft.OperationalInsights/workspaces', format('law-{0}', variables('applicationInsightsName'))), resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')))]",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      },
+      "tags": "[variables('rootTags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', format('law-{0}', variables('applicationInsightsName')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2025-04-01-preview",
+      "name": "[variables('foundryResourceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "AIServices",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "apiProperties": {},
+        "allowProjectManagement": true,
+        "customSubDomainName": "[variables('foundryResourceName')]",
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "virtualNetworkRules": [],
+          "ipRules": []
+        },
+        "publicNetworkAccess": "Enabled",
+        "disableLocalAuth": true,
+        "defaultProject": "[variables('aiProjectName')]",
+        "associatedProjects": [
+          "[variables('aiProjectName')]"
+        ]
+      },
+      "tags": "[variables('rootTags')]"
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/projects",
+      "apiVersion": "2025-04-01-preview",
+      "name": "[format('{0}/{1}', variables('foundryResourceName'), variables('aiProjectName'))]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "description": "[parameters('aiProjectDescription')]",
+        "displayName": "[parameters('aiProjectFriendlyName')]"
+      },
+      "tags": "[variables('rootTags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', variables('foundryResourceName'))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "modelDeployments",
+        "count": "[length(parameters('models'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2024-10-01",
+      "name": "[format('{0}/{1}', variables('foundryResourceName'), parameters('models')[copyIndex()].name)]",
+      "sku": {
+        "capacity": "[parameters('models')[copyIndex()].capacity]",
+        "name": "[parameters('models')[copyIndex()].skuName]"
+      },
+      "properties": {
+        "model": {
+          "name": "[parameters('models')[copyIndex()].name]",
+          "format": "[parameters('models')[copyIndex()].format]",
+          "version": "[parameters('models')[copyIndex()].version]"
+        },
+        "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+        "currentCapacity": "[parameters('models')[copyIndex()].capacity]"
+      },
+      "tags": "[variables('rootTags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', variables('foundryResourceName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts/projects', variables('foundryResourceName'), variables('aiProjectName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "apiVersion": "2022-12-01",
+      "name": "[variables('postgresServerNameResolved')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('rootTags')]",
+      "sku": "[parameters('postgresSku')]",
+      "properties": {
+        "version": "[parameters('postgresVersion')]",
+        "storage": "[parameters('postgresStorage')]",
+        "highAvailability": {
+          "mode": "Disabled"
+        },
+        "administratorLogin": "[if(equals(parameters('postgresAuthType'), 'Password'), parameters('postgresAdminLogin'), null())]",
+        "administratorLoginPassword": "[if(equals(parameters('postgresAuthType'), 'Password'), parameters('postgresAdminPassword'), null())]"
+      }
+    },
+    {
+      "condition": "[parameters('postgresAllowAllIPs')]",
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), 'allow-all-IPs')]",
+      "properties": {
+        "startIpAddress": "0.0.0.0",
+        "endIpAddress": "255.255.255.255"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('postgresAllowAzureIPs')]",
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), 'allow-all-azure-internal-IPs')]",
+      "properties": {
+        "startIpAddress": "0.0.0.0",
+        "endIpAddress": "0.0.0.0"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "postgresFirewallSingle",
+        "count": "[length(parameters('postgresAllowedIPs'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), format('allow-single-{0}', replace(parameters('postgresAllowedIPs')[copyIndex()], '.', '')))]",
+      "properties": {
+        "startIpAddress": "[parameters('postgresAllowedIPs')[copyIndex()]]",
+        "endIpAddress": "[parameters('postgresAllowedIPs')[copyIndex()]]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
+      "condition": "[equals(parameters('postgresAuthType'), 'EntraOnly')]",
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/administrators",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), deployer().objectId)]",
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "principalType": "User",
+        "principalName": "[deployer().userPrincipalName]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-IPs')]",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-azure-internal-IPs')]",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/configurations",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), 'azure.extensions')]",
+      "properties": {
+        "value": "vector",
+        "source": "user-override"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/administrators', variables('postgresServerNameResolved'), deployer().objectId)]",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-IPs')]",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-azure-internal-IPs')]",
+        "postgresFirewallSingle",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "resourceGroupName": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    },
+    "aiFoundryName": {
+      "type": "string",
+      "value": "[variables('foundryResourceName')]"
+    },
+    "aiProjectName": {
+      "type": "string",
+      "value": "[variables('aiProjectName')]"
+    },
+    "projectsEndpoint": {
+      "type": "string",
+      "value": "[format('{0}api/projects/{1}', reference(resourceId('Microsoft.CognitiveServices/accounts', variables('foundryResourceName')), '2025-04-01-preview').endpoints['AI Foundry API'], variables('aiProjectName'))]"
+    },
+    "deployedModels": {
+      "type": "array",
+      "copy": {
+        "count": "[length(parameters('models'))]",
+        "input": {
+          "name": "[parameters('models')[copyIndex()].name]",
+          "deploymentName": "[parameters('models')[copyIndex()].name]"
+        }
+      }
+    },
+    "applicationInsightsName": {
+      "type": "string",
+      "value": "[variables('applicationInsightsName')]"
+    },
+    "applicationInsightsConnectionString": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName')), '2020-02-02').ConnectionString]"
+    },
+    "applicationInsightsInstrumentationKey": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
+    },
+    "applicationInsightsId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]"
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string",
+      "value": "[if(empty(parameters('logAnalyticsWorkspaceName')), resourceId('Microsoft.OperationalInsights/workspaces', format('law-{0}', variables('applicationInsightsName'))), resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')))]"
+    },
+    "postgresServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "PostgreSQL server name"
+      },
+      "value": "[variables('postgresServerNameResolved')]"
+    },
+    "postgresUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "PostgreSQL username"
+      },
+      "value": "[if(equals(parameters('postgresAuthType'), 'Password'), parameters('postgresAdminLogin'), deployer().userPrincipalName)]"
+    }
+  }
+}
