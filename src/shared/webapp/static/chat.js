@@ -736,16 +736,21 @@ async function clearChat() {
     clearBtn.disabled = true;
     clearBtn.textContent = "Clearing...";
 
-    // Call the clear endpoint with session ID
-    const response = await fetch(
-      "/chat/clear?" +
-        new URLSearchParams({
-          session_id: chatState.sessionId,
-        }),
-      {
-        method: "DELETE",
-      }
-    );
+    // Get current RLS user ID
+    const rlsUserId = await getCurrentRlsUserId();
+
+    // Call the clear endpoint with session ID and RLS user ID
+    const response = await fetch("/chat/clear", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "", // Required field in ChatRequest but not used for clear
+        session_id: chatState.sessionId,
+        rls_user_id: rlsUserId,
+      }),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to clear chat: ${response.status}`);
@@ -935,7 +940,8 @@ async function saveRlsUser() {
     localStorage.setItem("current_rls_user_id", selectedUserId);
 
     // Clear current chat session since we're switching agents
-    await clearChatSession();
+    // Pass the new selectedUserId to ensure it's used for the clear operation
+    await clearChatSession(selectedUserId);
 
     // Update current user display immediately
     await updateCurrentUserDisplay();
@@ -969,8 +975,31 @@ function hideStatusMessage() {
   rlsUserStatus.textContent = "";
 }
 
-async function clearChatSession() {
+async function clearChatSession(rls_user_id = null) {
   try {
+    // Use provided RLS user ID or get current one
+    const rlsUserId = rls_user_id || await getCurrentRlsUserId();
+
+    // Call the backend clear endpoint to properly clean up server-side state
+    const response = await fetch("/chat/clear", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "", // Required field in ChatRequest but not used for clear
+        session_id: chatState.sessionId,
+        rls_user_id: rlsUserId,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("Backend clear failed, continuing with frontend clear");
+    } else {
+      const result = await response.json();
+      console.log("Clear response:", result);
+    }
+
     // Generate new session ID for fresh start
     chatState.sessionId = generateSessionId();
     localStorage.setItem("chat_session_id", chatState.sessionId);
@@ -1036,8 +1065,19 @@ async function updateCurrentUserDisplay() {
 window.addEventListener("beforeunload", (e) => {
   // Use fetch with keepalive for DELETE request during page unload
   try {
+    // Get the current RLS user ID from localStorage (sync operation for beforeunload)
+    const currentRlsUserId = localStorage.getItem("current_rls_user_id") || "00000000-0000-0000-0000-000000000000";
+    
     fetch("/chat/clear", {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "", // Required field in ChatRequest but not used for clear
+        session_id: chatState.sessionId,
+        rls_user_id: currentRlsUserId,
+      }),
       keepalive: true,
     }).catch(() => {
       // Ignore errors during page unload

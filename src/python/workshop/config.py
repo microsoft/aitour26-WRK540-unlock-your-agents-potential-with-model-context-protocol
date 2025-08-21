@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -18,7 +19,7 @@ class Config:
     EMBEDDING_MODEL_DEPLOYMENT_NAME: str = os.environ["EMBEDDING_MODEL_DEPLOYMENT_NAME"]
     PROJECT_ENDPOINT: str = os.environ["PROJECT_ENDPOINT"]
     APPLICATIONINSIGHTS_CONNECTION_STRING: str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    DEV_TUNNEL_URL: str = url + "/mcp" if (url := os.getenv("DEV_TUNNEL_URL")) else ""
+    DEV_TUNNEL_URL: str = ""  # Will be set after class definition
 
     # Model parameters
     MAX_COMPLETION_TOKENS = 2 * 10240
@@ -31,6 +32,26 @@ class Config:
 
     # MCP configuration
     MAP_MCP_FUNCTIONS: bool = os.getenv("MAP_MCP_FUNCTIONS", "true").lower() in ("true", "1", "yes")
+
+    @staticmethod
+    def _compute_dev_tunnel_url() -> str:
+        """Compute the dev tunnel URL at class definition time."""
+        try:
+            # Look for dev_tunnel.log in the shared scripts directory
+            log_file_path = Path(__file__).parent / "dev_tunnel.log"
+            with log_file_path.open("r") as file:
+                for line in file:
+                    line = line.strip()
+                    if line.startswith("Connect via browser:"):
+                        # Extract URLs from the line
+                        urls_part = line.split("Connect via browser:")[1].strip()
+                        urls = [url.strip() for url in urls_part.split(",")]
+                        if len(urls) >= 2:
+                            # Use the second URL and append /mcp
+                            return urls[1].rstrip("/") + "/mcp"
+            return ""
+        except (FileNotFoundError, Exception):
+            return ""
 
     class Rls:
         """RLS configuration for PostgreSQL Row Level Security."""
@@ -72,3 +93,7 @@ Configuration Summary:
 - Max Completion Tokens: {cls.MAX_COMPLETION_TOKENS}
 - Max Prompt Tokens: {cls.MAX_PROMPT_TOKENS}
 """
+
+
+# Set the DEV_TUNNEL_URL value after class definition
+Config.DEV_TUNNEL_URL = Config._compute_dev_tunnel_url()

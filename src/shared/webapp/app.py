@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import AsyncGenerator, Dict
 
 import httpx
-from fastapi import FastAPI, Form, HTTPException, UploadFile
+from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -200,12 +200,24 @@ class WebApp:
             logger.error(f"Streaming error: {e!s}")
             yield f"data: {json.dumps({'error': f'Streaming error: {e!s}'})}\n\n"
 
-    async def clear_chat(self, session_id: str = "default") -> Dict:
+    async def clear_chat(self, request: Request) -> Dict:
         """Clear chat history and call agent service to delete thread for specific session."""
+        session_id = "unknown"  # Initialize for error logging
         try:
+            # Parse JSON body from the request
+            request_data = await request.json()
+            session_id = request_data.get("session_id", "default")
+            rls_user_id = request_data.get("rls_user_id", "00000000-0000-0000-0000-000000000000")
+
             # Call agent service to clear thread for this session
             async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.delete(f"{AGENT_SERVICE_URL}/chat/clear", params={"session_id": session_id})
+                # Send as JSON body to match the ChatRequest model
+                agent_request_data = {
+                    "message": "",  # Required field in ChatRequest but not used for clear
+                    "session_id": session_id,
+                    "rls_user_id": rls_user_id,
+                }
+                response = await client.request("DELETE", f"{AGENT_SERVICE_URL}/chat/clear", json=agent_request_data)
 
                 if response.status_code == 200:
                     result = response.json()

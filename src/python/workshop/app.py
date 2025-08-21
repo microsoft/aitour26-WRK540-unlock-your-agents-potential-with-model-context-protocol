@@ -23,7 +23,6 @@ from config import Config
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from mcp_client import MCPClient
-from models import RlsUserRequest, RlsUserResult
 from opentelemetry import trace
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from utilities import Utilities
@@ -57,10 +56,8 @@ class AgentManager:
 
         logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
-            # For function mapping, we'll create tools without RLS user ID
-            # The RLS user ID will be passed via tool resources during run
-            mcp_client = MCPClient.create_default("00000000-0000-0000-0000-000000000000")  # Default placeholder
-            function_tools = await mcp_client.build_function_tools()
+            self.mcp_client = MCPClient("00000000-0000-0000-0000-000000000000")  # Default placeholder
+            function_tools = await self.mcp_client.build_function_tools()
             self.toolset.add(function_tools)
         else:
             mcp_tools = McpTool(
@@ -79,68 +76,21 @@ class AgentManager:
 
     def __init__(self) -> None:
         self.utilities = Utilities()
+        self.mcp_client: MCPClient | None = None
         self.agents_client: AgentsClient | None = None
         self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
         self.tracer = tracer
         self.application_insights_connection_string = Config.APPLICATIONINSIGHTS_CONNECTION_STRING
 
-    async def get_or_create_agent(self) -> Agent:
-        """Get existing agent or create a new one."""
-        if self.agent is not None:
-            return self.agent
-
-        if not self.agents_client:
-            raise ValueError("AgentsClient is not initialized")
-
-        # Check if agent already exists in the service
-        # if self.agents_client:
-        #     known_agents = self.agents_client.list_agents()
-        #     async for agent in known_agents:
-        #         if agent.name == Config.AGENT_NAME:
-        #             logger.info("Found existing agent: %s", agent.name)
-        #             self.agent = agent
-        #             return agent
-
-        # Create new agent if not found
-        self.agent = await self.create_agent()
-        return self.agent
-
-    async def create_agent(self) -> Agent:
-        """Create a new agent."""
-        logger.info("Creating new agent: %s", Config.AGENT_NAME)
-
-        if not self.agents_client:
-            raise ValueError("AgentsClient is not initialized")
-
-        # Load LLM instructions
-        instructions = self.utilities.load_instructions(INSTRUCTIONS_FILE)
-
-        # Setup tools (without RLS user specifics)
-        await self._setup_agent_tools()
-
-        with self.tracer.start_as_current_span(trace_scenario):
-            # Create agent without RLS-specific configuration
-            agent = await self.agents_client.create_agent(
-                model=Config.GPT_MODEL_DEPLOYMENT_NAME,
-                name=Config.AGENT_NAME,
-                instructions=instructions,
-                toolset=self.toolset,
-                temperature=Config.TEMPERATURE,
-            )
-            logger.info("Created agent, ID: %s", agent.id)
-
-            # Enable auto function calls
-            if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
-                self.agents_client.enable_auto_function_calls(tools=self.toolset)
-
-        return agent
-
-    async def initialize(self) -> bool:
+    async def initialize(self, instructions_file: str) -> bool:
         """Initialize the agent with tools and instructions."""
         try:
             # Validate configuration
             Config.validate_required_env_vars()
+
+            # Load LLM instructions
+            instructions = self.utilities.load_instructions(instructions_file)
 
             # Validate Azure Entra ID Authentication
             credential = await self.utilities.validate_azure_authentication()
@@ -156,10 +106,24 @@ class AgentManager:
                 endpoint=Config.PROJECT_ENDPOINT,
             )
 
+            await self._setup_agent_tools()
+
             configure_azure_monitor(connection_string=self.application_insights_connection_string)
 
-            # Initialize single agent
-            await self.get_or_create_agent()
+            with self.tracer.start_as_current_span(trace_scenario):
+                # Create agent
+                self.agent = await self.agents_client.create_agent(
+                    model=Config.GPT_MODEL_DEPLOYMENT_NAME,
+                    name=Config.AGENT_NAME,
+                    instructions=instructions,
+                    toolset=self.toolset,
+                    temperature=Config.TEMPERATURE,
+                )
+                logger.info("Created agent, ID: %s", self.agent.id)
+
+                # Enable auto function calls
+                if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
+                    self.agents_client.enable_auto_function_calls(tools=self.toolset)
 
             return True
 
@@ -185,7 +149,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Initializing agent service on startup...")
 
     # Initialize agent
-    success = await agent_manager.initialize()
+    success = await agent_manager.initialize(INSTRUCTIONS_FILE)
 
     if not success:
         logger.warning("Agent initialization failed. Check your configuration.")
@@ -234,75 +198,33 @@ async def stream_chat(request: ChatRequest) -> StreamingResponse:
 
 
 @app.delete("/chat/clear")
-async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
+async def clear_chat(request: ChatRequest) -> Dict[str, Any]:
     """Clear the chat session and thread for a specific session."""
     try:
         if not agent_manager.is_initialized or not agent_manager.agents_client or not agent_manager.agent:
             raise HTTPException(status_code=500, detail="Agent not initialized")
 
+        # Get session_id and rls_user_id from the request object
+        session_id = request.session_id or "default"
+        rls_user_id = request.rls_user_id or "00000000-0000-0000-0000-000000000000"
+
         # Clear the specific session and its thread
         await agent_service.clear_session_thread(session_id)
+        if agent_manager.mcp_client:
+            await agent_manager.mcp_client.new_user_rls(rls_user_id)
 
         return {
             "status": "success",
             "message": f"Chat session '{session_id}' cleared successfully",
+            "rls_user_id": rls_user_id,
         }
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error("Error clearing chat for session %s: %s", session_id, e)
+        session_id_for_log = request.session_id or "default"
+        logger.error("Error clearing chat for session %s: %s", session_id_for_log, e)
         raise HTTPException(status_code=500, detail=f"Failed to clear chat: {e!s}") from e
-
-
-@app.post("/agent/rls-user")
-async def set_rls_user(rls_user_id: str = Form(...)) -> RlsUserResult:
-    """Set the RLS user ID for the agent service (compatibility endpoint)."""
-    try:
-        if not agent_manager.is_initialized:
-            raise HTTPException(status_code=500, detail="Agent not initialized")
-
-        # Validate the RLS user ID exists
-        user_name_map = {
-            Config.Rls.ZAVA_HEADOFFICE_USER_ID: "Head Office",
-            Config.Rls.ZAVA_SEATTLE_USER_ID: "Seattle",
-            Config.Rls.ZAVA_BELLEVUE_USER_ID: "Bellevue",
-            Config.Rls.ZAVA_TACOMA_USER_ID: "Tacoma",
-            Config.Rls.ZAVA_SPOKANE_USER_ID: "Spokane",
-            Config.Rls.ZAVA_EVERETT_USER_ID: "Everett",
-            Config.Rls.ZAVA_REDOND_USER_ID: "Redmond",
-            Config.Rls.ZAVA_KIRKLAND_USER_ID: "Kirkland",
-            Config.Rls.ZAVA_ONLINE_USER_ID: "Online",
-        }
-
-        if rls_user_id not in user_name_map:
-            raise ValueError(f"Invalid RLS user ID: {rls_user_id}")
-
-        user_name = user_name_map[rls_user_id]
-        message = f"RLS user ID acknowledged: {user_name}"
-        logger.info("RLS user ID set: %s (%s)", rls_user_id, user_name)
-
-        return RlsUserResult(message=message, rls_user_id=rls_user_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-    except Exception as e:
-        logger.error("Error setting RLS user ID: %s", e)
-        raise HTTPException(status_code=500, detail=f"Failed to set RLS user ID: {e!s}") from e
-
-
-@app.get("/agent/rls-user")
-async def get_rls_user() -> Dict[str, str]:
-    """Get the current RLS user ID from the agent service (compatibility endpoint)."""
-    try:
-        if not agent_manager.is_initialized:
-            raise HTTPException(status_code=500, detail="Agent not initialized")
-
-        # Return default RLS user ID since we no longer maintain state
-        default_rls_user_id = Config.Rls.ZAVA_HEADOFFICE_USER_ID
-        return {"status": "success", "rls_user_id": default_rls_user_id}
-    except Exception as e:
-        logger.error("Error getting RLS user ID: %s", e)
-        raise HTTPException(status_code=500, detail=f"Failed to get RLS user ID: {e!s}") from e
 
 
 @app.get("/files/{filename}")

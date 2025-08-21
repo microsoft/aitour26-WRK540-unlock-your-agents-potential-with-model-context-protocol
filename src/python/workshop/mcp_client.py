@@ -17,21 +17,30 @@ logger = logging.getLogger(__name__)
 class MCPClient:
     """Client for communicating with MCP servers."""
 
-    def __init__(self, server_command: List[str]) -> None:
-        """Initialize with the command to start the MCP server."""
-        self.server_params = StdioServerParameters(
-            command=server_command[0],
-            args=server_command[1:] if len(server_command) > 1 else [],
-        )
+    def __init__(self, rls_user_id: str) -> None:
+        """Initialize with default server configuration using RLS user ID."""
+        self.server_script_path = Path(__file__).parent.parent / "mcp_server" / "sales_analysis" / "sales_analysis.py"
+        self.server_params = self.set_mcp_stdio_parameters(rls_user_id)
+
         self._session: Optional[ClientSession] = None
         self._client_context = None
         self._session_lock = asyncio.Lock()
 
-    @classmethod
-    def create_default(cls, rls_user_id: str) -> "MCPClient":
-        """Create an MCPClient with default server configuration."""
-        server_script_path = Path(__file__).parent.parent / "mcp_server" / "sales_analysis" / "sales_analysis.py"
-        return cls([sys.executable, str(server_script_path), "--stdio", "--RLS_USER_ID", rls_user_id])
+    async def new_user_rls(self, rls_user_id: str) -> None:
+        """Update the RLS user ID for the MCP server parameters."""
+        if self._session:
+            await self.close_session()
+        self.server_params = self.set_mcp_stdio_parameters(rls_user_id)
+
+    def set_mcp_stdio_parameters(self, rls_user_id: str) -> StdioServerParameters:
+        """Set up the MCP server parameters for stdio communication."""
+
+        server_command = [sys.executable, str(self.server_script_path), "--stdio", "--RLS_USER_ID", rls_user_id]
+
+        return StdioServerParameters(
+            command=server_command[0],
+            args=server_command[1:] if len(server_command) > 1 else [],
+        )
 
     async def __aenter__(self) -> "MCPClient":
         """Async context manager entry."""
@@ -76,7 +85,13 @@ class MCPClient:
             return "No result returned from tool"
 
         content_item = result.content[0]
-        return content_item.text if hasattr(content_item, "text") else str(content_item)
+
+        # Handle different content types based on their type field
+        if hasattr(content_item, "type") and content_item.type == "text":
+            return getattr(content_item, "text", str(content_item))
+
+        # Fallback: try to get text attribute safely, or convert to string
+        return getattr(content_item, "text", str(content_item))
 
     def _build_enhanced_docstring(self, tool_description: str, tool_parameters: Dict[str, Any]) -> str:
         """Build enhanced docstring with parameter info from MCP schema."""
@@ -211,7 +226,7 @@ class MCPClient:
 if __name__ == "__main__":
 
     async def test() -> None:
-        client = MCPClient.create_default("00000000-0000-0000-0000-000000000000")  # Example RLS user ID
+        client = MCPClient("00000000-0000-0000-0000-000000000000")  # Example RLS user ID
         async with client:
             tools = await client.fetch_tools_async()
             logger.info("Available tools: %s", [tool["function"]["name"] for tool in tools])

@@ -79,6 +79,27 @@
                     "clear": false
                 },
                 "problemMatcher": []
+            },
+            {
+                "label": "Start DevTunnel",
+                "type": "shell",
+                "command": "${workspaceFolder:shared}/scripts/start_devtunnel.sh",
+                "options": {
+                    "cwd": "${workspaceFolder:workshop}"
+                },
+                "group": "build",
+                "isBackground": true,
+                "problemMatcher": {
+                    "owner": "devtunnel",
+                    "pattern": {
+                        "regexp": "^.*$"
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "^.*(Starting DevTunnel).*$",
+                        "endsPattern": "^.*(Ready to accept connections for tunnel:).*$"
+                    }
+                }
             }
         ]
     },
@@ -100,6 +121,7 @@
                     "Debug: Agent Manager (http)",
                     "Debug: Web App"
                 ],
+                "preLaunchTask": "Start DevTunnel",
                 "stopAll": true
             }
         ],

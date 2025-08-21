@@ -174,14 +174,16 @@ class ChatManager:
                         last_messages=5,
                     )
 
-                    # Create dynamic tool resources with RLS user ID header
-                    mcp_tool_resource = MCPToolResource(
-                        server_label="ZavaSalesAnalysisMcpServer",
-                        headers={"x-rls-user-id": request.rls_user_id},
-                        require_approval="never",
-                    )
                     tool_resources = ToolResources()
-                    tool_resources.mcp = [mcp_tool_resource]
+
+                    if request.rls_user_id:
+                        # Create dynamic tool resources with RLS user ID header
+                        mcp_tool_resource = MCPToolResource(
+                            server_label="ZavaSalesAnalysisMcpServer",
+                            headers={"x-rls-user-id": request.rls_user_id},
+                            require_approval="never",
+                        )
+                        tool_resources.mcp = [mcp_tool_resource]
 
                     try:
                         async with await agents_client.runs.stream(

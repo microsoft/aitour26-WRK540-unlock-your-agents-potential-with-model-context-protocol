@@ -13,7 +13,7 @@ load_dotenv(dotenv_path=env_path)
 class Config:
     """Configuration class for managing application settings."""
 
-    POSTGRES_URL: str = os.getenv("POSTGRES_URL", "postgresql://store_manager:StoreManager123!@db:5432/zava")
+    POSTGRES_URL: str = os.getenv("POSTGRES_URL") or "postgresql://store_manager:StoreManager123!@db:5432/zava"
     APPLICATIONINSIGHTS_CONNECTION_STRING: str = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "")
 
     @classmethod
