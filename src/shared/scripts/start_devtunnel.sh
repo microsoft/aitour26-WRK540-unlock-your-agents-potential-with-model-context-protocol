@@ -4,8 +4,6 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TUNNEL_JSON_FILE="dev_tunnel.json"
 
-ls -all
-
 # Function to get tunnel ID from dev_tunnel.json file
 get_tunnel_id_from_json() {
     if [ -f "$TUNNEL_JSON_FILE" ]; then
