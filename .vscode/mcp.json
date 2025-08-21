@@ -1,14 +1,5 @@
 {
 	"servers": {
-		"zava-sales-assistant-stdio": {
-			"type": "stdio",
-			"command": "python",
-			"args": [
-				"${workspaceFolder}/src/python/mcp_server/mcp_server_sales_analysis.py",
-				"--stdio",
-				"--RLS_USER_ID=00000000-0000-0000-0000-000000000000"
-			]
-		},
 		"zava-customer-sales-stdio": {
 			"type": "stdio",
 			"command": "python",
