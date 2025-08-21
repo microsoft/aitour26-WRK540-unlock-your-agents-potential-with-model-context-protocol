@@ -7,9 +7,6 @@ import argparse
 import asyncio
 import logging
 import os
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Annotated, Optional
 
@@ -36,14 +33,6 @@ for name in [
     "azure.monitor.opentelemetry.exporter.export._base",
 ]:
     logging.getLogger(name).setLevel(logging.WARNING)
-
-
-@dataclass
-class AppContext:
-    """Application context containing database connection."""
-
-    db: PostgreSQLSchemaProvider
-    semantic_search: SemanticSearchTextEmbedding
 
 
 db_provider = PostgreSQLSchemaProvider()
@@ -125,8 +114,6 @@ async def semantic_search_products(
     logger.info("Max Rows: %d", max_rows)
 
     try:
-        # app_context = get_app_context()
-
         # Check if semantic search is available
         if not semantic_search_provider.is_available():
             return "Error: Semantic search is not available. Azure OpenAI endpoint not configured."
@@ -193,7 +180,6 @@ async def get_multiple_table_schemas(
     logger.info("Retrieving schemas for tables: %s", ", ".join(table_names))
 
     try:
-        # provider = get_db_provider()
         return await db_provider.get_table_metadata_from_list(table_names, rls_user_id=rls_user_id)
     except Exception as e:
         logger.error("Error retrieving table schemas: %s", e)
@@ -222,7 +208,6 @@ async def execute_sales_query(
         if not postgresql_query:
             return "Error: postgresql_query parameter is required"
 
-        # provider = get_db_provider()
         result = await db_provider.execute_query(postgresql_query, rls_user_id=rls_user_id)
         return f"Query Results:\n{result}"
 
