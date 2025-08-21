@@ -46,27 +46,12 @@ class AppContext:
     semantic_search: SemanticSearchTextEmbedding
 
 
-@asynccontextmanager
-async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:  # noqa: ARG001
-    """Manage application lifecycle with type-safe context"""
-
-    db = PostgreSQLSchemaProvider()
-    semantic_search = SemanticSearchTextEmbedding()
-    # Use connection pool instead of single connection for HTTP server
-    await db.create_pool()
-
-    try:
-        yield AppContext(db=db, semantic_search=semantic_search)
-    finally:
-        # Cleanup on shutdown
-        try:
-            await db.close_pool()
-        except Exception as e:
-            logger.error("⚠️  Error closing database pool: %s", e)
+db_provider = PostgreSQLSchemaProvider()
+semantic_search_provider = SemanticSearchTextEmbedding()
 
 
 # Create MCP server with lifespan support
-mcp = FastMCP("mcp-zava-sales", lifespan=app_lifespan, stateless_http=True)
+mcp = FastMCP("mcp-zava-sales", stateless_http=True)
 
 
 def get_header(ctx: Context, header_name: str) -> Optional[str]:
@@ -97,24 +82,6 @@ def get_rls_user_id(ctx: Context) -> str:
         # Default to a placeholder if not provided
         rls_user_id = "00000000-0000-0000-0000-000000000000"
     return rls_user_id
-
-
-def get_db_provider() -> PostgreSQLSchemaProvider:
-    """Get the database provider instance from context."""
-    ctx = mcp.get_context()
-    app_context = ctx.request_context.lifespan_context
-    if isinstance(app_context, AppContext):
-        return app_context.db
-    raise RuntimeError("Invalid lifespan context type")
-
-
-def get_app_context() -> AppContext:
-    """Get the application context from MCP context."""
-    ctx = mcp.get_context()
-    app_context = ctx.request_context.lifespan_context
-    if isinstance(app_context, AppContext):
-        return app_context
-    raise RuntimeError("Invalid lifespan context type")
 
 
 # @mcp.tool()
@@ -158,19 +125,19 @@ async def semantic_search_products(
     logger.info("Max Rows: %d", max_rows)
 
     try:
-        app_context = get_app_context()
+        # app_context = get_app_context()
 
         # Check if semantic search is available
-        if not app_context.semantic_search.is_available():
+        if not semantic_search_provider.is_available():
             return "Error: Semantic search is not available. Azure OpenAI endpoint not configured."
 
         # Generate embedding for the query
-        query_embedding = app_context.semantic_search.generate_query_embedding(query_description)
+        query_embedding = semantic_search_provider.generate_query_embedding(query_description)
         if not query_embedding:
             return "Error: Failed to generate embedding for the query. Please try again."
 
         # Search for similar products using the embedding
-        return await app_context.db.search_products_by_similarity(
+        return await db_provider.search_products_by_similarity(
             query_embedding, rls_user_id=rls_user_id, max_rows=max_rows, similarity_threshold=similarity_threshold
         )
 
@@ -226,8 +193,8 @@ async def get_multiple_table_schemas(
     logger.info("Retrieving schemas for tables: %s", ", ".join(table_names))
 
     try:
-        provider = get_db_provider()
-        return await provider.get_table_metadata_from_list(table_names, rls_user_id=rls_user_id)
+        # provider = get_db_provider()
+        return await db_provider.get_table_metadata_from_list(table_names, rls_user_id=rls_user_id)
     except Exception as e:
         logger.error("Error retrieving table schemas: %s", e)
         return f"Error retrieving table schemas: {e!s}"
@@ -255,8 +222,8 @@ async def execute_sales_query(
         if not postgresql_query:
             return "Error: postgresql_query parameter is required"
 
-        provider = get_db_provider()
-        result = await provider.execute_query(postgresql_query, rls_user_id=rls_user_id)
+        # provider = get_db_provider()
+        result = await db_provider.execute_query(postgresql_query, rls_user_id=rls_user_id)
         return f"Query Results:\n{result}"
 
     except Exception as e:
@@ -266,7 +233,7 @@ async def execute_sales_query(
 
 @mcp.tool()
 async def get_current_utc_date() -> str:
-    """Get the current UTC date and time in ISO format. Useful for date-based queries, filtering recent data, or understanding the current context for time-sensitive analysis.
+    """Get the current UTC date and time in ISO format. Useful for date time relative queries or understanding the current date for time-sensitive analysis.
 
     Returns:
         Current UTC date and time in ISO format (YYYY-MM-DDTHH:MM:SS.fffffZ)
@@ -288,17 +255,27 @@ async def run_http_server() -> None:
     # from the host application
     configure_azure_monitor(connection_string=config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 
-    mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
-    StarletteInstrumentor().instrument_app(mcp.sse_app())
-    StarletteInstrumentor().instrument_app(mcp.streamable_http_app())
-    logger.info(
-        "❤️ 📡 MCP endpoint available at: http://%s:%d/mcp",
-        mcp.settings.host,
-        mcp.settings.port,
-    )
+    # Ensure a single connection pool is created once for the process.
+    try:
+        await db_provider.create_pool()
 
-    # Run the FastMCP server as HTTP endpoint
-    await mcp.run_streamable_http_async()
+        mcp.settings.port = int(os.getenv("PORT", mcp.settings.port))
+        StarletteInstrumentor().instrument_app(mcp.sse_app())
+        StarletteInstrumentor().instrument_app(mcp.streamable_http_app())
+        logger.info(
+            "❤️ 📡 MCP endpoint available at: http://%s:%d/mcp",
+            mcp.settings.host,
+            mcp.settings.port,
+        )
+
+        # Run the FastMCP server as HTTP endpoint
+        await mcp.run_streamable_http_async()
+    finally:
+        # Close the pool on shutdown
+        try:
+            await db_provider.close_pool()
+        except Exception as e:
+            logger.error("⚠️  Error closing database pool: %s", e)
 
 
 def main() -> None:
@@ -314,7 +291,20 @@ def main() -> None:
     RLS_USER_ID = args.RLS_USER_ID
 
     if args.stdio:
-        mcp.run()
+        # Create process-wide pool for stdio mode as well.
+        try:
+            asyncio.run(db_provider.create_pool())
+        except Exception as e:
+            logger.error("Error creating DB pool for stdio mode: %s", e)
+            raise
+
+        try:
+            mcp.run()
+        finally:
+            try:
+                asyncio.run(db_provider.close_pool())
+            except Exception as e:
+                logger.error("⚠️  Error closing database pool: %s", e)
     else:
         # Run the HTTP server
         asyncio.run(run_http_server())
