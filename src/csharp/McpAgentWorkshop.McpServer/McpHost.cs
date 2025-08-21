@@ -13,7 +13,7 @@ builder.Services.AddMcpServer()
 
 builder.Services.AddHttpContextAccessor();
 
-builder.AddNpgsqlDataSource("zava");
+builder.AddNpgsqlDataSource("store-manager");
 
 var app = builder.Build();
 

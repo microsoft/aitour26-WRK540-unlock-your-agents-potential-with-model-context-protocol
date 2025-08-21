@@ -1,5 +1,4 @@
 using System.ClientModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Azure.AI.Agents.Persistent;
 using McpAgentWorkshop.WorkshopApi.Models;
@@ -15,9 +14,10 @@ public class AgentService(
     private PersistentAgent? persistentAgent;
     private readonly IDictionary<string, PersistentAgentThread> sessionThreads = new Dictionary<string, PersistentAgentThread>();
     private readonly SemaphoreSlim sessionLock = new(1, 1);
+    private readonly SemaphoreSlim agentLock = new(1, 1);
     private const string AgentName = "Zava DIY Sales Analysis Agent";
     private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
-
+    private const string ZavaMcpToolLabel = "ZavaSalesAnalysisMcpServer";
     private readonly string sharedPath = Path.Combine(hostEnvironment.ContentRootPath, "..", "..", "shared");
 
     public bool IsAgentAvailable => persistentAgent is not null;
@@ -30,28 +30,37 @@ public class AgentService(
         }
 
         if (persistentAgent is not null)
+        {
             await persistentAgentsClient.Administration.DeleteAgentAsync(persistentAgent.Id);
+        }
 
         sessionLock.Dispose();
+        agentLock.Dispose();
     }
 
     public async Task InitialiseAsync()
     {
         logger.LogInformation("Initialising agent service...");
 
-        var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
+        // Create or find the single agent
+        persistentAgent = await GetOrCreateAgentAsync();
+    }
 
-        await foreach (var agent in agentsList)
-        {
-            if (agent.Name == AgentName)
-            {
-                logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
-                persistentAgent = agent;
-                break;
-            }
-        }
+    private async Task<PersistentAgent> GetOrCreateAgentAsync()
+    {
+        // var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
 
-        persistentAgent ??= await CreateAgentAsync();
+        // await foreach (var agent in agentsList)
+        // {
+        //     if (agent.Name == AgentName)
+        //     {
+        //         logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
+        //         return agent;
+        //     }
+        // }
+
+        // Create new agent if not found
+        return await CreateAgentAsync();
     }
 
     private async Task<PersistentAgent> CreateAgentAsync()
@@ -74,21 +83,15 @@ public class AgentService(
 
         devtunnelUrl = devtunnelUrl.EndsWith('/') ? devtunnelUrl : devtunnelUrl + "/";
 
-        var mcpTool = new MCPToolDefinition("ZavaSalesAnalysisMcpServer", devtunnelUrl + "mcp");
-        var mcpToolResource = new MCPToolResource(mcpTool.ServerLabel, new Dictionary<string, string>
-        {
-            { "x-rls-user-id", "00000000-0000-0000-0000-000000000000" }
-        });
-        var toolResources = new ToolResources();
-        toolResources.Mcp.Add(mcpToolResource);
+        var mcpTool = new MCPToolDefinition(ZavaMcpToolLabel, devtunnelUrl + "mcp");
 
+        // Create agent without tool resources - we'll set them per run
         PersistentAgent pa = await persistentAgentsClient.Administration.CreateAgentAsync(
                 name: AgentName,
                 model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
                 instructions: instructionsContent,
                 temperature: 0.1f,
-                tools: [mcpTool, new CodeInterpreterToolDefinition()],
-                toolResources: toolResources);
+                tools: [mcpTool, new CodeInterpreterToolDefinition()]);
 
         logger.LogInformation("Agent created with ID: {AgentId}", pa.Id);
 
@@ -147,7 +150,7 @@ public class AgentService(
         logger.LogInformation("Cleared thread for session {SessionId}", sessionId);
     }
 
-    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update)
+    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update, ToolResources toolResources)
     {
         switch (update.UpdateKind)
         {
@@ -163,12 +166,17 @@ public class AgentService(
                 logger.LogInformation("Approving MCP tool call: {Name}, Arguments: {Arguments}", submitToolApprovalUpdate.Name, submitToolApprovalUpdate.Arguments);
                 List<ToolApproval> toolApprovals = [];
 
-                toolApprovals.Add(new ToolApproval(submitToolApprovalUpdate.ToolCallId, approve: true));
+                ToolApproval toolApproval = PersistentAgentsModelFactory.ToolApproval(
+                    submitToolApprovalUpdate.ToolCallId,
+                    true,
+                    toolResources.Mcp.SelectMany(mcp => mcp.Headers).ToDictionary(h => h.Key, h => h.Value));
+
+                toolApprovals.Add(toolApproval);
 
                 var toolOutputStream = persistentAgentsClient.Runs.SubmitToolOutputsToStreamAsync(submitToolApprovalUpdate, toolOutputs: [], toolApprovals: toolApprovals);
                 await foreach (var toolUpdate in toolOutputStream)
                 {
-                    var response = HandleStreamingUpdateAsync(toolUpdate);
+                    var response = HandleStreamingUpdateAsync(toolUpdate, toolResources);
                     await foreach (var res in response)
                     {
                         yield return res;
@@ -226,6 +234,12 @@ public class AgentService(
             yield break;
         }
 
+        if (string.IsNullOrWhiteSpace(request.RlsUserId))
+        {
+            yield return new ChatErrorResponse("RLS User ID is required");
+            yield break;
+        }
+
         var sessionId = request.SessionId ?? "default";
 
         // Create a span for this chat request  
@@ -239,6 +253,14 @@ public class AgentService(
         PersistentAgentThread sessionThread;
         AsyncCollectionResult<StreamingUpdate>? streamingUpdates = null;
         string? errorMessage = null;
+        // Create tool resources for this RLS user
+        var mcpToolResource = new MCPToolResource(ZavaMcpToolLabel, new Dictionary<string, string>
+        {
+            { "x-rls-user-id", request.RlsUserId }
+        });
+        var toolResources = new ToolResources();
+        toolResources.Mcp.Add(mcpToolResource);
+
 
         try
         {
@@ -251,6 +273,7 @@ public class AgentService(
             activity?.SetTag("agent_id", persistentAgent!.Id);
             activity?.SetTag("thread_id", sessionThread.Id);
             activity?.SetTag("session_id", sessionId);
+            activity?.SetTag("rls_user_id", request.RlsUserId);
 
             // Create message in thread  
             await persistentAgentsClient.Messages.CreateMessageAsync(
@@ -259,15 +282,22 @@ public class AgentService(
                 content: request.Message,
                 cancellationToken: cancellationToken);
 
-            // Start streaming run (equivalent to the Python run_stream() function)
+            // Create run options with dynamic tool resources
+            var runOptions = new CreateRunStreamingOptions
+            {
+                MaxCompletionTokens = 2 * 10240,
+                MaxPromptTokens = 6 * 10240,
+                Temperature = 0.1f,
+                TopP = 0.1f,
+                TruncationStrategy = new Truncation(TruncationStrategy.LastMessages) { LastMessages = 5 },
+                ToolResources = toolResources
+            };
+
+            // Start streaming run with dynamic tool resources
             streamingUpdates = persistentAgentsClient.Runs.CreateRunStreamingAsync(
                 threadId: sessionThread.Id,
                 agentId: persistentAgent.Id,
-                maxCompletionTokens: 2 * 10240,
-                maxPromptTokens: 6 * 10240,
-                temperature: 0.1f,
-                topP: 0.1f,
-                truncationStrategy: new Truncation(TruncationStrategy.LastMessages) { LastMessages = 5 },
+                options: runOptions,
                 cancellationToken: cancellationToken
             );
         }
@@ -285,7 +315,7 @@ public class AgentService(
 
         await foreach (var update in streamingUpdates!)
         {
-            var response = HandleStreamingUpdateAsync(update);
+            var response = HandleStreamingUpdateAsync(update, toolResources);
             await foreach (var res in response)
             {
                 yield return res;

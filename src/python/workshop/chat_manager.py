@@ -16,7 +16,9 @@ from azure.ai.agents.models import (
     Agent,
     AgentThread,
     AsyncToolSet,
+    MCPToolResource,
     RunCompletionUsage,
+    ToolResources,
     TruncationObject,
     TruncationStrategy,
 )
@@ -41,8 +43,8 @@ class AgentManagerProtocol(Protocol):
     agents_client: AgentsClient | None
     project_client: AIProjectClient | None
     agent: Agent | None
-    toolset: AsyncToolSet
     application_insights_connection_string: str
+    toolset: AsyncToolSet
 
     @property
     def is_initialized(self) -> bool: ...
@@ -52,6 +54,7 @@ class AgentManagerProtocol(Protocol):
 class ChatRequest(BaseModel):
     message: str
     session_id: str | None = "default"
+    rls_user_id: str | None = None
 
 
 class ChatResponse(BaseModel):
@@ -112,6 +115,10 @@ class ChatManager:
             yield ChatResponse(error="Empty message")
             return
 
+        if not request.rls_user_id:
+            yield ChatResponse(error="RLS User ID is required")
+            return
+
         if not self.agent_manager.is_initialized:
             yield ChatResponse(error="Agent not initialized")
             return
@@ -144,6 +151,7 @@ class ChatManager:
                 span.set_attribute("agent_id", self.agent_manager.agent.id)
                 span.set_attribute("thread_id", session_thread.id)
                 span.set_attribute("session_id", session_id)
+                span.set_attribute("rls_user_id", request.rls_user_id)
 
                 # Create message in thread
 
@@ -159,13 +167,23 @@ class ChatManager:
                     agents_client = cast(AgentsClient, self.agent_manager.agents_client)
                     agent = cast(Agent, self.agent_manager.agent)
                     thread = session_thread  # Use the session-specific thread
-                    toolset = cast(AsyncToolSet, self.agent_manager.toolset)
 
                     # Limit context to last 5 messages (instead of default auto truncation)
                     truncation_strategy = TruncationObject(
                         type=TruncationStrategy.LAST_MESSAGES,  # or "last_messages"
                         last_messages=5,
                     )
+
+                    tool_resources = ToolResources()
+
+                    if request.rls_user_id:
+                        # Create dynamic tool resources with RLS user ID header
+                        mcp_tool_resource = MCPToolResource(
+                            server_label="ZavaSalesAnalysisMcpServer",
+                            headers={"x-rls-user-id": request.rls_user_id},
+                            require_approval="never",
+                        )
+                        tool_resources.mcp = [mcp_tool_resource]
 
                     try:
                         async with await agents_client.runs.stream(
@@ -176,7 +194,7 @@ class ChatManager:
                             max_prompt_tokens=Config.MAX_PROMPT_TOKENS,
                             temperature=Config.TEMPERATURE,
                             top_p=Config.TOP_P,
-                            tool_resources=toolset.resources,
+                            tool_resources=tool_resources,
                             truncation_strategy=truncation_strategy,
                         ) as stream:
                             await stream.until_done()

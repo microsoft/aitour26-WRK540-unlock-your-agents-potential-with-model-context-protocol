@@ -35,6 +35,12 @@ app.MapPost("/chat/stream", (ChatRequest request, ILogger<Program> logger, HttpC
     }, contentType: "text/event-stream");
 });
 
+app.MapDelete("/chat/clear", async (string session_id, AgentService agentService) =>
+{
+    await agentService.ClearSessionThreadAsync(session_id);
+    return TypedResults.Ok(new { message = "Chat session cleared successfully", session_id });
+});
+
 app.MapGet("/files/{*path}", async (string path, AgentService agentService) =>
 {
     var fileInfo = await agentService.GetFileInfoAsync(path);

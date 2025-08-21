@@ -20,7 +20,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from chat_manager import ChatManager, ChatRequest
 from config import Config
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from mcp_client import MCPClient
 from opentelemetry import trace
@@ -38,11 +38,9 @@ Utilities.suppress_logs()
 INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_code_interpreter.txt"
 # INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
 
-RLS_USER_ID = Config.Rls.ZAVA_HEADOFFICE_USER_ID
 RESPONSE_TIMEOUT_SECONDS = 60
 
 trace_scenario = "Zava Agent Initialization"
-mcp_client = MCPClient.create_default(RLS_USER_ID)
 
 
 class AgentManager:
@@ -50,6 +48,7 @@ class AgentManager:
 
     async def _setup_agent_tools(self) -> None:
         """Setup MCP tools and code interpreter."""
+        self.toolset = AsyncToolSet()
 
         # Add code interpreter tool
         code_interpreter = CodeInterpreterTool()
@@ -57,7 +56,8 @@ class AgentManager:
 
         logger.info("Setting up Agent tools...")
         if Config.MAP_MCP_FUNCTIONS:
-            function_tools = await mcp_client.build_function_tools()
+            self.mcp_client = MCPClient("00000000-0000-0000-0000-000000000000")  # Default placeholder
+            function_tools = await self.mcp_client.build_function_tools()
             self.toolset.add(function_tools)
         else:
             mcp_tools = McpTool(
@@ -70,18 +70,16 @@ class AgentManager:
                     "semantic_search_products",
                 ],
             )
-            # PostgreSQL Row Level Security (RLS) User ID header
-            mcp_tools.update_headers("x-rls-user-id", RLS_USER_ID)
-            # Disabled as specified in allowed tools
+            # Don't set RLS user ID header here - it will be set via tool resources per run
             mcp_tools.set_approval_mode("never")
             self.toolset.add(mcp_tools)
 
     def __init__(self) -> None:
         self.utilities = Utilities()
+        self.mcp_client: MCPClient | None = None
         self.agents_client: AgentsClient | None = None
         self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
-        self.toolset = AsyncToolSet()
         self.tracer = tracer
         self.application_insights_connection_string = Config.APPLICATIONINSIGHTS_CONNECTION_STRING
 
@@ -178,6 +176,7 @@ async def health_check() -> Response:
 
 
 @app.post("/chat/stream")
+@app.get("/chat/stream")
 async def stream_chat(request: ChatRequest) -> StreamingResponse:
     """Stream chat responses."""
 
@@ -199,24 +198,32 @@ async def stream_chat(request: ChatRequest) -> StreamingResponse:
 
 
 @app.delete("/chat/clear")
-async def clear_chat(session_id: str = "default") -> Dict[str, Any]:
+async def clear_chat(request: ChatRequest) -> Dict[str, Any]:
     """Clear the chat session and thread for a specific session."""
     try:
         if not agent_manager.is_initialized or not agent_manager.agents_client or not agent_manager.agent:
             raise HTTPException(status_code=500, detail="Agent not initialized")
 
+        # Get session_id and rls_user_id from the request object
+        session_id = request.session_id or "default"
+        rls_user_id = request.rls_user_id or "00000000-0000-0000-0000-000000000000"
+
         # Clear the specific session and its thread
         await agent_service.clear_session_thread(session_id)
+        if agent_manager.mcp_client:
+            await agent_manager.mcp_client.new_user_rls(rls_user_id)
 
         return {
             "status": "success",
             "message": f"Chat session '{session_id}' cleared successfully",
+            "rls_user_id": rls_user_id,
         }
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error("Error clearing chat for session %s: %s", session_id, e)
+        session_id_for_log = request.session_id or "default"
+        logger.error("Error clearing chat for session %s: %s", session_id_for_log, e)
         raise HTTPException(status_code=500, detail=f"Failed to clear chat: {e!s}") from e
 
 

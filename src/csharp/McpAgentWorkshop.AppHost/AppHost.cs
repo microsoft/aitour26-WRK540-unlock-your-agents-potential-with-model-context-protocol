@@ -24,19 +24,22 @@ var pg = builder.AddPostgres("pg")
     ;
 
 var zava = pg.AddDatabase("zava");
+var storeManagerUser = zava.AddPostgresAccount(
+    "store-manager",
+    builder.AddParameter("store-manager-user", "store_manager"),
+    builder.AddParameter("store-manager-password", "StoreManager123!"));
 
 var devtunnel = builder.AddDevTunnel("mcp-devtunnel");
 
 builder.AddMcpInspector("mcp-inspector");
 
 var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("dotnet-mcp-server")
-    .WithReference(zava)
+    .WithReference(storeManagerUser)
     .WaitFor(zava)
     .WithDevTunnel(devtunnel)
     .WithReference(appInsights);
 
 var dotnetAgentApp = builder.AddProject<Projects.McpAgentWorkshop_WorkshopApi>("dotnet-agent-app")
-    .WithReference(zava)
     .WithReference(dotnetMcpServer)
     .WaitFor(dotnetMcpServer)
     .WaitFor(devtunnel)
