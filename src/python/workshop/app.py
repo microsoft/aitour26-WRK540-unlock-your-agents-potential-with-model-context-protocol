@@ -47,14 +47,14 @@ class AgentManager:
 
     async def _setup_agent_tools(self) -> None:
         """Setup MCP tools and code interpreter."""
+        logger.info("Setting up Agent tools...")
         self.toolset = AsyncToolSet()
 
         # Add code interpreter tool
         code_interpreter = CodeInterpreterTool()
         self.toolset.add(code_interpreter)
 
-        logger.info("Setting up Agent tools...")
-
+        # Add MCP tools
         mcp_tools = McpTool(
             server_label="ZavaSalesAnalysisMcpServer",
             server_url=Config.DEV_TUNNEL_URL,
@@ -65,8 +65,8 @@ class AgentManager:
                 "semantic_search_products",
             ],
         )
-        # Don't set RLS user ID header here - it will be set via tool resources per run
-        mcp_tools.set_approval_mode("never")
+
+        mcp_tools.set_approval_mode("never")  # No human in the loop
         self.toolset.add(mcp_tools)
 
     def __init__(self) -> None:
