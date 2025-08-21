@@ -22,7 +22,6 @@ from chat_manager import ChatManager, ChatRequest
 from config import Config
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
-from mcp_client import MCPClient
 from opentelemetry import trace
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from utilities import Utilities
@@ -55,28 +54,23 @@ class AgentManager:
         self.toolset.add(code_interpreter)
 
         logger.info("Setting up Agent tools...")
-        if Config.MAP_MCP_FUNCTIONS:
-            self.mcp_client = MCPClient("00000000-0000-0000-0000-000000000000")  # Default placeholder
-            function_tools = await self.mcp_client.build_function_tools()
-            self.toolset.add(function_tools)
-        else:
-            mcp_tools = McpTool(
-                server_label="ZavaSalesAnalysisMcpServer",
-                server_url=Config.DEV_TUNNEL_URL,
-                allowed_tools=[
-                    "get_multiple_table_schemas",
-                    "execute_sales_query",
-                    "get_current_utc_date",
-                    "semantic_search_products",
-                ],
-            )
-            # Don't set RLS user ID header here - it will be set via tool resources per run
-            mcp_tools.set_approval_mode("never")
-            self.toolset.add(mcp_tools)
+
+        mcp_tools = McpTool(
+            server_label="ZavaSalesAnalysisMcpServer",
+            server_url=Config.DEV_TUNNEL_URL,
+            allowed_tools=[
+                "get_multiple_table_schemas",
+                "execute_sales_query",
+                "get_current_utc_date",
+                "semantic_search_products",
+            ],
+        )
+        # Don't set RLS user ID header here - it will be set via tool resources per run
+        mcp_tools.set_approval_mode("never")
+        self.toolset.add(mcp_tools)
 
     def __init__(self) -> None:
         self.utilities = Utilities()
-        self.mcp_client: MCPClient | None = None
         self.agents_client: AgentsClient | None = None
         self.project_client: AIProjectClient | None = None
         self.agent: Agent | None = None
@@ -120,10 +114,6 @@ class AgentManager:
                     temperature=Config.TEMPERATURE,
                 )
                 logger.info("Created agent, ID: %s", self.agent.id)
-
-                # Enable auto function calls
-                if self.toolset.definitions and Config.MAP_MCP_FUNCTIONS:
-                    self.agents_client.enable_auto_function_calls(tools=self.toolset)
 
             return True
 
@@ -210,8 +200,6 @@ async def clear_chat(request: ChatRequest) -> Dict[str, Any]:
 
         # Clear the specific session and its thread
         await agent_service.clear_session_thread(session_id)
-        if agent_manager.mcp_client:
-            await agent_manager.mcp_client.new_user_rls(rls_user_id)
 
         return {
             "status": "success",

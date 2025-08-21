@@ -3,7 +3,6 @@
 Provides comprehensive customer sales database access with individual table schema tools for Zava Retail DIY Business.
 """
 
-import argparse
 import asyncio
 import logging
 import os
@@ -18,7 +17,6 @@ from pydantic import Field
 from sales_analysis_postgres import PostgreSQLSchemaProvider
 from sales_analysis_text_embeddings import SemanticSearchTextEmbedding
 
-RLS_USER_ID = None
 config = Config()
 
 logger = logging.getLogger(__name__)
@@ -61,10 +59,6 @@ def get_header(ctx: Context, header_name: str) -> Optional[str]:
 
 def get_rls_user_id(ctx: Context) -> str:
     """Get the Row Level Security User ID from the request context."""
-
-    # if running in stdio mode, use the global RLS_USER_ID passed as an argument
-    if RLS_USER_ID is not None:
-        return RLS_USER_ID
 
     rls_user_id = get_header(ctx, "x-rls-user-id")
     if rls_user_id is None:
@@ -265,34 +259,9 @@ async def run_http_server() -> None:
 
 def main() -> None:
     """Main entry point for the MCP server."""
-    global RLS_USER_ID
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--stdio", action="store_true", help="Run server in stdio mode")
-    parser.add_argument("--RLS_USER_ID", type=str, default=None, help="Row Level Security User ID")
-    args = parser.parse_args()
-
-    # if running in stdio mode, set the global RLS_USER_ID
-    RLS_USER_ID = args.RLS_USER_ID
-
-    if args.stdio:
-        # Create process-wide pool for stdio mode as well.
-        try:
-            asyncio.run(db_provider.create_pool())
-        except Exception as e:
-            logger.error("Error creating DB pool for stdio mode: %s", e)
-            raise
-
-        try:
-            mcp.run()
-        finally:
-            try:
-                asyncio.run(db_provider.close_pool())
-            except Exception as e:
-                logger.error("⚠️  Error closing database pool: %s", e)
-    else:
-        # Run the HTTP server
-        asyncio.run(run_http_server())
+    # Run the HTTP server
+    asyncio.run(run_http_server())
 
 
 if __name__ == "__main__":
