@@ -16,7 +16,9 @@ From the previous lab you can ask the agent questions about sales data, but it w
     What 18 amp circuit breakers do we sell?
     ```
 
-    The agent responds with something similar to this message: "I couldn’t find any specific 18 amp circuit breakers in our inventory. However, we may have other types of circuit breakers available. Would you like me to search for general circuit breakers or any other related products? 😊"
+    The agent responds with something similar to this message: 
+    
+    *"I couldn’t find any specific 18 amp circuit breakers in our inventory. However, we may have other types of circuit breakers available. Would you like me to search for general circuit breakers or any other related products? 😊"*
 
 ## Stop the Agent App
 
@@ -34,7 +36,7 @@ In this section, you will implement semantic search using the Model Context Prot
     /workspace/src/python/mcp_server/sales_analysis/sales_analysis.py
     ```
 
-4. Scroll down to around line 100 and look for the `semantic_search_products` method. This method is responsible for performing semantic search on the sales data. You'll notice the **@mcp.tool()** decorator is commented out. This decorator is used to register the method as an MCP tool, allowing it to be called by the agent.
+4. Scroll down to around line 70 and look for the `semantic_search_products` method. This method is responsible for performing semantic search on the sales data. You'll notice the **@mcp.tool()** decorator is commented out. This decorator is used to register the method as an MCP tool, allowing it to be called by the agent.
 
 5. Uncomment the `@mcp.tool()` decorator by removing the `#` at the beginning of the line. This will enable the semantic search tool.
 
@@ -95,4 +97,4 @@ Write an executive report on the sales performance of different stores for these
 
 ## Leave the Agent App Running
 
-Leave the agent app running as you will use it in the next lab to extend the agent with more tools and capabilities.
+Leave the agent app running as you will use it in the next lab to explore secure agent data access.

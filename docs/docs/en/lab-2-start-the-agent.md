@@ -18,14 +18,34 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 === "Python"
 
     1. **Open** the `app.py`.
-    2. **Uncomment** the line that adds the Code Interpreter tool to the agent's toolset in the `_setup_agent_tools` method of the `AgentManager` class. This line is currently commented out with a `#` at the beginning.:
+    2. Scroll down to around line 50 and find the line that adds the Code Interpreter and the MCP tools to the agent's toolset. These line are currently commented out with a `#` at the beginning.
+    3. **Uncomment** the following lines:
+
+          1. After the comment `Add code interpreter tool`, uncomment the 2 lines that adds the Code Interpreter tool to the agent's toolset.
+          2. After the comment `Add MCP tool`, uncomment the rest if the code block, these lines add the MCP Server tools to the agent's toolset.
 
         ```python
+        # Add code interpreter tool
         # code_interpreter = CodeInterpreterTool()
         # self.toolset.add(code_interpreter)
+
+        # Add MCP tools
+        # mcp_tools = McpTool(
+        #     server_label="ZavaSalesAnalysisMcpServer",
+        #     server_url=Config.DEV_TUNNEL_URL,
+        #     allowed_tools=[
+        #         "get_multiple_table_schemas",
+        #         "execute_sales_query",
+        #         "get_current_utc_date",
+        #         "semantic_search_products",
+        #     ],
+        # )
+
+        # mcp_tools.set_approval_mode("never")  # No human in the loop
+        # self.toolset.add(mcp_tools)
         ```
 
-    3. **Review** the code in the `app.py` file. You'll notice the Code Interpreter and MCP Server tools are added to the agent's toolset in the `_setup_agent_tools` method of the `AgentManager` class.
+    4. **Review** the code you uncommented. The code should look exactly like this:
 
         ```python
 
@@ -37,13 +57,27 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 
             async def _setup_agent_tools(self) -> None:
                 """Setup MCP tools and code interpreter."""
+                logger.info("Setting up Agent tools...")
+                self.toolset = AsyncToolSet()
 
-                # Enable the code interpreter tool
+                # Add code interpreter tool
                 code_interpreter = CodeInterpreterTool()
                 self.toolset.add(code_interpreter)
 
-                print("Setting up Agent tools...")
-                ...
+                # Add MCP tools
+                mcp_tools = McpTool(
+                    server_label="ZavaSalesAnalysisMcpServer",
+                    server_url=Config.DEV_TUNNEL_URL,
+                    allowed_tools=[
+                        "get_multiple_table_schemas",
+                        "execute_sales_query",
+                        "get_current_utc_date",
+                        "semantic_search_products",
+                    ],
+                )
+
+                mcp_tools.set_approval_mode("never")  # No human in the loop
+                self.toolset.add(mcp_tools)
         ```
 
 === "C#"
@@ -60,7 +94,7 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 
 2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
 3. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
-4. Select **🔁🤖Debug Compound: Agent and MCP (stdio)** from the list. This will start the agent app and the web chat client.
+4. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
 
 ## Open the Agent Web Chat Client
 
@@ -73,6 +107,8 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
 3. Paste the text into the Command Palette and select **Open Port in Browser**.
 4. Select **8005** from the list. This will open the agent web chat client in your browser.
+
+    ![](../media/agent_web_chat.png)
 
 ### Start a Conversation with the Agent
 

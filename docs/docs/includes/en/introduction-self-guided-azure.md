@@ -1,11 +1,34 @@
-!!! danger 
+!!! danger
     Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
+
+## Authenticate with DevTunnel
+
+DevTunnel provides a port forwarding service that will be used in the workshop to allow the Azure AI Agents Service to access the MCP Server you'll be running on your local development environment. Follow these steps to authenticate:
+
+1. From VS Code, **press** <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> to open a new terminal window. Then run the following command:
+1. **Run the following command** to authenticate with DevTunnel:
+
+    ```shell
+    devtunnel login
+    ```
+
+1. Follow these steps to authenticate:
+
+      1. Copy the **Authentication Code** to the clipboard.
+      2. **Press and hold** the <kbd>ctrl</kbd> or <kbd>cmd</kbd> key.
+      3. **Select** the authentication URL to open it in your browser.
+      4. **Paste** the code and click **Next**.
+      5. **Pick an account** and sign in.
+      6. Select **Continue**
+      7. **Return** to the terminal window in VS Code.
+
+1. Leave the terminal window **open** for the next steps.
 
 ## Authenticate with Azure
 
 Authenticate with Azure to allow the agent app access to the Azure AI Agents Service and models. Follow these steps:
 
-1. From VS Code, **press** <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> to open a new terminal window. Then run the following command:
+1. Then run the following command:
 
     ```shell
     az login --use-device-code
@@ -35,10 +58,12 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
 
 This deployment creates the following resources in your Azure subscription.
 
-- A resource group named **rg-zava-agent-wks-nnnn**
-- An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnn**
-- An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnn**
+- A resource group named **rg-zava-agent-wks-nnnnnnnn**
+- An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnnnnnn**
+- An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnnnnnn**
 - Two models are deployed: **gpt-4o-mini** and **text-embedding-3-small**. [See pricing.](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
+- Azure Database for PostgreSQL Flexible Server (B1ms Burstable 32GB) database named **pg-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/details/postgresql/flexible-server){:target="_blank"}
+- Application Insights resource named **appi-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/calculator/?service=monitor){:target="_blank"}
 
 !!! warning "Ensure you have at least the following model quotas"
     - 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls.
@@ -61,8 +86,8 @@ cd infra && ./deploy.sh
 
     #### Azure Resource Configuration
 
-    The deploy script generates the **.env** file, which contains the project and model endpoints, model deployment names, and Application Insights connection string. The .env file will automatically be saved in the `src/python/workshop` folder. 
-    
+    The deploy script generates the **.env** file, which contains the project and model endpoints, model deployment names, and Application Insights connection string. The .env file will automatically be saved in the `src/python/workshop` folder.
+
     Your **.env** file will look similar to the following, updated with your values:
 
     ```python
@@ -70,23 +95,24 @@ cd infra && ./deploy.sh
     GPT_MODEL_DEPLOYMENT_NAME="<your_model_deployment_name>"
     EMBEDDING_MODEL_DEPLOYMENT_NAME="<your_embedding_model_deployment_name>"
     APPLICATIONINSIGHTS_CONNECTION_STRING="<your_application_insights_connection_string>"
-    DEV_TUNNEL_URL="<your_dev_tunnel_url>"
     AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED="true"
     AZURE_OPENAI_ENDPOINT="<your_azure_openai_endpoint>"
+    POSTGRES_URL="<your_postgres_connection_string>"
     ```
 
     #### Azure Resource Names
 
-    You'll also find a file named `resources.txt` in the `workshop` folder. This file contains the names of the Azure resources created during the deployment. 
+    You'll also find a file named `resources.txt` in the `workshop` folder. This file contains the names of the Azure resources created during the deployment.
 
     I'll look similar to the following:
 
     ```plaintext
     Azure AI Foundry Resources:
-    - Resource Group Name: rg-zava-agent-wks-nnnn
-    - AI Project Name: prj-zava-agent-wks-nnnn
-    - Foundry Resource Name: fdy-zava-agent-wks-nnnn
-    - Application Insights Name: appi-zava-agent-wks-nnnn
+    - Resource Group Name: rg-zava-agent-wks-nnnnnnnn
+    - AI Project Name: prj-zava-agent-wks-nnnnnnnn
+    - Foundry Resource Name: fdy-zava-agent-wks-nnnnnnnn
+    - Application Insights Name: appi-zava-agent-wks-nnnnnnnn
+    - Postgres Flexible Server Name: pg-zava-agent-wrk-nnnnnnnn
     ```
 
 === "C#"
