@@ -17,6 +17,9 @@ echo "Python environment setup complete."
 echo Installing devtunnels
 curl -sL https://aka.ms/DevTunnelCliInstall | bash
 echo "DevTunnels installed."
+echo "Adding DevTunnels to bashrc"
+echo 'export PATH="/home/vscode/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 
 echo Setting up Aspire CLI
 curl -sSL https://aspire.dev/install.sh | bash
