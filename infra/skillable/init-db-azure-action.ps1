@@ -26,7 +26,7 @@ param(
 # Set error action preference to stop on any error
 $ErrorActionPreference = "Stop"
 
-Write-Host "🎯 Using UNIQUE_SUFFIX: $UniqueSuffix" -ForegroundColor Yellow
+Write-Host "Using UNIQUE_SUFFIX: $UniqueSuffix" -ForegroundColor Yellow
 Write-Host ""
 
 # Verify the PostgreSQL server exists
@@ -37,7 +37,7 @@ Write-Host ""
 Write-Host ""
 
 $PsqlVersion = & psql --version
-Write-Host "✅ PostgreSQL client tools found: $PsqlVersion" -ForegroundColor Green
+Write-Host "PostgreSQL client tools found: $PsqlVersion" -ForegroundColor Green
 
 # Set up Azure PostgreSQL connection parameters using naming convention
 $AzurePgHost = "pg-zava-agent-wks-$UniqueSuffix.postgres.database.azure.com"
@@ -46,8 +46,8 @@ $AzurePgPassword = if ($AzurePgPassword) { $AzurePgPassword } elseif ($env:AZURE
 $AzurePgDatabase = if ($env:AZURE_PG_DATABASE) { $env:AZURE_PG_DATABASE } else { "postgres" }
 $AzurePgPort = if ($env:AZURE_PG_PORT) { $env:AZURE_PG_PORT } else { "5432" }
 
-Write-Host "📡 Host: $AzurePgHost" -ForegroundColor Yellow
-Write-Host "👤 User: $AzurePgUser" -ForegroundColor Yellow
+Write-Host "Host: $AzurePgHost" -ForegroundColor Yellow
+Write-Host "User: $AzurePgUser" -ForegroundColor Yellow
 Write-Host ""
 
 # Set up environment variables for PostgreSQL connection
@@ -58,28 +58,28 @@ $env:PGPASSWORD = $AzurePgPassword
 $env:PGDATABASE = $AzurePgDatabase
 $env:PGSSLMODE = "require"
 
-Write-Host "🔗 Connecting to Azure PostgreSQL..." -ForegroundColor Cyan
+Write-Host "Connecting to Azure PostgreSQL..." -ForegroundColor Cyan
 Write-Host "   Host: $AzurePgHost" -ForegroundColor Gray
 Write-Host "   User: $AzurePgUser" -ForegroundColor Gray
 Write-Host "   SSL: Required" -ForegroundColor Gray
 
 # Test connection
-Write-Host "🧪 Testing database connection..." -ForegroundColor Cyan
+Write-Host "Testing database connection..." -ForegroundColor Cyan
 try {
     $null = & psql -c "SELECT version();" 2>$null
     if ($LASTEXITCODE -ne 0) {
         throw "Connection failed"
     }
-    Write-Host "✅ Connection successful!" -ForegroundColor Green
+    Write-Host "Connection successful" -ForegroundColor Green
 }
 catch {
-    Write-Host "❌ Failed to connect to Azure PostgreSQL" -ForegroundColor Red
-    Write-Host "💡 Please check your connection parameters and network access" -ForegroundColor Cyan
+    Write-Host "Failed to connect to Azure PostgreSQL" -ForegroundColor Red
+    Write-Host "Please check your connection parameters and network access" -ForegroundColor Cyan
     exit 1
 }
 
 # Create the zava database
-Write-Host "📦 Creating 'zava' database..." -ForegroundColor Cyan
+Write-Host "Creating 'zava' database..." -ForegroundColor Cyan
 try {
     $DatabaseExists = & psql -lqt | Select-String "zava"
     if (-not $DatabaseExists) {
@@ -87,14 +87,14 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "Failed to create database"
         }
-        Write-Host "✅ Created database 'zava'" -ForegroundColor Green
+        Write-Host "Created database 'zava'" -ForegroundColor Green
     }
     else {
-        Write-Host "✅ Database 'zava' already exists" -ForegroundColor Green
+        Write-Host "Database 'zava' already exists" -ForegroundColor Green
     }
 }
 catch {
-    Write-Host "❌ Failed to create database: $_" -ForegroundColor Red
+    Write-Host "Failed to create database: $_" -ForegroundColor Red
     exit 1
 }
 
@@ -103,7 +103,7 @@ catch {
 $env:PGDATABASE = "zava"
 
 # Install pgvector extension
-Write-Host "🔧 Installing pgvector extension..." -ForegroundColor Cyan
+Write-Host "Installing pgvector extension..." -ForegroundColor Cyan
 try {
     & psql -c "CREATE EXTENSION IF NOT EXISTS vector;"
     if ($LASTEXITCODE -ne 0) {
@@ -111,11 +111,11 @@ try {
     }
 }
 catch {
-    Write-Host "⚠️  Failed to install pgvector extension (this may be normal if not available)" -ForegroundColor Yellow
+    Write-Host "Failed to install pgvector extension (this may be normal if not available)" -ForegroundColor Yellow
 }
 
 # Create store_manager user
-Write-Host "👤 Creating 'store_manager' user..." -ForegroundColor Cyan
+Write-Host "Creating 'store_manager' user..." -ForegroundColor Cyan
 $CreateUserSQL = @'
 DO $$
 BEGIN
@@ -136,18 +136,18 @@ try {
     }
 }
 catch {
-    Write-Host "⚠️  Failed to create store_manager user: $_" -ForegroundColor Yellow
+    Write-Host "Failed to create store_manager user: $_" -ForegroundColor Yellow
 }
 
 # Check for backup file and restore if found
 $BackupFile = "C:\Users\Admin\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\scripts\backups\zava_retail_2025_07_21_postgres_rls.backup"
 
-Write-Host "🔍 Checking for backup files..." -ForegroundColor Cyan
+Write-Host "Checking for backup files..." -ForegroundColor Cyan
 if (Test-Path $BackupFile) {
-    Write-Host "📂 Found backup file: $BackupFile" -ForegroundColor Green
+    Write-Host "Found backup file: $BackupFile" -ForegroundColor Green
     
     $BackupSize = (Get-Item $BackupFile).Length
-    Write-Host "📊 Backup file size: $BackupSize bytes" -ForegroundColor Gray
+    Write-Host "Backup file size: $BackupSize bytes" -ForegroundColor Gray
     
     # Validate backup file
     try {
@@ -155,18 +155,18 @@ if (Test-Path $BackupFile) {
         if ($LASTEXITCODE -ne 0) {
             throw "Invalid backup file"
         }
-        Write-Host "✅ Backup file is valid" -ForegroundColor Green
+        Write-Host "Backup file is valid" -ForegroundColor Green
         
         # Restore backup (pg_restore exit code 1 is normal for warnings)
-        Write-Host "🚀 Restoring backup..." -ForegroundColor Cyan
+        Write-Host "Restoring backup..." -ForegroundColor Cyan
         & pg_restore --dbname="zava" --no-owner --no-privileges $BackupFile 2>$null
         $RestoreExitCode = $LASTEXITCODE
         
         if ($RestoreExitCode -eq 0 -or $RestoreExitCode -eq 1) {
-            Write-Host "✅ Backup restored successfully" -ForegroundColor Green
+            Write-Host "Backup restored successfully" -ForegroundColor Green
             
             # Grant comprehensive permissions to store_manager for RLS
-            Write-Host "🔑 Setting up store_manager permissions for RLS..." -ForegroundColor Cyan
+            Write-Host "Setting up store_manager permissions for RLS..." -ForegroundColor Cyan
             $PermissionsSQL = @'
 -- Grant schema usage
 GRANT USAGE ON SCHEMA retail TO store_manager;
@@ -184,14 +184,14 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA retail GRANT USAGE, SELECT ON SEQUENCES TO st
                 $PermissionsSQL | & psql
             }
             catch {
-                Write-Host "⚠️  Some permission grants may have failed (this is often normal)" -ForegroundColor Yellow
+                Write-Host "Some permission grants may have failed (this is often normal)" -ForegroundColor Yellow
             }
             
             # Verify the restoration
             try {
                 $TableCountResult = & psql -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'retail';"
                 $TableCount = $TableCountResult.Trim()
-                Write-Host "✅ Found $TableCount tables in retail schema" -ForegroundColor Green
+                Write-Host "Found $TableCount tables in retail schema" -ForegroundColor Green
                 
                 # Check for data in key tables
                 $StoresCountResult = & psql -t -c "SELECT COUNT(*) FROM retail.stores;" 2>$null
@@ -200,36 +200,36 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA retail GRANT USAGE, SELECT ON SEQUENCES TO st
                 $ProductsCountResult = & psql -t -c "SELECT COUNT(*) FROM retail.products;" 2>$null
                 $ProductsCount = if ($LASTEXITCODE -eq 0) { $ProductsCountResult.Trim() } else { "0" }
                 
-                Write-Host "📊 Data check: $StoresCount stores, $ProductsCount products" -ForegroundColor Gray
+                Write-Host "Data check: $StoresCount stores, $ProductsCount products" -ForegroundColor Gray
             }
             catch {
-                Write-Host "⚠️  Could not verify table counts" -ForegroundColor Yellow
+                Write-Host "Could not verify table counts" -ForegroundColor Yellow
             }
         }
         else {
-            Write-Host "⚠️  Backup restoration failed, but database is still functional" -ForegroundColor Yellow
+            Write-Host "Backup restoration failed, but database is still functional" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "⚠️  Backup file appears to be invalid: $_" -ForegroundColor Yellow
+        Write-Host "Backup file appears to be invalid: $_" -ForegroundColor Yellow
     }
 }
 else {
-    Write-Host "⚠️  No backup file found at $BackupFile" -ForegroundColor Yellow
+    Write-Host "No backup file found at $BackupFile" -ForegroundColor Yellow
 }
 
-Write-Host "🎉 Zava PostgreSQL Database initialization completed on Azure!" -ForegroundColor Green
-Write-Host "📊 Database: zava" -ForegroundColor Gray
-Write-Host "🌐 Host: $AzurePgHost" -ForegroundColor Gray
-Write-Host "👤 Users: $AzurePgUser (admin), store_manager (for testing)" -ForegroundColor Gray
-Write-Host "🔌 Extensions: pgvector" -ForegroundColor Gray
-Write-Host "🔒 SSL: Required" -ForegroundColor Gray
+Write-Host "Zava PostgreSQL Database initialization completed on Azure!" -ForegroundColor Green
+Write-Host "Database: zava" -ForegroundColor Gray
+Write-Host "Host: $AzurePgHost" -ForegroundColor Gray
+Write-Host "Users: $AzurePgUser (admin), store_manager (for testing)" -ForegroundColor Gray
+Write-Host "Extensions: pgvector" -ForegroundColor Gray
+Write-Host "SSL: Required" -ForegroundColor Gray
 Write-Host ""
-Write-Host "🔧 Connect using:" -ForegroundColor Cyan
+Write-Host "Connect using:" -ForegroundColor Cyan
 Write-Host "   Environment variables:" -ForegroundColor Gray
 Write-Host "   `$env:PGHOST = '$AzurePgHost'; `$env:PGPORT = '$AzurePgPort'; `$env:PGUSER = '$AzurePgUser'" -ForegroundColor Gray
 Write-Host "   `$env:PGPASSWORD = '$AzurePgPassword'; `$env:PGDATABASE = 'zava'; `$env:PGSSLMODE = 'require'" -ForegroundColor Gray
 Write-Host "   psql" -ForegroundColor Gray
 Write-Host "" -ForegroundColor Gray
-Write-Host "   PostgreSQL Connection URL (store_manager):" -ForegroundColor Gray
+Write-Host "PostgreSQL Connection URL (store_manager):" -ForegroundColor Gray
 Write-Host "   postgresql://store_manager:StoreManager123!@$AzurePgHost`:$AzurePgPort/zava?sslmode=require" -ForegroundColor Gray
