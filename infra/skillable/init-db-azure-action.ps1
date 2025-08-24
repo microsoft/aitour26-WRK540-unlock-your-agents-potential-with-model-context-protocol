@@ -1,7 +1,5 @@
-
 # Set error action preference to stop on any error
 $ErrorActionPreference = "Stop"
-
 
 #!/usr/bin/env pwsh
 
@@ -128,8 +126,8 @@ catch {
 
 # Create store_manager user
 Write-Host "👤 Creating 'store_manager' user..." -ForegroundColor Cyan
-$CreateUserSQL = @"
-DO `$`$
+$CreateUserSQL = @'
+DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'store_manager') THEN
         CREATE USER store_manager WITH PASSWORD 'StoreManager123!';
@@ -138,8 +136,8 @@ BEGIN
     ELSE
         RAISE NOTICE 'store_manager user already exists';
     END IF;
-END `$`$;
-"@
+END $$;
+'@
 
 try {
     $CreateUserSQL | & psql
@@ -179,7 +177,7 @@ if (Test-Path $BackupFile) {
             
             # Grant comprehensive permissions to store_manager for RLS
             Write-Host "🔑 Setting up store_manager permissions for RLS..." -ForegroundColor Cyan
-            $PermissionsSQL = @"
+            $PermissionsSQL = @'
 -- Grant schema usage
 GRANT USAGE ON SCHEMA retail TO store_manager;
 
@@ -190,7 +188,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA retail TO store_manager;
 -- Grant default privileges for future objects
 ALTER DEFAULT PRIVILEGES IN SCHEMA retail GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO store_manager;
 ALTER DEFAULT PRIVILEGES IN SCHEMA retail GRANT USAGE, SELECT ON SEQUENCES TO store_manager;
-"@
+'@
             
             try {
                 $PermissionsSQL | & psql
