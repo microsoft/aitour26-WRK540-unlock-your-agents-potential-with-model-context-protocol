@@ -1,6 +1,3 @@
-# Set error action preference to stop on any error
-$ErrorActionPreference = "Stop"
-
 #!/usr/bin/env pwsh
 
 <#
@@ -26,15 +23,8 @@ param(
     [string]$AzurePgPassword
 )
 
-# $UniqueSuffix     = "@lab.LabInstance.Id"
-# $AzurePgPassword  = "@lab.CloudResourceTemplate(WRK540-AITour2026).Parameters[postgresAdminPassword]"
-# $AzurePgPassword  = "SecurePassword123!"
-# $TenantId         = "@lab.CloudSubscription.TenantId"
-# $AppId            = "@lab.CloudSubscription.AppId"
-# $Secret           = "@lab.CloudSubscription.AppSecret"
-# $SubId            = "@lab.CloudSubscription.Id"
-
-
+# Set error action preference to stop on any error
+$ErrorActionPreference = "Stop"
 
 Write-Host "🎯 Using UNIQUE_SUFFIX: $UniqueSuffix" -ForegroundColor Yellow
 Write-Host ""
