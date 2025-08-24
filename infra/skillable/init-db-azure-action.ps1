@@ -2,9 +2,35 @@
 # Set error action preference to stop on any error
 $ErrorActionPreference = "Stop"
 
-$UniqueSuffix     = "@lab.LabInstance.Id"
+
+#!/usr/bin/env pwsh
+
+<#
+.SYNOPSIS
+    Initializes Zava PostgreSQL Database on Azure
+.DESCRIPTION
+    This script sets up a PostgreSQL database on Azure with the zava schema and data.
+.PARAMETER UniqueSuffix
+    The unique suffix to use for Azure resource naming
+.PARAMETER AzurePgPassword
+    The password for the PostgreSQL database connection
+.EXAMPLE
+    ./init-db-azure.ps1 -UniqueSuffix "myunique123" -AzurePgPassword "YourPassword123!"
+.EXAMPLE
+    $env:UNIQUE_SUFFIX = "myunique123"; $env:AZURE_PG_PASSWORD = "YourPassword123!"; ./init-db-azure.ps1
+#>
+
+param(
+    [Parameter(Position = 0)]
+    [string]$UniqueSuffix,
+    
+    [Parameter(Position = 1)]
+    [string]$AzurePgPassword
+)
+
+# $UniqueSuffix     = "@lab.LabInstance.Id"
 # $AzurePgPassword  = "@lab.CloudResourceTemplate(WRK540-AITour2026).Parameters[postgresAdminPassword]"
-$AzurePgPassword  = "SecurePassword123!"
+# $AzurePgPassword  = "SecurePassword123!"
 # $TenantId         = "@lab.CloudSubscription.TenantId"
 # $AppId            = "@lab.CloudSubscription.AppId"
 # $Secret           = "@lab.CloudSubscription.AppSecret"
