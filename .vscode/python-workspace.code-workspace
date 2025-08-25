@@ -83,7 +83,7 @@
             {
                 "label": "Start DevTunnel",
                 "type": "shell",
-                "command": "${workspaceFolder:shared}/scripts/start_devtunnel.sh",
+                "command": "${workspaceFolder:shared}/scripts/start_devtunnel.ps1",
                 "options": {
                     "cwd": "${workspaceFolder:workshop}"
                 },
