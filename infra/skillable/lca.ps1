@@ -32,10 +32,37 @@ Connect-AzAccount -ServicePrincipal -Tenant $TenantId -Credential $cred -Subscri
 $ctx = Get-AzContext
 Log "Logged in as: $($ctx.Account) | Sub: $($ctx.Subscription.Name) ($($ctx.Subscription.Id))"
 
+
+######################################################
+# Foundry Roles
+
+# $username = "@lab.CloudPortalCredential(User1).Username"
+
+# New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-agent-workshop"
+# New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId"
+
+######################################################
+# Allow IP Address of Current Machine
+
+$PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
+$ResourceGroup      = "@lab.CloudResourceGroup(rg-zava-agent-wks).Name"
+
+$CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org" -Method Get).Trim()
+$RuleName  = "allow-current-ip-@lab.LabInstance.Id"
+New-AzPostgreSqlFlexibleServerFirewallRule `
+  -Name $RuleName `
+  -ResourceGroupName $ResourceGroup `
+  -ServerName $PostgresServerName `
+  -StartIPAddress $CurrentIP `
+  -EndIPAddress   $CurrentIP | Out-Null
+
+#######################################################
+# Create .env
+
 # --- Find deployment and read OUTPUTS (cannot use @lab ... Outputs[..]) ---
 # Prefer RG-scope deployments (most common with Skillable templates)
 $deployment = Get-AzResourceGroupDeployment -ResourceGroupName $ResourceGroup `
-              | Sort-Object Timestamp -Descending | Select-Object -First 1
+              | Sort-Object Timestamp | Select-Object -First 1
 
 if (-not $deployment) {
   Log "No RG-scope deployments found in $ResourceGroup. Trying subscription-scope..."
@@ -87,12 +114,12 @@ if (-not (Test-Path $workshopDir)) { New-Item -ItemType Directory -Path $worksho
 if (Test-Path $ENV_FILE_PATH) { Remove-Item -Path $ENV_FILE_PATH -Force }
 
 @"
-PROJECT_ENDPOINT=$projectsEndpoint
-AZURE_OPENAI_ENDPOINT=$azureOpenAIEndpoint
+PROJECT_ENDPOINT="$projectsEndpoint"
+AZURE_OPENAI_ENDPOINT="$azureOpenAIEndpoint"
 GPT_MODEL_DEPLOYMENT_NAME="$GPT_MODEL_DEPLOYMENT_NAME"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="$EMBEDDING_MODEL_DEPLOYMENT_NAME"
 APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
-POSTGRES_URL=$PostgresUrl
+POSTGRES_URL="$PostgresUrl"
 "@ | Set-Content -Path $ENV_FILE_PATH -Encoding UTF8
 
 Log "Created .env at $ENV_FILE_PATH"
