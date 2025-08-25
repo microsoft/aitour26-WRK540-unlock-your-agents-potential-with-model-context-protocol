@@ -83,16 +83,8 @@ Follow these steps to open the workshop in Visual Studio Code:
 
       1. From the terminal window, execute the following commands to clone the workshop repository, navigate to the relevant folder, set up a virtual environment, activate it, and install the required packages:
 
-          <!-- ```powershell
-          ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-          ; git pull `
-          ; python -m venv src/python/workshop/.venv `
-          ; src\python\workshop\.venv\Scripts\activate `
-          ; pip install -r requirements.windows.lock.txt
-          ``` -->
-
           ```powershell
-          ; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+          ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
           ; git pull `
           ; src\python\workshop\.venv\Scripts\activate `
           ; code .vscode\python-workspace.code-workspace
