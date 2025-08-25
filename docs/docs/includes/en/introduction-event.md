@@ -47,10 +47,18 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
     ```powershell
     $subId = $(az account show --query id --output tsv) `
     ;$objectId = $(az ad signed-in-user show --query id -o tsv) `
-    ; az role assignment create --role "f6c7c914-8db3-469d-8ca1-694a8f32e121" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-agent-workshop" --assignee-principal-type 'User'
+    ; az role assignment create --role "Azure AI Developer" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
     ```
 
 5. Leave the terminal window open for the next steps.
+
+## Restore the Database
+
+```powershell
+; $UniqueSuffix = Read-Host "Enter your unique suffix"
+; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
+; .\init-db-azure-action.ps1 -UniqueSuffix $UniqueSuffix -AzurePgPassword "SecurePassword123!"
+```
 
 ## Open the Workshop
 
@@ -60,18 +68,19 @@ Follow these steps to open the workshop in Visual Studio Code:
 
       1. From the terminal window, execute the following commands to clone the workshop repository, navigate to the relevant folder, set up a virtual environment, activate it, and install the required packages:
 
-          ```powershell
+          <!-- ```powershell
           ; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
           ; git pull `
           ; python -m venv src/python/workshop/.venv `
           ; src\python\workshop\.venv\Scripts\activate `
-          ; pip install -r requirements.in
-          ```
-
-      2. Open in VS Code. From the terminal window, run the following command:
+          ; pip install -r requirements.windows.lock.txt
+          ``` -->
 
           ```powershell
-          code .vscode\python-workspace.code-workspace
+          ; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+          ; git pull `
+          ; src\python\workshop\.venv\Scripts\activate `
+          ; code .vscode\python-workspace.code-workspace
           ```
 
         !!! warning "When the project opens in VS Code, two notifications appear in the bottom right corner. Click ✖ to close both notifications."
@@ -96,7 +105,7 @@ Follow these steps to open the workshop in Visual Studio Code:
 
     === "Visual Studio 2022"
 
-        1. Open the workshop in Visual Studio 2022. From the terminal window, run the following command:
+        2. Open the workshop in Visual Studio 2022. From the terminal window, run the following command:
 
             ```powershell
             start build-your-first-agent-with-azure-ai-agent-service-workshop\src\csharp\workshop\AgentWorkshop.sln
