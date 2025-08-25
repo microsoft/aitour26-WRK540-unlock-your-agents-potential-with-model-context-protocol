@@ -71,7 +71,7 @@ Authenticate with the Skillable Username and TAP.
 
 ```powershell
 ; $UniqueSuffix = Read-Host "Enter your unique suffix" `
-; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
+; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
 ; .\init-db-azure-action.ps1 -UniqueSuffix $UniqueSuffix -AzurePgPassword "SecurePassword123!"
 ```
 
@@ -84,7 +84,7 @@ Follow these steps to open the workshop in Visual Studio Code:
       1. From the terminal window, execute the following commands to clone the workshop repository, navigate to the relevant folder, set up a virtual environment, activate it, and install the required packages:
 
           <!-- ```powershell
-          ; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+          ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
           ; git pull `
           ; python -m venv src/python/workshop/.venv `
           ; src\python\workshop\.venv\Scripts\activate `
