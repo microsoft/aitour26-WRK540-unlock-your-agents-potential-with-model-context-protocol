@@ -71,7 +71,7 @@ class WebApp:
     async def get_chat_page(self) -> HTMLResponse:
         """Serve the chat HTML page."""
         html_file = Path("static/index.html")
-        with html_file.open("r") as f:
+        with html_file.open("r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
 
     async def get_favicon(self) -> FileResponse:
