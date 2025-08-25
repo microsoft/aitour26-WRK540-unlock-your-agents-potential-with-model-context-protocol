@@ -1,5 +1,5 @@
 !!! danger
-    Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
+Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
 
 ## Authenticate with DevTunnel
 
@@ -8,19 +8,19 @@ DevTunnel provides a port forwarding service that will be used in the workshop t
 1. From VS Code, **press** <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>`</kbd> to open a new terminal window. Then run the following command:
 1. **Run the following command** to authenticate with DevTunnel:
 
-    ```shell
-    devtunnel login
-    ```
+   ```shell
+   devtunnel login
+   ```
 
 1. Follow these steps to authenticate:
 
-      1. Copy the **Authentication Code** to the clipboard.
-      2. **Press and hold** the <kbd>ctrl</kbd> or <kbd>cmd</kbd> key.
-      3. **Select** the authentication URL to open it in your browser.
-      4. **Paste** the code and click **Next**.
-      5. **Pick an account** and sign in.
-      6. Select **Continue**
-      7. **Return** to the terminal window in VS Code.
+   1. Copy the **Authentication Code** to the clipboard.
+   2. **Press and hold** the <kbd>ctrl</kbd> or <kbd>cmd</kbd> key.
+   3. **Select** the authentication URL to open it in your browser.
+   4. **Paste** the code and click **Next**.
+   5. **Pick an account** and sign in.
+   6. Select **Continue**
+   7. **Return** to the terminal window in VS Code.
 
 1. Leave the terminal window **open** for the next steps.
 
@@ -28,20 +28,20 @@ DevTunnel provides a port forwarding service that will be used in the workshop t
 
 Authenticate with Azure to allow the agent app access to the Azure AI Agents Service and models. Follow these steps:
 
-1. Then run the following command:
+1.  Then run the following command:
 
     ```shell
     az login --use-device-code
     ```
 
     !!! warning
-        If you have multiple Azure tenants, specify the correct one using:
+    If you have multiple Azure tenants, specify the correct one using:
 
         ```shell
         az login --use-device-code --tenant <tenant_id>
         ```
 
-2. Follow these steps to authenticate:
+2.  Follow these steps to authenticate:
 
     1. **Copy** the **Authentication Code** to the clipboard.
     2. **Press and hold** the <kbd>ctrl</kbd> or <kbd>cmd</kbd> key.
@@ -52,7 +52,7 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
     7. **Return** to the terminal window in VS Code.
     8. If prompted, **select** a subscription.
 
-3. Leave the terminal window open for the next steps.
+3.  Leave the terminal window open for the next steps.
 
 ## Deploy the Azure Resources
 
@@ -61,24 +61,27 @@ This deployment creates the following resources in your Azure subscription.
 - A resource group named **rg-zava-agent-wks-nnnnnnnn**
 - An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnnnnnn**
 - An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnnnnnn**
-- Two models are deployed: **gpt-4o-mini** and **text-embedding-3-small**. [See pricing.](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="_blank"}
-- Azure Database for PostgreSQL Flexible Server (B1ms Burstable 32GB) database named **pg-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/details/postgresql/flexible-server){:target="_blank"}
-- Application Insights resource named **appi-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/calculator/?service=monitor){:target="_blank"}
+- Two models are deployed: **gpt-4o-mini** and **text-embedding-3-small**. [See pricing.](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="\_blank"}
+- Azure Database for PostgreSQL Flexible Server (B1ms Burstable 32GB) database named **pg-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/details/postgresql/flexible-server){:target="\_blank"}
+- Application Insights resource named **appi-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/calculator/?service=monitor){:target="\_blank"}
 
-!!! warning "Ensure you have at least the following model quotas"
-    - 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls.
-    - 50K TPM for the text-embedding-3-small model Global Standard SKU.
-    - Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="_blank"}."
+!!! warning "Ensure you have at least the following model quotas" - 120K TPM quota for the gpt-4o-mini Global Standard SKU, as the agent makes frequent model calls. - 50K TPM for the text-embedding-3-small model Global Standard SKU. - Check your quota in the [AI Foundry Management Center](https://ai.azure.com/managementCenter/quota){:target="\_blank"}."
 
 ### Automated Deployment
 
 Run the following bash script to automate the deployment of the resources required for the workshop. The `deploy.sh` script deploys resources to the `westus` region by default. To run the script:
 
-```bash
-cd infra && ./deploy.sh
-```
+=== "Linux/Mac OS"
 
-<!-- !!! note "On Windows, run `deploy.ps1` instead of `deploy.sh`" -->
+    ```bash
+    cd infra && ./deploy.sh
+    ```
+
+=== "Windows"
+
+    ```powershell
+    cd infra && .\deploy.ps1
+    ```
 
 ### Workshop Configuration
 

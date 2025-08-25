@@ -46,9 +46,17 @@ Azure AI Agents Service और मॉडल तक पहुँच हेतु 
 
 ### स्वचालित परिनियोजन
 
-```bash
-cd infra && ./deploy.sh
-```
+=== "Linux/Mac OS"
+
+    ```bash
+    cd infra && ./deploy.sh
+    ```
+
+=== "Windows"
+
+    ```powershell
+    cd infra && .\deploy.ps1
+    ```
 
 ### वर्कशॉप कॉन्फ़िगरेशन
 

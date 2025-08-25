@@ -49,10 +49,17 @@
 
 다음 bash 스크립트를 실행하여 워크샵에 필요한 리소스의 배포를 자동화합니다. `deploy.sh` 스크립트는 기본적으로 `westus` 지역에 리소스를 배포합니다. 스크립트를 실행하려면:
 
-```bash
-cd infra && ./deploy.sh
-```
+=== "Linux/Mac OS"
 
+    ```bash
+    cd infra && ./deploy.sh
+    ```
+
+=== "Windows"
+
+    ```powershell
+    cd infra && .\deploy.ps1
+    ```
 <!-- !!! note "Windows에서는 `deploy.sh` 대신 `deploy.ps1`을 실행하세요" -->
 
 ### 워크샵 구성

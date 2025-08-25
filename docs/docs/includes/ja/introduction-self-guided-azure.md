@@ -49,9 +49,17 @@
 
 ワークショップに必要なリソースのデプロイメントを自動化するために、以下の bash スクリプトを実行します。`deploy.sh` スクリプトは、デフォルトで `westus` リージョンにリソースをデプロイします。スクリプトを実行するには：
 
-```bash
-cd infra && ./deploy.sh
-```
+=== "Linux/Mac OS"
+
+    ```bash
+    cd infra && ./deploy.sh
+    ```
+
+=== "Windows"
+
+    ```powershell
+    cd infra && .\deploy.ps1
+    ```
 
 <!-- !!! note "Windows では、`deploy.sh` の代わりに `deploy.ps1` を実行してください" -->
 
