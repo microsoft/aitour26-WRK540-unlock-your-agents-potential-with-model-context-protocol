@@ -91,7 +91,7 @@ From VS Code, stop the agent app by pressing <kbd>Shift + F5</kbd>.
 ## Start the Agent App with the Semantic Search Tool
 
 1.  **Start** the agent app by pressing <kbd>F5</kbd>. This will start the agent with the updated instructions and the semantic search tool enabled.
-2.  Switch back to the **Web Chat** tab in your browser.
+2.  Open the **Web Chat** in your browser.
 3.  Enter the following question in the chat:
 
     ```text
