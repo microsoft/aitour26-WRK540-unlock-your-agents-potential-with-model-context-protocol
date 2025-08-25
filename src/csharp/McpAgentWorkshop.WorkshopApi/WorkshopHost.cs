@@ -48,6 +48,6 @@ app.MapGet("/files/{*path}", async (string path, AgentService agentService) =>
 });
 
 var agentService = app.Services.GetRequiredService<AgentService>();
-await agentService.InitialiseAsync();
+await agentService.InitialiseAgentAsync();
 
 app.Run();

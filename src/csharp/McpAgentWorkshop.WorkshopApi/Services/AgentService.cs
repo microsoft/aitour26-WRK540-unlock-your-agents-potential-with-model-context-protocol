@@ -16,9 +16,8 @@ public partial class AgentService(
     private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
     private const string ZavaMcpToolLabel = "ZavaSalesAnalysisMcpServer";
 
-    public async Task InitialiseAsync()
+    public async Task InitialiseAgentAsync()
     {
-        logger.LogInformation("Initialising agent service...");
         logger.LogInformation("Creating new agent: {AgentName}", AgentName);
 
         var instructions = Path.Combine(sharedPath, "instructions", InstructionsFile);
@@ -37,7 +36,9 @@ public partial class AgentService(
 
         devtunnelUrl = devtunnelUrl.EndsWith('/') ? devtunnelUrl : devtunnelUrl + "/";
 
-        var mcpTool = new MCPToolDefinition(ZavaMcpToolLabel, devtunnelUrl + "mcp");
+        var mcpTool = new MCPToolDefinition(
+            ZavaMcpToolLabel,
+            devtunnelUrl + "mcp");
 
         var codeInterpreterTool = new CodeInterpreterToolDefinition();
 
@@ -53,77 +54,6 @@ public partial class AgentService(
         logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
     }
 
-    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update, ToolResources toolResources)
-    {
-        switch (update.UpdateKind)
-        {
-            case StreamingUpdateReason.MessageUpdated:
-                // The agent has a response to the user - stream the content
-                var messageContentUpdate = (MessageContentUpdate)update;
-                yield return new ChatContentResponse(messageContentUpdate.Text ?? "");
-                yield break;
-
-            case StreamingUpdateReason.RunRequiresAction:
-                // Simulate a human-in-the-loop workflow but we'll do auto-approval here
-                var submitToolApprovalUpdate = (SubmitToolApprovalUpdate)update;
-                logger.LogInformation("Approving MCP tool call: {Name}, Arguments: {Arguments}", submitToolApprovalUpdate.Name, submitToolApprovalUpdate.Arguments);
-                List<ToolApproval> toolApprovals = [];
-
-                ToolApproval toolApproval = PersistentAgentsModelFactory.ToolApproval(
-                    submitToolApprovalUpdate.ToolCallId,
-                    true,
-                    // Forward on the MCP headers to the approval call. This ensures RLS flows through
-                    toolResources.Mcp.SelectMany(mcp => mcp.Headers).ToDictionary(h => h.Key, h => h.Value));
-
-                toolApprovals.Add(toolApproval);
-
-                var toolOutputStream = persistentAgentsClient.Runs.SubmitToolOutputsToStreamAsync(submitToolApprovalUpdate, toolOutputs: [], toolApprovals: toolApprovals);
-                await foreach (var toolUpdate in toolOutputStream)
-                {
-                    var approvalUpdateResponses = HandleStreamingUpdateAsync(toolUpdate, toolResources);
-                    await foreach (var response in approvalUpdateResponses)
-                    {
-                        yield return response;
-                    }
-                }
-                yield break;
-
-            case StreamingUpdateReason.MessageCompleted:
-                // Message is complete - handle any file content
-                var messageStatusUpdate = (MessageStatusUpdate)update;
-                var threadMessage = messageStatusUpdate.Value;
-                foreach (var contentItem in threadMessage.ContentItems)
-                {
-                    if (contentItem is MessageImageFileContent imageContent)
-                    {
-                        var fileInfo = await DownloadImageFileContentAsync(imageContent);
-                        yield return new ChatFileResponse(fileInfo);
-                    }
-                }
-                yield break;
-
-            case StreamingUpdateReason.RunCompleted:
-                // The run is complete
-                yield return new ChatCompletionResponse();
-                yield break;
-
-            case StreamingUpdateReason.RunFailed:
-                // The run failed
-                var runFailedUpdate = (RunUpdate)update;
-                var errorMessage = runFailedUpdate.Value.LastError?.Message ?? "Unknown error";
-                yield return new ChatErrorResponse($"Run failed: {errorMessage}");
-                yield break;
-
-            default:
-                yield break;
-        }
-    }
-
-    /// <summary>
-    /// Process chat message and stream responses.
-    /// This method implements the same logic as the Python process_chat_message method,
-    /// including session management, message creation, and streaming responses.
-    /// </summary>
     public async IAsyncEnumerable<ChatResponse> ProcessChatMessageAsync(ChatRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (persistentAgent is null)
@@ -229,6 +159,72 @@ public partial class AgentService(
             {
                 yield return chatResponse;
             }
+        }
+    }
+
+    private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update, ToolResources toolResources)
+    {
+        switch (update.UpdateKind)
+        {
+            case StreamingUpdateReason.MessageUpdated:
+                // The agent has a response to the user - stream the content
+                var messageContentUpdate = (MessageContentUpdate)update;
+                yield return new ChatContentResponse(messageContentUpdate.Text ?? "");
+                yield break;
+
+            case StreamingUpdateReason.RunRequiresAction:
+                // Simulate a human-in-the-loop workflow but we'll do auto-approval here
+                var submitToolApprovalUpdate = (SubmitToolApprovalUpdate)update;
+                logger.LogInformation("Approving MCP tool call: {Name}, Arguments: {Arguments}", submitToolApprovalUpdate.Name, submitToolApprovalUpdate.Arguments);
+                List<ToolApproval> toolApprovals = [];
+
+                ToolApproval toolApproval = PersistentAgentsModelFactory.ToolApproval(
+                    submitToolApprovalUpdate.ToolCallId,
+                    true,
+                    // Forward on the MCP headers to the approval call. This ensures RLS flows through
+                    toolResources.Mcp.SelectMany(mcp => mcp.Headers).ToDictionary(h => h.Key, h => h.Value));
+
+                toolApprovals.Add(toolApproval);
+
+                var toolOutputStream = persistentAgentsClient.Runs.SubmitToolOutputsToStreamAsync(submitToolApprovalUpdate, toolOutputs: [], toolApprovals: toolApprovals);
+                await foreach (var toolUpdate in toolOutputStream)
+                {
+                    var approvalUpdateResponses = HandleStreamingUpdateAsync(toolUpdate, toolResources);
+                    await foreach (var response in approvalUpdateResponses)
+                    {
+                        yield return response;
+                    }
+                }
+                yield break;
+
+            case StreamingUpdateReason.MessageCompleted:
+                // Message is complete - handle any file content
+                var messageStatusUpdate = (MessageStatusUpdate)update;
+                var threadMessage = messageStatusUpdate.Value;
+                foreach (var contentItem in threadMessage.ContentItems)
+                {
+                    if (contentItem is MessageImageFileContent imageContent)
+                    {
+                        var fileInfo = await DownloadImageFileContentAsync(imageContent);
+                        yield return new ChatFileResponse(fileInfo);
+                    }
+                }
+                yield break;
+
+            case StreamingUpdateReason.RunCompleted:
+                // The run is complete
+                yield return new ChatCompletionResponse();
+                yield break;
+
+            case StreamingUpdateReason.RunFailed:
+                // The run failed
+                var runFailedUpdate = (RunUpdate)update;
+                var errorMessage = runFailedUpdate.Value.LastError?.Message ?? "Unknown error";
+                yield return new ChatErrorResponse($"Run failed: {errorMessage}");
+                yield break;
+
+            default:
+                yield break;
         }
     }
 }
