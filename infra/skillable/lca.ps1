@@ -114,12 +114,14 @@ if (-not (Test-Path $workshopDir)) { New-Item -ItemType Directory -Path $worksho
 if (Test-Path $ENV_FILE_PATH) { Remove-Item -Path $ENV_FILE_PATH -Force }
 
 @"
+
 PROJECT_ENDPOINT="$projectsEndpoint"
 AZURE_OPENAI_ENDPOINT="$azureOpenAIEndpoint"
 GPT_MODEL_DEPLOYMENT_NAME="$GPT_MODEL_DEPLOYMENT_NAME"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="$EMBEDDING_MODEL_DEPLOYMENT_NAME"
 APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
 POSTGRES_URL="$PostgresUrl"
+
 "@ | Set-Content -Path $ENV_FILE_PATH -Encoding UTF8
 
 Log "Created .env at $ENV_FILE_PATH"
