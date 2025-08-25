@@ -8,7 +8,7 @@
 
 ## Published Docs
 
-This repo is configured to use mkdocs, and the docs are in the `docs` folder.  The workshop docs are published [here](https://didactic-adventure-mr83k6w.pages.github.io/).
+This repo is configured to use mkdocs, and the docs are in the `docs` folder.  The workshop docs are published [here](https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/).
 
 Thanks for creating content for AI Tour 26.
 
