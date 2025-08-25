@@ -70,7 +70,7 @@ Authenticate with the Skillable Username and TAP.
 ## Restore the Database
 
 ```powershell
-; $UniqueSuffix = Read-Host "Enter your unique suffix"
+; $UniqueSuffix = Read-Host "Enter your unique suffix" `
 ; cd aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
 ; .\init-db-azure-action.ps1 -UniqueSuffix $UniqueSuffix -AzurePgPassword "SecurePassword123!"
 ```
