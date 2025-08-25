@@ -25,7 +25,7 @@ In normal operation, the a store manager would authenticate with the agent and t
         tool_resources.mcp = [mcp_tool_resource]
     ```
 
-    You'll find the code to retrieve the RLS User ID in the MCP Server (mcp_server/sales_analysis/sales_analysis.py). If the server can’t find the RLS header, it defaults to the Head Office role. This behavior is for workshop purposes only and should not be used in production.
+    You'll find the code to retrieve the RLS User ID in the MCP Server (`mcp_server/sales_analysis/sales_analysis.py`). If the server can’t find the RLS header, it defaults to the Head Office role. This behavior is for workshop purposes only and should not be used in production.
 
     ```python
     def get_rls_user_id(ctx: Context) -> str:
@@ -40,7 +40,36 @@ In normal operation, the a store manager would authenticate with the agent and t
 
 === "C#"
 
-    tbc
+    You'll find the code responsible for setting the user role on the requests to the MCP Server in the `AgentService` class.
+
+    ```csharp
+    var mcpToolResource = new MCPToolResource(ZavaMcpToolLabel, new Dictionary<string, string>
+    {
+        { "x-rls-user-id", request.RlsUserId }
+    });
+    var toolResources = new ToolResources();
+    toolResources.Mcp.Add(mcpToolResource);
+    ```
+
+    The `MCPToolResource` is then added to the `ToolResources` collection, which is provided to the streaming run using the `CreateRunStreamingOptions.ToolResources` property, this is because the RLS user ID is a dynamic value from the client (different "logged in" users may have different IDs), we need to ensure it's set on the thread _run_ rather than when the agent is created.
+
+    As the RLS user ID is set as a header for the agent to forward to the MCP Server, this is accessed from the `HttpContext` on the request, which can be accessed from a `IHttpContextAccessor`, which is injected into the MCP tool methods. An extension method has been created, `HttpContextAccessorExtensions.GetRequestUserId`, which can be used within a tool:
+
+    ```csharp
+    public async Task<string> ExecuteSalesQueryAsync(
+        NpgsqlConnection connection,
+        ILogger<SalesTools> logger,
+        IHttpContextAccessor httpContextAccessor,
+        [Description("A well-formed PostgreSQL query.")] string query
+    )
+    {
+        ...
+
+        var rlsUserId = httpContextAccessor.GetRequestUserId();
+
+        ...
+    }
+    ```
 
 ## Lab Exercise
 
@@ -50,11 +79,11 @@ By default, the web client operates with the `Head Office` role, which has full 
 
 1. Enter the following query in the chat:
 
-    ```text
-    Show sales by store
-    ```
+   ```text
+   Show sales by store
+   ```
 
-    You'll see the data for all stores is returned. Perfect.
+   You'll see the data for all stores is returned. Perfect.
 
 ### Select a Store Manager Role
 
@@ -63,9 +92,12 @@ By default, the web client operates with the `Head Office` role, which has full 
 3. Select a `Store location` from the dropdown menu.
 4. Select `Save` and now the agent will operate with the selected store location's data access permissions.
 
-    ![](../media/select_store_manager_role.png)
+   ![](../media/select_store_manager_role.png)
 
 Now the agent will only have access to the data for the selected store location.
+
+!!! info "Note"
+    Changing the user will reset the chat session, as the context is tied to the user.
 
 Try the following query:
 
