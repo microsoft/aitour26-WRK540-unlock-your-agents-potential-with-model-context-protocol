@@ -1,6 +1,6 @@
 ## What You'll Learn
 
-In this lab, you enable semantic search capabilities in the Azure AI Agent using the Model Context Protocol (MCP) and the PostgreSQL database with the [PostgreSQL Vector](https://github.com/pgvector/pgvector){:target="_blank"} extension enabled.
+In this lab, you enable semantic search capabilities in the Azure AI Agent using the Model Context Protocol (MCP) and the PostgreSQL database with the [PostgreSQL Vector](https://github.com/pgvector/pgvector){:target="\_blank"} extension enabled.
 
 ## Introduction
 
@@ -12,49 +12,69 @@ From the previous lab you can ask the agent questions about sales data, but it w
 
 1. Paste the following question into the Web Chat tab in your browser:
 
-    ```text
-    What 18 amp circuit breakers do we sell?
-    ```
+   ```text
+   What 18 amp circuit breakers do we sell?
+   ```
 
-    The agent responds with something similar to this message: 
-    
-    *"I couldn’t find any specific 18 amp circuit breakers in our inventory. However, we may have other types of circuit breakers available. Would you like me to search for general circuit breakers or any other related products? 😊"*
+   The agent responds with something similar to this message:
+
+   _"I couldn’t find any specific 18 amp circuit breakers in our inventory. However, we may have other types of circuit breakers available. Would you like me to search for general circuit breakers or any other related products? 😊"_
 
 ## Stop the Agent App
 
 From VS Code, stop the agent app by pressing <kbd>Shift + F5</kbd>.
 
-## Implement Semantic Search
+=== "Python"
 
-In this section, you will implement semantic search using the Model Context Protocol (MCP) to enhance the agent's capabilities.
+    ## Implement Semantic Search
 
-1. Press <kbd>F1</kbd> to **open** the VS Code Command Palette.
-2. Type **Open File** and select **File: Open File...**.
-3. **Paste** the following path into the file picker and press <kbd>Enter</kbd>:
+    In this section, you will implement semantic search using the Model Context Protocol (MCP) to enhance the agent's capabilities.
 
-    ```text
-    /workspace/src/python/mcp_server/sales_analysis/sales_analysis.py
-    ```
+    1. Press <kbd>F1</kbd> to **open** the VS Code Command Palette.
+    2. Type **Open File** and select **File: Open File...**.
+    3. **Paste** the following path into the file picker and press <kbd>Enter</kbd>:
 
-4. Scroll down to around line 70 and look for the `semantic_search_products` method. This method is responsible for performing semantic search on the sales data. You'll notice the **@mcp.tool()** decorator is commented out. This decorator is used to register the method as an MCP tool, allowing it to be called by the agent.
+        ```text
+        /workspace/src/python/mcp_server/sales_analysis/sales_analysis.py
+        ```
 
-5. Uncomment the `@mcp.tool()` decorator by removing the `#` at the beginning of the line. This will enable the semantic search tool.
+    4. Scroll down to around line 70 and look for the `semantic_search_products` method. This method is responsible for performing semantic search on the sales data. You'll notice the **@mcp.tool()** decorator is commented out. This decorator is used to register the method as an MCP tool, allowing it to be called by the agent.
 
-    ```python
-    # @mcp.tool()
-    async def semantic_search_products(
-        ctx: Context,
-        query_description: Annotated[str, Field(
-        ...
-    ```
+    5. Uncomment the `@mcp.tool()` decorator by removing the `#` at the beginning of the line. This will enable the semantic search tool.
 
-6. Next, you need to enable the Agent instructions to use the semantic search tool. Switch back to the `app.py` file.
-7. Scroll down to around line 30 and find the line `# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt".
-8. Uncomment the line by removing the `#` at the beginning. This will enable the agent to use the semantic search tool.
+        ```python
+        # @mcp.tool()
+        async def semantic_search_products(
+            ctx: Context,
+            query_description: Annotated[str, Field(
+            ...
+        ```
 
-    ```python
-    INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
-    ```
+    6. Next, you need to enable the Agent instructions to use the semantic search tool. Switch back to the `app.py` file.
+    7. Scroll down to around line 30 and find the line `# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"`.
+    8. Uncomment the line by removing the `#` at the beginning. This will enable the agent to use the semantic search tool.
+
+        ```python
+        INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"
+        ```
+
+=== "C#"
+
+    ## Implement Semantic Search
+
+    In this section, you will implement semantic search using the Model Context Protocol (MCP) to enhance the agent's capabilities.
+
+    1. Open the `McpHost.cs` file.
+    1. Locate where the other MCP tools are registered with the MCP server, and register the `SemanticSearchTools` class as an MCP tool.
+
+        ```csharp
+        builder.Services.AddMcpTool<SemanticSearchTools>();
+        ```
+
+        !!! info "Note"
+            Have a read of the implementation of `SemanticSearchTools` to learn how the MCP server will be performing the search.
+
+    1. Next, you need to enable the Agent instructions to use the semantic search tool. Switch back to the `AgentService` class and change the const `InstructionsFile` to `mcp_server_tools_with_semantic_search.txt`.
 
 ## Review the Agent Instructions
 
@@ -62,17 +82,17 @@ In this section, you will implement semantic search using the Model Context Prot
 2. Type **Open File** and select **File: Open File...**.
 3. Paste the following path into the file picker and press <kbd>Enter</kbd>:
 
-    ```text
-    /workspace/src/shared/instructions/mcp_server_tools_with_semantic_search.txt
-    ```
+   ```text
+   /workspace/src/shared/instructions/mcp_server_tools_with_semantic_search.txt
+   ```
 
 4. Review the instructions in the file. These instructions instruct the agent to use the semantic search tool to answer questions about sales data.
 
 ## Start the Agent App with the Semantic Search Tool
 
-1. **Start** the agent app by pressing <kbd>F5</kbd>. This will start the agent with the updated instructions and the semantic search tool enabled.
-2. Switch back to the **Web Chat** tab in your browser.
-3. Enter the following question in the chat:
+1.  **Start** the agent app by pressing <kbd>F5</kbd>. This will start the agent with the updated instructions and the semantic search tool enabled.
+2.  Switch back to the **Web Chat** tab in your browser.
+3.  Enter the following question in the chat:
 
     ```text
     What 18 amp circuit breakers do we sell?
@@ -83,9 +103,9 @@ In this section, you will implement semantic search using the Model Context Prot
     !!! info "Note"
         The MCP Semantic Search tool works as follows:
 
-        1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
-        2. This vector is used to search for similar product vectors in the PostgreSQL database.
-        3. The agent receives the results and uses them to generate a response.
+            1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
+            2. This vector is used to search for similar product vectors in the PostgreSQL database.
+            3. The agent receives the results and uses them to generate a response.
 
 ## Write an Executive Report
 

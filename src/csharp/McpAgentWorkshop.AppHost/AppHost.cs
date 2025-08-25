@@ -37,7 +37,9 @@ var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("d
     .WithReference(storeManagerUser)
     .WaitFor(zava)
     .WithDevTunnel(devtunnel)
-    .WithReference(appInsights);
+    .WithReference(appInsights)
+    .WithReference(foundry)
+    .WaitFor(foundry);
 
 var dotnetAgentApp = builder.AddProject<Projects.McpAgentWorkshop_WorkshopApi>("dotnet-agent-app")
     .WithReference(dotnetMcpServer)

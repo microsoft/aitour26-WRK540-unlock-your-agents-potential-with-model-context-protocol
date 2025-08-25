@@ -155,11 +155,11 @@ From the web chat client, you can start a conversation with the agent. The agent
     After a moment, the agent will respond with a table showing the top 10 products by revenue for each store.
 
     !!! info
-    The agent uses the LLM calls three MCP Server tools to fetch the data and display it in a table:
+        The agent uses the LLM calls three MCP Server tools to fetch the data and display it in a table:
 
-           1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
-           2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
-           3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
+            1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
+            2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
+            3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
 
 2.  Generate a pie chart. Copy and paste the following question into the chat:
 
@@ -170,14 +170,14 @@ From the web chat client, you can start a conversation with the agent. The agent
     The agent will respond with a pie chart showing the sales distribution by store for the current financial year.
 
     !!! info
-    This might feel like magic, so what’s happening behind the scenes to make it all work?
+        This might feel like magic, so what’s happening behind the scenes to make it all work?
 
-        Foundry Agent Service orchestrates the following steps:
+            Foundry Agent Service orchestrates the following steps:
 
-        1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
-        2. The agent then uses the **execute_sales_query** tool to fetch the sales
-        3. Using the returned data, the LLM writes Python code to create a Pie Chart.
-        4. Finally, the Code Interpreter executes the Python code to generate the chart.
+            1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
+            2. The agent then uses the **execute_sales_query** tool to fetch the sales
+            3. Using the returned data, the LLM writes Python code to create a Pie Chart.
+            4. Finally, the Code Interpreter executes the Python code to generate the chart.
 
 3.  Continue asking questions about Zava sales data to see the Code Interpreter in action. Here are a few follow-up questions you might like to try:
 
