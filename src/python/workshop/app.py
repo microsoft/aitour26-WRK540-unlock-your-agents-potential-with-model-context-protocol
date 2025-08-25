@@ -50,11 +50,9 @@ class AgentManager:
         logger.info("Setting up Agent tools...")
         self.toolset = AsyncToolSet()
 
-        # Add code interpreter tool
         # code_interpreter = CodeInterpreterTool()
         # self.toolset.add(code_interpreter)
 
-        # Add MCP tools
         # mcp_tools = McpTool(
         #     server_label="ZavaSalesAnalysisMcpServer",
         #     server_url=Config.DEV_TUNNEL_URL,

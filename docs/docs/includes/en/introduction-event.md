@@ -44,16 +44,17 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
 
 4. Once you've logged in, run the following command to assign the **user** role to the resource group:
 
-    ```powershell
+    <!-- ```powershell
     $subId = $(az account show --query id --output tsv) `
     ;$objectId = $(az ad signed-in-user show --query id -o tsv) `
     ; az role assignment create --role "Azure AI Developer" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
-    ```
+    ``` -->
 
     ```powershell
-    ; $username = Read-Host "Enter your Skillable username” `
+    ; $username = Read-Host "Enter your user name” `
     ; $subId = $(az account show --query id --output tsv) `
-    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId"
+    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId" `
+    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-zava-agent-wks"
     ```
 
 5. Leave the terminal window open for the next steps.

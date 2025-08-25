@@ -25,11 +25,11 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
           2. After the comment `Add MCP tool`, uncomment the rest if the code block, these lines add the MCP Server tools to the agent's toolset.
 
         ```python
-        # Add code interpreter tool
+        
         # code_interpreter = CodeInterpreterTool()
         # self.toolset.add(code_interpreter)
 
-        # Add MCP tools
+        
         # mcp_tools = McpTool(
         #     server_label="ZavaSalesAnalysisMcpServer",
         #     server_url=Config.DEV_TUNNEL_URL,
@@ -60,11 +60,11 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
                 logger.info("Setting up Agent tools...")
                 self.toolset = AsyncToolSet()
 
-                # Add code interpreter tool
+                
                 code_interpreter = CodeInterpreterTool()
                 self.toolset.add(code_interpreter)
 
-                # Add MCP tools
+                
                 mcp_tools = McpTool(
                     server_label="ZavaSalesAnalysisMcpServer",
                     server_url=Config.DEV_TUNNEL_URL,
