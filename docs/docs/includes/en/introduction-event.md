@@ -50,7 +50,21 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
     ; az role assignment create --role "Azure AI Developer" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
     ```
 
+    ```powershell
+    ; $username = Read-Host "Enter your Skillable username” `
+    ; $subId = $(az account show --query id --output tsv) `
+    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId"
+    ```
+
 5. Leave the terminal window open for the next steps.
+
+## Authenticate with the DevTunnel Service
+
+```powershell
+devtunnel login
+```
+
+Authenticate with the Skillable Username and TAP.
 
 ## Restore the Database
 
