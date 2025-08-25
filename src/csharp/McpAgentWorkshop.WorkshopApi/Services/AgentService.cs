@@ -41,30 +41,6 @@ public class AgentService(
     public async Task InitialiseAsync()
     {
         logger.LogInformation("Initialising agent service...");
-
-        // Create or find the single agent
-        persistentAgent = await GetOrCreateAgentAsync();
-    }
-
-    private async Task<PersistentAgent> GetOrCreateAgentAsync()
-    {
-        // var agentsList = persistentAgentsClient.Administration.GetAgentsAsync();
-
-        // await foreach (var agent in agentsList)
-        // {
-        //     if (agent.Name == AgentName)
-        //     {
-        //         logger.LogInformation("Found existing agent: {AgentName}", agent.Name);
-        //         return agent;
-        //     }
-        // }
-
-        // Create new agent if not found
-        return await CreateAgentAsync();
-    }
-
-    private async Task<PersistentAgent> CreateAgentAsync()
-    {
         logger.LogInformation("Creating new agent: {AgentName}", AgentName);
 
         var instructions = Path.Combine(sharedPath, "instructions", InstructionsFile);
@@ -86,21 +62,19 @@ public class AgentService(
         var mcpTool = new MCPToolDefinition(ZavaMcpToolLabel, devtunnelUrl + "mcp");
 
         // Create agent without tool resources - we'll set them per run
-        PersistentAgent pa = await persistentAgentsClient.Administration.CreateAgentAsync(
+        persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(
                 name: AgentName,
                 model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
                 instructions: instructionsContent,
                 temperature: 0.1f,
                 tools: [mcpTool, new CodeInterpreterToolDefinition()]);
 
-        logger.LogInformation("Agent created with ID: {AgentId}", pa.Id);
-
-        return pa;
+        logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
     }
 
     private async Task<PersistentAgentThread> GetOrCreateThreadAsync(string sessionId, CancellationToken cancellationToken = default)
     {
-        await sessionLock.WaitAsync();
+        await sessionLock.WaitAsync(cancellationToken);
         try
         {
             if (sessionThreads.TryGetValue(sessionId, out var existingThread))

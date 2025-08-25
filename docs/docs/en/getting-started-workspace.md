@@ -18,7 +18,7 @@ There are two VS Code workspaces in the workshop, one for Python and one for C#.
     ### The "workshop" folder
 
     - The **app.py** file: The entry point for the app, containing its main logic.
-  
+
     Note the **INSTRUCTIONS_FILE** variable—it sets which instructions file the agent uses. You will update this variable in a later lab.
 
     - The **resources.txt** file: Contains the resources used by the agent app.
@@ -47,18 +47,17 @@ There are two VS Code workspaces in the workshop, one for Python and one for C#.
 
     ## Project Structure
 
-    Be sure to familiarize yourself with the key **folders** and **files** you’ll be working with throughout the workshop.
+    The project uses [Aspire](http://aka.ms/dotnet-aspire) to simplify building the agent application, managing the MCP server, and orchestrating all the external dependencies. The solution is comproised for four projects, all prefixed with `McpAgentWorkshop`:
 
-    ### The workshop folder
+    * `AppHost`: The Aspire orchestrator, and launch project for the workshop.
+    * `McpServer`: The MCP server project.
+    * `ServiceDefaults`: Default configuration for services, such as logging and telemetry.
+    * `WorkshopApi`: The Agent API for the workshop. The core application logic is in the `AgentService` class.
 
-    - The **Lab1.cs, Lab2.cs, Lab3.cs** files: The entry point for each lab, containing its agent logic.
-    - The **Program.cs** file: The entry point for the app, containing its main logic.
-    - The **SalesData.cs** file: The function logic to execute dynamic SQL queries against the SQLite database.
+    In addition to the .NET projects in the solution, there is a `shared` folder (visible as a Solution Folder, and via the file explorer), which contains:
 
-    ### The shared folder
-
-    - The **files** folder: Contains the files created by the agent app.
-    - The **fonts** folder: Contains the multilingual fonts used by Code Interpreter.
-    - The **instructions** folder: Contains the instructions passed to the LLM.
+    * `instructions`: The instructions passed to the LLM.
+    * `scripts`: Helper shell scripts for various tasks, these will be referred to when required.
+    * `webapp`: The front-end client application. Note: This is a Python application, which Aspire will manage the lifecycle of.
 
     ![Lab folder structure](media/project-structure-self-guided-csharp.png)
