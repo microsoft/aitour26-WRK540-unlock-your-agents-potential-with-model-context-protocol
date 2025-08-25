@@ -5,38 +5,16 @@ using McpAgentWorkshop.WorkshopApi.Models;
 
 namespace McpAgentWorkshop.WorkshopApi.Services;
 
-public class AgentService(
+public partial class AgentService(
     PersistentAgentsClient persistentAgentsClient,
     IWebHostEnvironment hostEnvironment,
     IConfiguration configuration,
     ILogger<AgentService> logger) : IAsyncDisposable
 {
     private PersistentAgent? persistentAgent;
-    private readonly IDictionary<string, PersistentAgentThread> sessionThreads = new Dictionary<string, PersistentAgentThread>();
-    private readonly SemaphoreSlim sessionLock = new(1, 1);
-    private readonly SemaphoreSlim agentLock = new(1, 1);
     private const string AgentName = "Zava DIY Sales Analysis Agent";
     private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
     private const string ZavaMcpToolLabel = "ZavaSalesAnalysisMcpServer";
-    private readonly string sharedPath = Path.Combine(hostEnvironment.ContentRootPath, "..", "..", "shared");
-
-    public bool IsAgentAvailable => persistentAgent is not null;
-
-    public async ValueTask DisposeAsync()
-    {
-        foreach (var thread in sessionThreads.Values)
-        {
-            await persistentAgentsClient.Threads.DeleteThreadAsync(thread.Id);
-        }
-
-        if (persistentAgent is not null)
-        {
-            await persistentAgentsClient.Administration.DeleteAgentAsync(persistentAgent.Id);
-        }
-
-        sessionLock.Dispose();
-        agentLock.Dispose();
-    }
 
     public async Task InitialiseAsync()
     {
@@ -61,67 +39,18 @@ public class AgentService(
 
         var mcpTool = new MCPToolDefinition(ZavaMcpToolLabel, devtunnelUrl + "mcp");
 
-        // Create agent without tool resources - we'll set them per run
+        var codeInterpreterTool = new CodeInterpreterToolDefinition();
+
+        IEnumerable<ToolDefinition> tools = [mcpTool, codeInterpreterTool];
+
         persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(
                 name: AgentName,
                 model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
                 instructions: instructionsContent,
-                temperature: 0.1f,
-                tools: [mcpTool, new CodeInterpreterToolDefinition()]);
+                temperature: modelTemperature,
+                tools: tools);
 
         logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
-    }
-
-    private async Task<PersistentAgentThread> GetOrCreateThreadAsync(string sessionId, CancellationToken cancellationToken = default)
-    {
-        await sessionLock.WaitAsync(cancellationToken);
-        try
-        {
-            if (sessionThreads.TryGetValue(sessionId, out var existingThread))
-            {
-                return existingThread;
-            }
-
-            // Create new thread for this session
-            var threadResponse = await persistentAgentsClient.Threads.CreateThreadAsync(cancellationToken: cancellationToken);
-            var thread = threadResponse.Value;
-            sessionThreads[sessionId] = thread;
-            logger.LogInformation("Created new thread {ThreadId} for session {SessionId}", thread.Id, sessionId);
-
-            return thread;
-        }
-        finally
-        {
-            sessionLock.Release();
-        }
-    }
-
-    public async Task ClearSessionThreadAsync(string sessionId)
-    {
-        await sessionLock.WaitAsync();
-        try
-        {
-            if (sessionThreads.TryGetValue(sessionId, out var thread))
-            {
-                if (persistentAgent is not null)
-                {
-                    using var activity = Diagnostics.ActivitySource.StartActivity("Zava Agent Chat Thread Deletion");
-                    activity?.SetTag("thread_id", thread.Id);
-                    activity?.SetTag("session_id", sessionId);
-                    activity?.SetTag("agent_id", persistentAgent.Id);
-                    activity?.SetTag("date_time", DateTime.UtcNow.ToString("O"));
-
-                    await persistentAgentsClient.Threads.DeleteThreadAsync(thread.Id);
-                }
-                sessionThreads.Remove(sessionId);
-            }
-        }
-        finally
-        {
-            sessionLock.Release();
-        }
-
-        logger.LogInformation("Cleared thread for session {SessionId}", sessionId);
     }
 
     private async IAsyncEnumerable<ChatResponse> HandleStreamingUpdateAsync(StreamingUpdate update, ToolResources toolResources)
@@ -135,7 +64,7 @@ public class AgentService(
                 yield break;
 
             case StreamingUpdateReason.RunRequiresAction:
-                // The run requires an action from the application, such as a tool output submission
+                // Simulate a human-in-the-loop workflow but we'll do auto-approval here
                 var submitToolApprovalUpdate = (SubmitToolApprovalUpdate)update;
                 logger.LogInformation("Approving MCP tool call: {Name}, Arguments: {Arguments}", submitToolApprovalUpdate.Name, submitToolApprovalUpdate.Arguments);
                 List<ToolApproval> toolApprovals = [];
@@ -143,6 +72,7 @@ public class AgentService(
                 ToolApproval toolApproval = PersistentAgentsModelFactory.ToolApproval(
                     submitToolApprovalUpdate.ToolCallId,
                     true,
+                    // Forward on the MCP headers to the approval call. This ensures RLS flows through
                     toolResources.Mcp.SelectMany(mcp => mcp.Headers).ToDictionary(h => h.Key, h => h.Value));
 
                 toolApprovals.Add(toolApproval);
@@ -150,10 +80,10 @@ public class AgentService(
                 var toolOutputStream = persistentAgentsClient.Runs.SubmitToolOutputsToStreamAsync(submitToolApprovalUpdate, toolOutputs: [], toolApprovals: toolApprovals);
                 await foreach (var toolUpdate in toolOutputStream)
                 {
-                    var response = HandleStreamingUpdateAsync(toolUpdate, toolResources);
-                    await foreach (var res in response)
+                    var approvalUpdateResponses = HandleStreamingUpdateAsync(toolUpdate, toolResources);
+                    await foreach (var response in approvalUpdateResponses)
                     {
-                        yield return res;
+                        yield return response;
                     }
                 }
                 yield break;
@@ -225,7 +155,7 @@ public class AgentService(
         using var activity = Diagnostics.ActivitySource.StartActivity(spanName);
 
         PersistentAgentThread sessionThread;
-        AsyncCollectionResult<StreamingUpdate>? streamingUpdates = null;
+        AsyncCollectionResult<StreamingUpdate>? runStream = null;
         string? errorMessage = null;
         // Create tool resources for this RLS user
         var mcpToolResource = new MCPToolResource(ZavaMcpToolLabel, new Dictionary<string, string>
@@ -234,7 +164,6 @@ public class AgentService(
         });
         var toolResources = new ToolResources();
         toolResources.Mcp.Add(mcpToolResource);
-
 
         try
         {
@@ -259,16 +188,16 @@ public class AgentService(
             // Create run options with dynamic tool resources
             var runOptions = new CreateRunStreamingOptions
             {
-                MaxCompletionTokens = 2 * 10240,
-                MaxPromptTokens = 6 * 10240,
-                Temperature = 0.1f,
-                TopP = 0.1f,
+                MaxCompletionTokens = maxCompletionTokens,
+                MaxPromptTokens = maxPromptTokens,
+                Temperature = modelTemperature,
+                TopP = topP,
                 TruncationStrategy = new Truncation(TruncationStrategy.LastMessages) { LastMessages = 5 },
                 ToolResources = toolResources
             };
 
             // Start streaming run with dynamic tool resources
-            streamingUpdates = persistentAgentsClient.Runs.CreateRunStreamingAsync(
+            runStream = persistentAgentsClient.Runs.CreateRunStreamingAsync(
                 threadId: sessionThread.Id,
                 agentId: persistentAgent.Id,
                 options: runOptions,
@@ -287,50 +216,19 @@ public class AgentService(
             yield break;
         }
 
-        await foreach (var update in streamingUpdates!)
+        if (runStream is null)
         {
-            var response = HandleStreamingUpdateAsync(update, toolResources);
-            await foreach (var res in response)
+            yield return new ChatErrorResponse("Streaming error: No updates received");
+            yield break;
+        }
+
+        await foreach (var update in runStream)
+        {
+            var responseStream = HandleStreamingUpdateAsync(update, toolResources);
+            await foreach (var chatResponse in responseStream)
             {
-                yield return res;
+                yield return chatResponse;
             }
         }
-    }
-
-    private async Task<AssistantFileInfo> DownloadImageFileContentAsync(MessageImageFileContent imageContent)
-    {
-        logger.LogInformation("Getting file with ID: {FileId}", imageContent.FileId);
-
-        BinaryData fileContent = await persistentAgentsClient.Files.GetFileContentAsync(imageContent.FileId);
-        string directory = Path.Combine(sharedPath, "files");
-        if (!Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
-        string fileName = imageContent.FileId + ".png";
-        string filePath = Path.Combine(directory, fileName);
-        await File.WriteAllBytesAsync(filePath, fileContent.ToArray());
-
-        logger.LogInformation("File save to {Path}", Path.GetFullPath(filePath));
-
-        return new AssistantFileInfo(FileId: imageContent.FileId,
-            FileName: fileName,
-            FilePath: filePath,
-            RelativePath: Path.Combine("files", fileName),
-            IsImage: true,
-            AttachmentName: fileName);
-    }
-
-    internal async Task<byte[]?> GetFileInfoAsync(string path)
-    {
-        string fullPath = Path.Combine(sharedPath, "files", path);
-
-        if (!File.Exists(fullPath))
-        {
-            return null;
-        }
-
-        return await File.ReadAllBytesAsync(fullPath);
     }
 }
