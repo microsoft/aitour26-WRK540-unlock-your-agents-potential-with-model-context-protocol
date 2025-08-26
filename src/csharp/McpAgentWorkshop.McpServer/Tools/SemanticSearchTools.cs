@@ -19,9 +19,11 @@ public class SemanticSearchTools
         IHttpContextAccessor httpContextAccessor,
         [Description("Describe the Zava product you're looking for using natural language. Include purpose, features, or use case. For example: 'waterproof electrical box for outdoor use', '15 amp circuit breaker', or 'LED light bulbs for kitchen ceiling'.")] string query,
         [Description("The maximum number of products to return. Defaults to 20.")] int maxRows = 20,
+        [Description("A value between 20 and 80 that sets the minimum similarity threshold. Products below this value are excluded. Defaults to 30.0.")] float similarityThreshold = 30f)
     {
         if (similarityThreshold < 20f || similarityThreshold > 80f)
             throw new ArgumentOutOfRangeException(nameof(similarityThreshold), similarityThreshold, "similarityThreshold must be between 20 and 80 (inclusive).");
+
         var activity = Diagnostics.ActivitySource.StartActivity(
                     name: nameof(SemanticSearchProductsAsync),
                     kind: ActivityKind.Server,
