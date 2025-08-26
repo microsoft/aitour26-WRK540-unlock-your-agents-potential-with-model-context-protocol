@@ -16,6 +16,7 @@
         "ghcr.io/devcontainers/features/python": {
             "version": "3.13"
         },
+        "ghcr.io/devcontainers/features/powershell": {},
         "ghcr.io/dotnet/aspire-devcontainer-feature/dotnetaspire": {},
         "ghcr.io/devcontainers/features/docker-in-docker": {},
         "ghcr.io/devcontainers/features/node": {}

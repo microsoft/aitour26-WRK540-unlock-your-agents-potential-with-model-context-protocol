@@ -83,7 +83,10 @@
             {
                 "label": "Start DevTunnel",
                 "type": "shell",
-                "command": "${workspaceFolder:shared}/scripts/start_devtunnel.ps1",
+                "command": "pwsh",
+                "args": [
+                    "${workspaceFolder:shared}/scripts/start_devtunnel.ps1"
+                ],
                 "options": {
                     "cwd": "${workspaceFolder:workshop}"
                 },
@@ -100,6 +103,38 @@
                         "endsPattern": "^.*(Ready to accept connections for tunnel:).*$"
                     }
                 }
+            },
+            {
+                "label": "Start Web App",
+                "type": "shell",
+                "command": "python",
+                "args": [
+                    "app.py"
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder:shared}/webapp"
+                },
+                "group": "build",
+                "isBackground": true,
+                "problemMatcher": {
+                    "owner": "webapp",
+                    "pattern": {
+                        "regexp": "^.*$"
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "^.*Starting web interface on port.*$",
+                        "endsPattern": "^.*Uvicorn running on.*$"
+                    }
+                }
+            },
+            {
+                "label": "Start DevTunnel and Web App",
+                "dependsOrder": "parallel",
+                "dependsOn": [
+                    "Start DevTunnel",
+                    "Start Web App"
+                ]
             }
         ]
     },
@@ -110,10 +145,9 @@
                 "name": "🌎🤖Debug Compound: Agent and MCP (http)",
                 "configurations": [
                     "Debug: MCP Server Sales Analysis",
-                    "Debug: Agent Manager (http)",
-                    "Debug: Web App"
+                    "Debug: Agent Manager (http)"
                 ],
-                "preLaunchTask": "Start DevTunnel",
+                "preLaunchTask": "Start DevTunnel and Web App",
                 "stopAll": true
             }
         ],
