@@ -144,8 +144,8 @@
             {
                 "name": "🌎🤖Debug Compound: Agent and MCP (http)",
                 "configurations": [
-                    "Debug: MCP Server Sales Analysis",
-                    "Debug: Agent Manager (http)"
+                    "Debug: MCP Server (workshop)",
+                    "Debug: Agent Manager (workshop)"
                 ],
                 "preLaunchTask": "Start DevTunnel and Web App",
                 "stopAll": true
@@ -153,12 +153,13 @@
         ],
         "configurations": [
             {
-                "name": "Debug: Agent Manager (http)",
+                "name": "Debug: Agent Manager (workshop)",
                 "type": "debugpy",
                 "request": "launch",
                 "program": "app.py",
                 "cwd": "${workspaceFolder:workshop}",
                 "console": "integratedTerminal",
+                "consoleName": "Agent Manager (workshop)",
                 "args": [],
                 "env": {
                     "PYDEVD_DISABLE_FILE_VALIDATION": "1",
@@ -172,6 +173,7 @@
                 "request": "launch",
                 "program": "app.py",
                 "console": "integratedTerminal",
+                "consoleName": "Web App",
                 "cwd": "${workspaceFolder:shared}/webapp",
                 "args": [],
                 "env": {
@@ -180,12 +182,13 @@
                 "justMyCode": true
             },
             {
-                "name": "Debug: MCP Server Sales Analysis",
+                "name": "Debug: MCP Server (workshop)",
                 "type": "debugpy",
                 "request": "launch",
                 "program": "sales_analysis.py",
                 "cwd": "${workspaceFolder:mcp_server}/sales_analysis",
                 "console": "integratedTerminal",
+                "consoleName": "MCP Server (workshop)",
                 "args": [],
                 "env": {
                     "PYDEVD_DISABLE_FILE_VALIDATION": "1"
