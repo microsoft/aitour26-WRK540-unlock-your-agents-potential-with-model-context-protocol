@@ -1,6 +1,6 @@
 ## Microsoft Build Attendees
 
-The instructions on this page assume you are attending [Microsoft Build 2025](https://build.microsoft.com/){:target="_blank"} and have access to a pre-configured lab environment. This environment provides an Azure subscription with all the tools and resources needed to complete the workshop.
+The instructions on this page assume you are attending an event and have access to a pre-configured lab environment. This environment provides an Azure subscription with all the tools and resources needed to complete the workshop.
 
 ## Introduction
 
@@ -8,7 +8,7 @@ This workshop is designed to teach you about the Azure AI Agents Service and the
 
 ## Select Workshop Programming Language
 
-The workshop is available in both Python and C#. Please make sure to select the language that fits the lab room you are in, by using the language selector tabs. Note, don't switch languages mid-workshop.
+The workshop is available in both Python and C#. Please make sure to select the language that fits the lab room or preference by using the language selector tabs. Note, don't switch languages mid-workshop.
 
 **Select the language tab that matches your lab room:**
 
@@ -120,52 +120,9 @@ Follow these steps to open the workshop in Visual Studio Code:
 
             !!! note "You may be asked what program to open the solution with. Select **Visual Studio 2022**."
 
-## Azure AI Foundry Project Endpoint
-
-Next, we log in to Azure AI Foundry to retrieve the project endpoint, which the agent app uses to connect to the Azure AI Agents Service.
-
-1. Navigate to the [Azure AI Foundry](https://ai.azure.com){:target="_blank"} website.
-2. Select **Sign in** and use the **Username** and **Password** found in the **top section** of the **Resources** tab in the lab environment. Click on the **Username** and **Password** fields to automatically fill in the login details.
-    ![Azure credentials](../media/azure-credentials.png){:width="500"}
-3. Read the introduction to the Azure AI Foundry and click **Got it**.
-4. Navigate to [All Resources](https://ai.azure.com/AllResources){:target="_blank"} to view the list of AI resources that have been pre-provisioned for you.
-5. Select the resource name that starts with **aip-** of type **Project**.
-
-    ![Select project](../media/ai-foundry-project.png){:width="500"}
-
-6. Review the introduction guide and click **Close**.
-7. From the **Overview** sidebar menu, locate the **Endpoints and keys** -> **Libraries** -> **Azure AI Foundry** section, click the **Copy** icon to copy the **Azure AI Foundry project endpoint**.
-
-    ![Copy connection string](../media/project-connection-string.png){:width="500"}
+## Project Structure
 
 === "Python"
-
-    ## Configure the Workshop
-
-    1. Switch back to the workshop you opened in VS Code.
-    2. **Rename** the `.env.sample` file to `.env`.
-
-        - Select the **.env.sample** file in the VS Code **Explorer** panel.
-        - Right-click the file and select **Rename**, or press <kbd>F2</kbd>.
-        - Change the file name to `.env` and press <kbd>Enter</kbd>.
-
-    3. Paste the **Project endpoint** you copied from Azure AI Foundry into the `.env` file.
-
-        ```python
-        PROJECT_CONNECTION_STRING="<your_project_endpoint>"
-        ```
-
-        Your `.env` file should look similar to this but with your project endpoint.
-
-        ```python
-        MODEL_DEPLOYMENT_NAME="gpt-4o"
-        AZURE_BING_CONNECTION_ID="/subscriptions/<subscription_id>/resourceGroups/<resource_group>/providers/Microsoft.CognitiveServices/accounts/<ai_account>/projects/<project_name>/connections/groundingwithbingsearch"
-        PROJECT_CONNECTION_STRING="<your_project_endpoint>"
-        ```
-
-    4. Save the `.env` file.
-
-    ## Project Structure
 
     Be sure to familiarize yourself with the key **subfolders** and **files** you’ll be working with throughout the workshop.
 
