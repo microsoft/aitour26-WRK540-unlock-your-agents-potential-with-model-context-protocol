@@ -3,7 +3,6 @@ site_author: Dave Glover
 site_description: >-
   Azure AI Foundry Agent Services with MCP Workshop.
 
-
 # Repository ..................................................
 repo_name: Unlock your Agents Potential with MCP
 repo_url: https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol
@@ -12,34 +11,33 @@ repo_url: https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potent
 copyright: >
   Copyright &copy; 2023 - present Microsoft
 
-
 nav:
   - Workshop Introduction: index.md
   - Workshop Navigation: navigating-the-workshop.md
-  - Getting Started: 
-    - Open the Workshop: getting-started.md
-    - Star the GitHub Repo: getting_started-star-workshop.md
-    - Architecture Overview: architecture.md
-    - Deploy Agent Resources: getting-started-azure.md
-    - Open VS Code Workspace: getting-started-workspace.md
+  - Getting Started:
+      - Open the Workshop: getting-started.md
+      - Star the GitHub Repo: getting_started-star-workshop.md
+      - Architecture Overview: architecture.md
+      - Deploy Agent Resources: getting-started-azure.md
+      - Open VS Code Workspace: getting-started-workspace.md
   - Agent Services Labs:
-    - AI Foundry Agent Services: agent-service-overview.md
-    - Lab 1 Agent Instructions: lab-1-agent-instructions.md
-    - Lab 2 Start your Agent: lab-2-start-the-agent.md
-    - Lab 3 Semantic Search: lab-3-mcp-semantic-search.md
-    - Lab 4 Securing Agent Data: lab-4-secure-agent-data.md
+      - AI Foundry Agent Services: agent-service-overview.md
+      - Lab 1 Agent Instructions: lab-1-agent-instructions.md
+      - Lab 2 Start your Agent: lab-2-start-the-agent.md
+      - Lab 3 Semantic Search: lab-3-mcp-semantic-search.md
+      - Lab 4 Securing Agent Data: lab-4-secure-agent-data.md
   - Observability Labs:
-    - Observability Overview: observability-overview.md
-    - Lab 5 Service Monitoring: lab-5-monitoring.md
-    - Lab 6 Understand Tracing: lab-6-tracing.md
-    # - Lab 6 Continuous Evaluation: lab-5-continuous-evaluation.md
+      - Observability Overview: observability-overview.md
+      - Lab 5 Service Monitoring: lab-5-monitoring.md
+      - Lab 6 Understand Tracing: lab-6-tracing.md
+      # - Lab 6 Continuous Evaluation: lab-5-continuous-evaluation.md
+      - Lab 7 Local Tracing with Aspire (C#): lab-7-local-tracing-with-aspire.md
   - Finishing Up: lab-7-finishing-up.md
   - Summary: summary.md
   - Resources: resources.md
   - Home Work:
-    - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
+      - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
   - About: about.md
-
 
 plugins:
   - search
@@ -87,8 +85,6 @@ plugins:
             "Home Work": "Home Work"
             "Debugging with Dev Tunnel": "Debugging with Dev Tunnel"
             "About": "About"
-        
-
 
 theme:
   name: material
@@ -98,7 +94,7 @@ theme:
     - navigation.instant
     - navigation.footer
     - content.code.copy
-    - navigation.tabs.sticky 
+    - navigation.tabs.sticky
     - content.tabs.link
 
   # Change Font: https://squidfunk.github.io/mkdocs-material/setup/changing-the-fonts/?h=fonts
@@ -108,7 +104,7 @@ theme:
     text: Roboto #Regular
   # logo: docs/media/azure-ai-studio.svg
   palette:
-    - scheme: default  # Light Mode
+    - scheme: default # Light Mode
       primary: black
       accent: pink
       toggle:
@@ -121,7 +117,6 @@ theme:
         icon: material/brightness-7
         name: Switch to light mode
 
-
 markdown_extensions:
   - toc:
       permalink: true
@@ -130,17 +125,14 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.tabbed:
-        alternate_style: true
+      alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - attr_list
   - md_in_html
   # - pymdownx.emoji:
-      # emoji_index: !!python/name:material.extensions.emoji.twemoji
-      # emoji_generator: !!python/name:material.extensions.emoji.to_svg
-
+  # emoji_index: !!python/name:material.extensions.emoji.twemoji
+  # emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra_css:
   - css/custom.css
-
-
