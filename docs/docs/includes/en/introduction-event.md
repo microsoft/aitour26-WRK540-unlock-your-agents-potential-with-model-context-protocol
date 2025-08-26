@@ -42,22 +42,20 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
 
 3. Then select the **Default** subscription from the command line, by clicking on **Enter**.
 
-4. Once you've logged in, run the following command to assign the **user** role to the resource group:
+## User Roles and Database Restore
 
-    <!-- ```powershell
-    $subId = $(az account show --query id --output tsv) `
-    ;$objectId = $(az ad signed-in-user show --query id -o tsv) `
-    ; az role assignment create --role "Azure AI Developer" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
-    ``` -->
+Once you've logged in, run the following command to assign the **user** role to the resource group and restore the Zava database.
 
-    ```powershell
-    ; $username = Read-Host "Enter your user name” `
-    ; $subId = $(az account show --query id --output tsv) `
-    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId" `
-    ; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-zava-agent-wks"
-    ```
+```powershell
+; $username = $env:LAB_USERNAME `
+; $subId = $env:LAB_SUBSCRIPTION_ID `
+; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId" `
+; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-zava-agent-wks" `
+; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
+; .\init-db-azure-action.ps1 -UniqueSuffix $env:LAB_INSTANCE_ID -AzurePgPassword "SecurePassword123!"
+```
 
-5. Leave the terminal window open for the next steps.
+Leave the terminal window open for the next steps.
 
 ## Authenticate with the DevTunnel Service
 
@@ -65,15 +63,14 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
 devtunnel login
 ```
 
-Authenticate with the Skillable Username and TAP.
+!!! note
+    You'll be prompted to open a browser link and log in to your Azure account.
 
-## Restore the Database
+    1. A browser window will open automatically, select **Work or school account** and click **Next**.
 
-```powershell
-; $UniqueSuffix = Read-Host "Enter your unique suffix" `
-; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
-; .\init-db-azure-action.ps1 -UniqueSuffix $UniqueSuffix -AzurePgPassword "SecurePassword123!"
-```
+    1. Use the **Username** and **Password** found in the **top section** of the **Resources** tab in the lab environment.
+
+    2. Select **OK**, then **Done**.
 
 ## Open the Workshop
 
