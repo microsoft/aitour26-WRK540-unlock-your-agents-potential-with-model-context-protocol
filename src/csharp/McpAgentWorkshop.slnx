@@ -4,6 +4,27 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/shared/" />
+  <Folder Name="/shared/instructions/">
+    <File Path="../shared/instructions/mcp_server_tools_with_code_interpreter.txt" />
+    <File Path="../shared/instructions/mcp_server_tools_with_semantic_search.txt" />
+  </Folder>
+  <Folder Name="/shared/scripts/">
+    <File Path="../shared/scripts/start_devtunnel.sh" />
+  </Folder>
+  <Folder Name="/shared/webapp/">
+    <File Path="../shared/webapp/app.py" />
+    <File Path="../shared/webapp/otel.py" />
+  </Folder>
+  <Folder Name="/shared/webapp/static/">
+    <File Path="../shared/webapp/static/chat.js" />
+    <File Path="../shared/webapp/static/favicon-16.png" />
+    <File Path="../shared/webapp/static/favicon-32.png" />
+    <File Path="../shared/webapp/static/favicon-48.png" />
+    <File Path="../shared/webapp/static/favicon.ico" />
+    <File Path="../shared/webapp/static/favicon.png" />
+    <File Path="../shared/webapp/static/index.html" />    
+  </Folder>
   <Project Path="McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj" />
   <Project Path="McpAgentWorkshop.McpServer/McpAgentWorkshop.McpServer.csproj" />
   <Project Path="McpAgentWorkshop.ServiceDefaults/McpAgentWorkshop.ServiceDefaults.csproj" />

@@ -1,185 +1,159 @@
 Write-Host "Deploying the Azure resources..."
 
-# Define resource group parameters
+# --- Parameters (match deploy.sh) ---
 $RG_LOCATION = "westus"
-$AI_PROJECT_FRIENDLY_NAME = "Zava DIY Agent Service Workshop"
+$AI_PROJECT_FRIENDLY_NAME = "Zava Agent Service Workshop"
 $RESOURCE_PREFIX = "zava-agent-wks"
-$UNIQUE_SUFFIX = -join ((65..90) + (97..122) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
+# unique suffix: lowercase letters + digits, 4 chars (similar to deploy.sh)
+$UNIQUE_SUFFIX = -join ((97..122) + (48..57) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
 
-# Deploy the Azure resources and save output to JSON
-Write-Host " Creating agent workshop resources in resource group: rg-$RESOURCE_PREFIX-$UNIQUE_SUFFIX " -BackgroundColor Red -ForegroundColor White
-$deploymentName = "azure-ai-agent-service-lab-$(Get-Date -Format 'yyyyMMddHHmmss')"
-az deployment sub create `
-  --name "$deploymentName" `
-  --location "$RG_LOCATION" `
-  --template-file main.bicep `
-  --parameters "@main.parameters.json" `
-  --parameters location="$RG_LOCATION" `
-  --parameters resourcePrefix="$RESOURCE_PREFIX" `
-  --parameters uniqueSuffix="$UNIQUE_SUFFIX" | Out-File -FilePath output.json -Encoding utf8
+Write-Host "Creating agent workshop resources in resource group: rg-$RESOURCE_PREFIX-$UNIQUE_SUFFIX"
+$DEPLOYMENT_NAME = "azure-ai-agent-service-lab-$(Get-Date -Format 'yyyyMMddHHmmss')"
 
-# Parse the JSON file using native PowerShell cmdlets
-if (-not (Test-Path -Path output.json)) {
-    Write-Host "Error: output.json not found."
-    exit -1
+Write-Host "Starting Azure deployment..."
+az deployment sub create \
+  --name "$DEPLOYMENT_NAME" \
+  --location "$RG_LOCATION" \
+  --template-file main.bicep \
+  --parameters @main.parameters.json \
+  --parameters location="$RG_LOCATION" \
+  --parameters resourcePrefix="$RESOURCE_PREFIX" \
+  --parameters uniqueSuffix="$UNIQUE_SUFFIX" \
+  --output json | Out-File -FilePath output.json -Encoding utf8
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Deployment failed. Check output.json for details." -ForegroundColor Red
+    exit 1
 }
 
-$jsonData = Get-Content output.json -Raw | ConvertFrom-Json
+if (-not (Test-Path -Path output.json)) {
+    Write-Host "Error: output.json not found." -ForegroundColor Red
+    exit 1
+}
+
+try {
+    $jsonData = Get-Content output.json -Raw | ConvertFrom-Json
+} catch {
+    Write-Host "Failed to parse output.json" -ForegroundColor Red
+    Write-Host $_.Exception.Message
+    exit 1
+}
+
 $outputs = $jsonData.properties.outputs
 
-# Extract values from the JSON object
-$projectsEndpoint = $outputs.projectsEndpoint.value
-$resourceGroupName = $outputs.resourceGroupName.value
-$subscriptionId = $outputs.subscriptionId.value
-$aiFoundryName = $outputs.aiFoundryName.value
-$aiProjectName = $outputs.aiProjectName.value
-$azureOpenAIEndpoint = $projectsEndpoint -replace 'api/projects/.*$', ''
-$applicationInsightsConnectionString = $outputs.applicationInsightsConnectionString.value
-$applicationInsightsName = $outputs.applicationInsightsName.value
+$PROJECTS_ENDPOINT = $outputs.projectsEndpoint.value
+$RESOURCE_GROUP_NAME = $outputs.resourceGroupName.value
+$SUBSCRIPTION_ID = $outputs.subscriptionId.value
+$AI_FOUNDRY_NAME = $outputs.aiFoundryName.value
+$AI_PROJECT_NAME = $outputs.aiProjectName.value
+$AZURE_OPENAI_ENDPOINT = ($PROJECTS_ENDPOINT -replace 'api/projects/.*$','')
+$APPLICATIONINSIGHTS_CONNECTION_STRING = $outputs.applicationInsightsConnectionString.value
+$APPLICATION_INSIGHTS_NAME = $outputs.applicationInsightsName.value
 
-if ([string]::IsNullOrEmpty($projectsEndpoint)) {
-    Write-Host "Error: projectsEndpoint not found. Possible deployment failure."
-    exit -1
+if ([string]::IsNullOrEmpty($PROJECTS_ENDPOINT) -or $PROJECTS_ENDPOINT -eq 'null') {
+    Write-Host "Error: projectsEndpoint not found. Possible deployment failure." -ForegroundColor Red
+    exit 1
 }
 
-# Set the path for the .env file
+# Write .env for workshop (overwrite)
 $ENV_FILE_PATH = "../src/python/workshop/.env"
 
-# Create workshop directory if it doesn't exist
-$workshopDir = Split-Path -Parent $ENV_FILE_PATH
-if (-not (Test-Path $workshopDir)) {
-    New-Item -ItemType Directory -Path $workshopDir -Force
-}
+# Ensure directory exists
+$envDir = Split-Path -Parent $ENV_FILE_PATH
+if (-not (Test-Path $envDir)) { New-Item -ItemType Directory -Path $envDir -Force | Out-Null }
 
-# Delete the file if it exists
-if (Test-Path $ENV_FILE_PATH) {
-    Remove-Item -Path $ENV_FILE_PATH -Force
-}
+if (Test-Path $ENV_FILE_PATH) { Remove-Item -Path $ENV_FILE_PATH -Force }
 
-# Create a new workshop .env file and write to it
 @"
-PROJECT_ENDPOINT=$projectsEndpoint
-AZURE_OPENAI_ENDPOINT=$azureOpenAIEndpoint
+PROJECT_ENDPOINT=$PROJECTS_ENDPOINT
+AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT
 GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
 EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
-APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
-"@ | Set-Content -Path $ENV_FILE_PATH
+APPLICATIONINSIGHTS_CONNECTION_STRING="$APPLICATIONINSIGHTS_CONNECTION_STRING"
+AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED="true"
+"@ | Out-File -FilePath $ENV_FILE_PATH -Encoding utf8
 
-
-# Set the path for the .resources.txt file
+# Write resources summary
 $RESOURCES_FILE_PATH = "../src/python/workshop/resources.txt"
+$resDir = Split-Path -Parent $RESOURCES_FILE_PATH
+if (-not (Test-Path $resDir)) { New-Item -ItemType Directory -Path $resDir -Force | Out-Null }
+if (Test-Path $RESOURCES_FILE_PATH) { Remove-Item -Path $RESOURCES_FILE_PATH -Force }
 
-# Create workshop directory if it doesn't exist
-$workshopDir = Split-Path -Parent $RESOURCES_FILE_PATH
-if (-not (Test-Path $workshopDir)) {
-    New-Item -ItemType Directory -Path $workshopDir -Force
-}
+@(
+  "Azure AI Foundry Resources:",
+  "- Resource Group Name: $RESOURCE_GROUP_NAME",
+  "- AI Project Name: $AI_PROJECT_NAME",
+  "- Foundry Resource Name: $AI_FOUNDRY_NAME",
+  "- Application Insights Name: $APPLICATION_INSIGHTS_NAME"
+) | Out-File -FilePath $RESOURCES_FILE_PATH -Encoding utf8
 
-# Delete the file if it exists
-if (Test-Path $RESOURCES_FILE_PATH) {
-    Remove-Item -Path $RESOURCES_FILE_PATH -Force
-}
-
-# Create a new workshop .env file and write to it
-@"
-Resource Information:
-- Resource Group Name: $resourceGroupName
-- AI Project Name: $aiProjectName
-- Foundry Resource Name: $aiFoundryName"
-- Application Insights Name: $applicationInsightsName
-"@ | Set-Content -Path $RESOURCES_FILE_PATH
-
-# # Create fresh root .env file (always overwrite)
-# $ROOT_ENV_FILE_PATH = "../.env"
-# @"
-# AZURE_OPENAI_ENDPOINT="$azureOpenAIEndpoint"
-# PROJECT_ENDPOINT="$projectsEndpoint"
-# GPT_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
-# EMBEDDING_MODEL_DEPLOYMENT_NAME="text-embedding-3-small"
-# APPLICATIONINSIGHTS_CONNECTION_STRING="$applicationInsightsConnectionString"
-# DEV_TUNNEL_URL=""
-# AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED="true"
-# "@ | Set-Content -Path $ROOT_ENV_FILE_PATH
-
-# Set the C# project path
-$CSHARP_PROJECT_PATH = "../src/csharp/workshop/AgentWorkshop.Client/AgentWorkshop.Client.csproj"
-
-# Set the user secrets for the C# project (if the project exists)
+# Set C# project user-secrets if project exists (match deploy.sh path)
+$CSHARP_PROJECT_PATH = "../src/csharp/McpAgentWorkshop.AppHost/McpAgentWorkshop.AppHost.csproj"
 if (Test-Path $CSHARP_PROJECT_PATH) {
-    dotnet user-secrets set "ConnectionStrings:AiAgentService" "$projectsEndpoint" --project "$CSHARP_PROJECT_PATH"
-    dotnet user-secrets set "Azure:ModelName" "gpt-4o-mini" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:FoundryEndpoint" "$PROJECTS_ENDPOINT" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:ChatModelDeploymentName" "gpt-4o-mini" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:EmbeddingModelDeploymentName" "text-embedding-3-small" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:AzureOpenAIEndpoint" "$AZURE_OPENAI_ENDPOINT" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:FoundryProjectName" "$AI_PROJECT_NAME" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:FoundryResourceName" "$AI_FOUNDRY_NAME" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:ResourceGroupName" "$RESOURCE_GROUP_NAME" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:ApplicationInsightsName" "$APPLICATION_INSIGHTS_NAME" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Azure:ResourceGroup" "$RESOURCE_GROUP_NAME" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Azure:Location" "$RG_LOCATION" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Azure:SubscriptionId" "$SUBSCRIPTION_ID" --project "$CSHARP_PROJECT_PATH"
 }
 
-# Delete the output.json file
-Remove-Item -Path output.json -Force
+# Clean up output.json
+Remove-Item -Path output.json -ErrorAction SilentlyContinue
 
 Write-Host "Adding Azure AI Developer user role"
 
-# Set Variables
+# Role assignments
 $subId = az account show --query id --output tsv
 $objectId = az ad signed-in-user show --query id -o tsv
 
 Write-Host "Ensuring Azure AI Developer role assignment..."
-
-# Try to create the role assignment and capture the result
 try {
-    $roleResult = az role assignment create `
-                            --role "Azure AI Developer" `
-                            --assignee "$objectId" `
-                            --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName/providers/Microsoft.CognitiveServices/accounts/$aiFoundryName" 2>&1
-    
+    $roleResult = az role assignment create \
+      --role "Azure AI Developer" \
+      --assignee "$objectId" \
+      --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME/providers/Microsoft.CognitiveServices/accounts/$AI_FOUNDRY_NAME" 2>&1
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "✅ Azure AI Developer role assignment created successfully." -ForegroundColor Green
+        Write-Host "✅ Azure AI Developer role assignment created successfully."
+    } elseif ($roleResult -match 'RoleAssignmentExists|already exists') {
+        Write-Host "✅ Azure AI Developer role assignment already exists."
+    } else {
+        Write-Host "❌ User role assignment failed with unexpected error:"; Write-Host $roleResult; exit 1
     }
-    else {
-        # Check if the error is about existing role assignment
-        $errorOutput = $roleResult -join " "
-        if ($errorOutput -match "RoleAssignmentExists|already exists") {
-            Write-Host "✅ Azure AI Developer role assignment already exists." -ForegroundColor Green
-        }
-        else {
-            Write-Host "❌ User role assignment failed with unexpected error:" -ForegroundColor Red
-            Write-Host $errorOutput -ForegroundColor Red
-            exit 1
-        }
-    }
-}
-catch {
-    # Handle any PowerShell exceptions
-    $errorMessage = $_.Exception.Message
-    if ($errorMessage -match "RoleAssignmentExists|already exists") {
-        Write-Host "✅ Azure AI Developer role assignment already exists." -ForegroundColor Green
-    }
-    else {
-        Write-Host "❌ User role assignment failed: $errorMessage" -ForegroundColor Red
-        exit 1
+} catch {
+    $err = $_.Exception.Message
+    if ($err -match 'RoleAssignmentExists|already exists') {
+        Write-Host "✅ Azure AI Developer role assignment already exists."
+    } else {
+        Write-Host "❌ User role assignment failed: $err"; exit 1
     }
 }
 
 Write-Host "Ensuring Azure AI User role assignment..."
-
-# Azure AI User role
-$roleResultUser = az role assignment create `
-  --assignee "$objectId" `
-  --role "Azure AI User" `
-  --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName"
+$roleResultUser = az role assignment create \
+  --assignee "$objectId" \
+  --role "Azure AI User" \
+  --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME"
 Write-Host "Role assignment result: $roleResultUser"
 
 Write-Host "Ensuring Azure AI Project Manager role assignment..."
-
-# Azure AI Project Manager role
-$roleResultManager = az role assignment create `
-  --assignee "$objectId" `
-  --role "Azure AI Project Manager" `
-  --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName"
+$roleResultManager = az role assignment create \
+  --assignee "$objectId" \
+  --role "Azure AI Project Manager" \
+  --scope "/subscriptions/$subId/resourceGroups/$RESOURCE_GROUP_NAME"
 Write-Host "Role assignment result: $roleResultManager"
 
 Write-Host ""
-Write-Host "🎉 Deployment completed successfully!" -ForegroundColor Green
+Write-Host "🎉 Deployment completed successfully!"
 Write-Host ""
-Write-Host "📋 Resource Information:" -ForegroundColor Cyan
-Write-Host "  Resource Group: $resourceGroupName"
-Write-Host "  AI Project: $aiProjectName"
-Write-Host "  Foundry Resource: $aiFoundryName"
-Write-Host "  Application Insights: $applicationInsightsName"
+Write-Host "📋 Resource Information:"
+Write-Host "  Resource Group: $RESOURCE_GROUP_NAME"
+Write-Host "  AI Project: $AI_PROJECT_NAME"
+Write-Host "  Foundry Resource: $AI_FOUNDRY_NAME"
+Write-Host "  Application Insights: $APPLICATION_INSIGHTS_NAME"
 Write-Host ""

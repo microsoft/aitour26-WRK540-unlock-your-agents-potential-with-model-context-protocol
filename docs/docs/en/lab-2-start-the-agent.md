@@ -80,41 +80,73 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
                 self.toolset.add(mcp_tools)
         ```
 
-=== "C#"
+    ## Start the Agent App
 
-    TBD
-
-## Start the Agent App
-
-1. Copy the text below to the clipboard:
+    1. Copy the text below to the clipboard:
 
     ```text
     Debug: Select and Start Debugging
     ```
 
-2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
-3. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
-4. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
+    2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+    3. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
+    4. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
 
-## Open the Agent Web Chat Client
+    ## Open the Agent Web Chat Client
 
-1. Copy the text below to the clipboard:
+    1. Copy the text below to the clipboard:
 
     ```text
     Open Port in Browser
     ```
 
-2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
-3. Paste the text into the Command Palette and select **Open Port in Browser**.
-4. Select **8005** from the list. This will open the agent web chat client in your browser.
+    2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+    3. Paste the text into the Command Palette and select **Open Port in Browser**.
+    4. Select **8005** from the list. This will open the agent web chat client in your browser.
 
     ![](../media/agent_web_chat.png)
 
-### Start a Conversation with the Agent
+=== "C#"
+
+    1. **Open** `AgentService.cs`.
+    1. Navigate to the `InitialiseAgentAsync` method.
+    1. **Uncomment** the following lines:
+
+        ```csharp
+        // var mcpTool = new MCPToolDefinition(
+        //     ZavaMcpToolLabel,
+        //     devtunnelUrl + "mcp");
+
+        // var codeInterpreterTool = new CodeInterpreterToolDefinition();
+
+        // IEnumerable<ToolDefinition> tools = [mcpTool, codeInterpreterTool];
+
+        // persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(
+        //         name: AgentName,
+        //         model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
+        //         instructions: instructionsContent,
+        //         temperature: modelTemperature,
+        //         tools: tools);
+
+        // logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
+        ```
+
+    ## Start the Agent App
+
+    1. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+    1. Select **Debug Aspire** as the launch configuration.
+
+    Once the debugger has launched, a browser window will open with the Aspire dashboard. Once all resources have started, you can launch the workshop web application by clicking the link **Workshop Frontend**.
+
+    ![Aspire dashboard](../media//lab-2-start-agent-aspire-dashboard.png)
+
+    Refer to the [troubleshooting guide](./dotnet-troubleshooting.md) if you encounter any issues.
+
+## Start a Conversation with the Agent
 
 From the web chat client, you can start a conversation with the agent. The agent is designed to answer questions about Zava's sales data and generate visualizations using the Code Interpreter.
 
-1. Product sales analysis. Copy and paste the following question into the chat:
+1.  Product sales analysis. Copy and paste the following question into the chat:
 
     ```text
     Show the top 10 products by revenue by store for the last quarter
@@ -125,11 +157,11 @@ From the web chat client, you can start a conversation with the agent. The agent
     !!! info
         The agent uses the LLM calls three MCP Server tools to fetch the data and display it in a table:
 
-           1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
-           2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
-           3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
+            1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
+            2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
+            3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
 
-2. Generate a pie chart. Copy and paste the following question into the chat:
+2.  Generate a pie chart. Copy and paste the following question into the chat:
 
     ```text
     Show sales by store as a pie chart for this financial year
@@ -140,21 +172,21 @@ From the web chat client, you can start a conversation with the agent. The agent
     !!! info
         This might feel like magic, so what’s happening behind the scenes to make it all work?
 
-        Foundry Agent Service orchestrates the following steps:
+            Foundry Agent Service orchestrates the following steps:
 
-        1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
-        2. The agent then uses the **execute_sales_query** tool to fetch the sales
-        3. Using the returned data, the LLM writes Python code to create a Pie Chart.
-        4. Finally, the Code Interpreter executes the Python code to generate the chart.
+            1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
+            2. The agent then uses the **execute_sales_query** tool to fetch the sales
+            3. Using the returned data, the LLM writes Python code to create a Pie Chart.
+            4. Finally, the Code Interpreter executes the Python code to generate the chart.
 
-3. Continue asking questions about Zava sales data to see the Code Interpreter in action. Here are a few follow-up questions you might like to try:
+3.  Continue asking questions about Zava sales data to see the Code Interpreter in action. Here are a few follow-up questions you might like to try:
 
-    - ```Determine which products or categories drive sales. Show as a Bar Chart.```
-    - ```What would be the impact of a shock event (e.g., 20% sales drop in one region) on global sales distribution? Show as a Grouped Bar Chart.```
-        - Follow up with ```What if the shock event was 50%?```
-    - ```Which regions have sales above or below the average? Show as a Bar Chart with Deviation from Average.```
-    - ```Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.```
-    - ```Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.```
+    - `Determine which products or categories drive sales. Show as a Bar Chart.`
+    - `What would be the impact of a shock event (e.g., 20% sales drop in one region) on global sales distribution? Show as a Grouped Bar Chart.`
+      - Follow up with `What if the shock event was 50%?`
+    - `Which regions have sales above or below the average? Show as a Bar Chart with Deviation from Average.`
+    - `Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.`
+    - `Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.`
 
 <!-- ## Stop the Agent App
 

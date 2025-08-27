@@ -36,6 +36,33 @@
 			"isBackground": true,
 			"problemMatcher": [],
 			"args": []
+		},
+		{
+			"label": "Docs: Install Python Dependencies",
+			"type": "shell",
+			"command": "pip",
+			"args": [
+				"install",
+				"-r",
+				"requirements.txt"
+			],
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}/docs"
+			}
+		},
+		{
+			"label": "Docs: Run Server",
+			"type": "shell",
+			"command": "mkdocs",
+			"args": [
+				"serve"
+			],
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}/docs"
+			},
+			"dependsOn": "Docs: Install Python Dependencies"
 		}
 	]
 }

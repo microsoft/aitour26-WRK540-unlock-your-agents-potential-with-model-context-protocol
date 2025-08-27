@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Npgsql" Version="9.4.0" />
-    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.3" />
+    <PackageReference Include="Aspire.Azure.AI.OpenAI" />
+    <PackageReference Include="Aspire.Azure.Npgsql" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    <PackageReference Include="Pgvector" />
   </ItemGroup>
 
   <ItemGroup>
