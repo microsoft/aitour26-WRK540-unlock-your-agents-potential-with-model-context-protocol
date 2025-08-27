@@ -1,3 +1,5 @@
+using System.Data.Common;
+using Aspire.Hosting.Azure;
 using Aspire.Hosting.Python;
 using AspireDevTunnels.AppHost.Extensions;
 using AspireDevTunnels.AppHost.Resources;
@@ -11,17 +13,24 @@ public static class Extensions
     static readonly string sourceFolder = Path.Combine(Environment.CurrentDirectory, "..", "..");
     static readonly string virtualEnvironmentPath = "/usr/local/python/current";
 
-    public static IResourceBuilder<PythonAppResource> WithPostgres(this IResourceBuilder<PythonAppResource> builder, IResourceBuilder<PostgresDatabaseResource> db)
+    public static IResourceBuilder<PythonAppResource> WithPostgres(this IResourceBuilder<PythonAppResource> builder, IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> db)
     {
-        builder.WithEnvironment("POSTGRES_URL", () => $"postgresql://{db.Resource.Parent.UserNameParameter?.ToString() ?? "postgres"}:{db.Resource.Parent.PasswordParameter.Value}@{db.Resource.Parent.PrimaryEndpoint.Host}:{db.Resource.Parent.PrimaryEndpoint.Port}/{db.Resource.Name}")
-               .WaitFor(db);
+        builder.WithEnvironment(async (ctx) =>
+        {
+            var connectionStringBuilder = new DbConnectionStringBuilder()
+            {
+                ConnectionString = await db.Resource.ConnectionStringExpression.GetValueAsync(ctx.CancellationToken)
+            };
+            ctx.EnvironmentVariables["POSTGRES_URL"] = $"postgresql://{connectionStringBuilder["Username"] ?? "postgres"}:{connectionStringBuilder["Password"]}@{connectionStringBuilder["Host"]}:{connectionStringBuilder["Port"]}/{db.Resource.Name}";
+        })
+        .WaitFor(db);
 
         return builder;
     }
 
     public static IDistributedApplicationBuilder AddPythonWorkshop(
         this IDistributedApplicationBuilder builder,
-        IResourceBuilder<PostgresDatabaseResource> zava,
+        IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> zava,
         IResourceBuilder<DevTunnelResource> devtunnel,
         IResourceBuilder<IResourceWithConnectionString> appInsights,
         IResourceBuilder<ParameterResource> foundryEndpoint,
@@ -101,7 +110,7 @@ public static class Extensions
         });
     }
 
-    public static IResourceBuilder<PostgresAccountResource> AddPostgresAccount(this IResourceBuilder<PostgresDatabaseResource> builder, [ResourceName] string accountName, IResourceBuilder<ParameterResource> username, IResourceBuilder<ParameterResource> password)
+    public static IResourceBuilder<PostgresAccountResource> AddPostgresAccount(this IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> builder, [ResourceName] string accountName, IResourceBuilder<ParameterResource> username, IResourceBuilder<ParameterResource> password)
     {
         return builder.ApplicationBuilder.AddResource(new PostgresAccountResource(accountName, builder.Resource, username.Resource, password.Resource))
             .WithParentRelationship(builder.Resource);

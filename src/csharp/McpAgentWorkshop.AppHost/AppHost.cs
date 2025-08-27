@@ -15,13 +15,25 @@ var appInsights = builder.AddAzureApplicationInsights("app-insights")
 var foundry = builder.AddAzureAIFoundry("ai-foundry")
     .RunAsExisting(foundryResourceName, rg);
 
-var pg = builder.AddPostgres("pg")
-    .WithPgAdmin()
-    .WithInitFiles(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", "scripts"))
-    // Use the pgvector image for PostgreSQL with pgvector extension
-    .WithImage("pgvector/pgvector", "pg17")
-    .WithLifetime(ContainerLifetime.Persistent)
-    ;
+var pg = builder.AddAzurePostgresFlexibleServer("pg");
+
+if (builder.Configuration["Parameters:PostgresName"] is not null)
+{
+    pg.RunAsExisting(builder.AddParameter("PostgresName"), rg);
+}
+else
+{
+    pg.RunAsContainer(configureContainer: containerBuilder =>
+    {
+        containerBuilder
+            .WithPgAdmin()
+            .WithInitFiles(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", "scripts"))
+            // Use the pgvector image for PostgreSQL with pgvector extension
+            .WithImage("pgvector/pgvector", "pg17")
+            .WithLifetime(ContainerLifetime.Persistent);
+    });
+}
+
 
 var zava = pg.AddDatabase("zava");
 var storeManagerUser = zava.AddPostgresAccount(

@@ -1,14 +1,16 @@
+using Aspire.Hosting.Azure;
+
 namespace McpAgentWorkshop.AppHost.Integrations;
 
-public class PostgresAccountResource(string name, PostgresDatabaseResource postgresDatabase, ParameterResource username, ParameterResource password) : Resource(name), IResourceWithConnectionString
+public class PostgresAccountResource(string name, AzurePostgresFlexibleServerDatabaseResource postgresDatabase, ParameterResource username, ParameterResource password) : Resource(name), IResourceWithConnectionString
 {
-    public PostgresDatabaseResource PostgresDatabase { get; } = postgresDatabase;
+    public AzurePostgresFlexibleServerDatabaseResource PostgresDatabase { get; } = postgresDatabase;
     public ParameterResource Username { get; } = username;
     public ParameterResource Password { get; } = password;
 
     private ReferenceExpression ConnectionString =>
         ReferenceExpression.Create(
-            $"Host={PostgresDatabase.Parent.PrimaryEndpoint.Property(EndpointProperty.Host)};Port={PostgresDatabase.Parent.PrimaryEndpoint.Property(EndpointProperty.Port)};Username={Username};Password={Password};Database={PostgresDatabase.DatabaseName}");
+            $"{PostgresDatabase.ConnectionStringExpression};Username={Username};Password={Password};Database={PostgresDatabase.DatabaseName}");
 
     /// <summary>
     /// Gets the connection string expression for the PostgreSQL server.
