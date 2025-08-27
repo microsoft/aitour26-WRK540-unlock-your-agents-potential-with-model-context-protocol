@@ -113,6 +113,7 @@ public static class Extensions
     public static IResourceBuilder<PostgresAccountResource> AddPostgresAccount(this IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> builder, [ResourceName] string accountName, IResourceBuilder<ParameterResource> username, IResourceBuilder<ParameterResource> password)
     {
         return builder.ApplicationBuilder.AddResource(new PostgresAccountResource(accountName, builder.Resource, username.Resource, password.Resource))
-            .WithParentRelationship(builder.Resource);
+            .WithParentRelationship(builder.Resource)
+            .WithInitialState(new CustomResourceSnapshot { State = KnownResourceStates.Running, ResourceType = "PostgresAccount", Properties = [] });
     }
 }
