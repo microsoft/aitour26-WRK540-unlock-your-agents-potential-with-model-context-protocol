@@ -38,7 +38,7 @@ class SemanticSearchTextEmbedding:
         self._load_environment()
 
         # Azure OpenAI configuration
-        self.endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://fdy-zava-agent-wks-87lc.services.ai.azure.com/")
+        self.endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
         self.model_name = "text-embedding-3-small"
         self.deployment = os.getenv("EMBEDDING_MODEL_DEPLOYMENT_NAME", "text-embedding-3-small")
 
