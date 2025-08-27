@@ -184,7 +184,7 @@ Follow these steps to open the workshop in Visual Studio Code:
     - The **fonts** folder: Contains the multilingual fonts used by Code Interpreter.
     - The **instructions** folder: Contains the instructions passed to the LLM.
 
-    ![Lab folder structure](../media/project-structure-self-guided-csharp.png)
+    ![Lab folder structure](../../media/project-structure-self-guided-csharp.png)
 
 ## Pro Tips
 
