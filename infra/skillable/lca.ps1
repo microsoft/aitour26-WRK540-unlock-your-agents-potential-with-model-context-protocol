@@ -131,10 +131,13 @@ Log "Created .env at $ENV_FILE_PATH"
 # --- Attempt to set .NET user-secrets for C# project (if present) ---
 Log "Configure dotnet user-secrets on VM"
 
-# Read expected outputs directly (assume they exist)
-$aiFoundryName = $outs.aiFoundryName.value
-$aiProjectName = $outs.aiProjectName.value
-$applicationInsightsName = $outs.applicationInsightsName.value
+# Read expected outputs with null checks
+$aiFoundryName = if ($outs.aiFoundryName) { $outs.aiFoundryName.value } else { $null }
+$aiProjectName = if ($outs.aiProjectName) { $outs.aiProjectName.value } else { $null }
+$applicationInsightsName = if ($outs.applicationInsightsName) { $outs.applicationInsightsName.value } else { $null }
+
+# Log what we found
+Log "Deployment outputs - aiFoundryName: $aiFoundryName, aiProjectName: $aiProjectName, applicationInsightsName: $applicationInsightsName"
 
 # C# project path (match deploy.ps1 relative project)
 $CSHARP_PROJECT_PATH = Join-Path $workshopRoot "csharp\McpAgentWorkshop.AppHost\McpAgentWorkshop.AppHost.csproj"
@@ -142,20 +145,60 @@ $CSHARP_PROJECT_PATH = Join-Path $workshopRoot "csharp\McpAgentWorkshop.AppHost\
 if (Test-Path $CSHARP_PROJECT_PATH) {
   Log "Found C# project at $CSHARP_PROJECT_PATH; setting user-secrets"
 
+  # Validate required values before setting secrets
+  if (-not $aiFoundryName -or -not $aiProjectName -or -not $applicationInsightsName) {
+    Log "Warning: Some deployment outputs are missing. Continuing with available values..."
+  }
+
+  Log "Setting user-secret: Parameters:FoundryEndpoint"
   dotnet user-secrets set "Parameters:FoundryEndpoint" "$projectsEndpoint" --project "$CSHARP_PROJECT_PATH"
+  
+  Log "Setting user-secret: Parameters:ChatModelDeploymentName"
   dotnet user-secrets set "Parameters:ChatModelDeploymentName" $GPT_MODEL_DEPLOYMENT_NAME --project "$CSHARP_PROJECT_PATH"
+  
+  Log "Setting user-secret: Parameters:EmbeddingModelDeploymentName"
   dotnet user-secrets set "Parameters:EmbeddingModelDeploymentName" $EMBEDDING_MODEL_DEPLOYMENT_NAME --project "$CSHARP_PROJECT_PATH"
+  
+  Log "Setting user-secret: Parameters:AzureOpenAIEndpoint"
   dotnet user-secrets set "Parameters:AzureOpenAIEndpoint" "$azureOpenAIEndpoint" --project "$CSHARP_PROJECT_PATH"
-  dotnet user-secrets set "Parameters:FoundryProjectName" "$aiProjectName" --project "$CSHARP_PROJECT_PATH"
-  dotnet user-secrets set "Parameters:FoundryResourceName" "$aiFoundryName" --project "$CSHARP_PROJECT_PATH"
+  
+  # Only set these if they have values
+  if ($aiProjectName) {
+    Log "Setting user-secret: Parameters:FoundryProjectName"
+    dotnet user-secrets set "Parameters:FoundryProjectName" "$aiProjectName" --project "$CSHARP_PROJECT_PATH"
+  } else {
+    Log "Skipping Parameters:FoundryProjectName - aiProjectName is null/empty"
+  }
+  
+  if ($aiFoundryName) {
+    Log "Setting user-secret: Parameters:FoundryResourceName"
+    dotnet user-secrets set "Parameters:FoundryResourceName" "$aiFoundryName" --project "$CSHARP_PROJECT_PATH"
+  } else {
+    Log "Skipping Parameters:FoundryResourceName - aiFoundryName is null/empty"
+  }
+  
+  if ($applicationInsightsName) {
+    Log "Setting user-secret: Parameters:ApplicationInsightsName"
+    dotnet user-secrets set "Parameters:ApplicationInsightsName" "$applicationInsightsName" --project "$CSHARP_PROJECT_PATH"
+  } else {
+    Log "Skipping Parameters:ApplicationInsightsName - applicationInsightsName is null/empty"
+  }
+  
+  Log "Setting user-secret: Parameters:ResourceGroupName"
   dotnet user-secrets set "Parameters:ResourceGroupName" "$ResourceGroup" --project "$CSHARP_PROJECT_PATH"
-  dotnet user-secrets set "Parameters:ApplicationInsightsName" "$applicationInsightsName" --project "$CSHARP_PROJECT_PATH"
+  
+  Log "Setting user-secret: Parameters:PostgresName"
   dotnet user-secrets set "Parameters:PostgresName" "$PostgresServerName" --project "$CSHARP_PROJECT_PATH"
 
+  Log "Setting user-secret: Azure:ResourceGroup"
   dotnet user-secrets set "Azure:ResourceGroup" "$ResourceGroup" --project "$CSHARP_PROJECT_PATH"
+  
   # Use deployment location if available; fall back to westus
   $deployLocation = if ($deployment.Location) { $deployment.Location } else { "westus" }
+  Log "Setting user-secret: Azure:Location (value: $deployLocation)"
   dotnet user-secrets set "Azure:Location" "$deployLocation" --project "$CSHARP_PROJECT_PATH"
+  
+  Log "Setting user-secret: Azure:SubscriptionId"
   dotnet user-secrets set "Azure:SubscriptionId" "$SubId" --project "$CSHARP_PROJECT_PATH"
 }
 else {
