@@ -63,7 +63,7 @@ devtunnel login
 
 Once you've logged in, run the following command to restore the Zava database.
 
-Copy and paste the following command block to the terminal and press **Enter**:
+Copy and paste the following command block to the terminal and press **Enter**.
 
 ```powershell
 ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
@@ -80,7 +80,7 @@ Follow these steps to open the workshop in Visual Studio Code:
 
     The following command block updates the workshop repository, activates the Python virtual environment, and opens the project in VS Code.
 
-    Copy and paste the following command block to the terminal and press **Enter**:
+    Copy and paste the following command block to the terminal and press **Enter**.
 
     ```powershell
     ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
@@ -93,10 +93,11 @@ Follow these steps to open the workshop in Visual Studio Code:
 
 === "C#"
 
-    1. From a terminal window, execute the following commands to clone the workshop repository:
+    1. From a terminal window, execute the following commands to update the workshop repository:
 
         ```powershell
-        git clone https://github.com/microsoft/build-your-first-agent-with-azure-ai-agent-service-workshop.git
+        cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+        ; git pull 
         ```
 
     === "VS Code"
@@ -104,7 +105,9 @@ Follow these steps to open the workshop in Visual Studio Code:
         1. Open the workshop in Visual Studio Code. From the terminal window, run the following command:
 
             ```powershell
-            code build-your-first-agent-with-azure-ai-agent-service-workshop\.vscode\csharp-workspace.code-workspace
+            cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+            ; git pull 
+            code .vscode\csharp-workspace.code-workspace
             ```
 
         !!! note "When the project opens in VS Code, a notification will appear in the bottom right corner to install the C# extension. Click **Install** to install the C# extension, as this will provide the necessary features for C# development."
@@ -114,7 +117,7 @@ Follow these steps to open the workshop in Visual Studio Code:
         2. Open the workshop in Visual Studio 2022. From the terminal window, run the following command:
 
             ```powershell
-            start build-your-first-agent-with-azure-ai-agent-service-workshop\src\csharp\workshop\AgentWorkshop.sln
+            cd $HOME; start .\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\src\csharp\McpAgentWorkshop.slnx
             ```
 
             !!! note "You may be asked what program to open the solution with. Select **Visual Studio 2022**."
@@ -134,37 +137,6 @@ Follow these steps to open the workshop in Visual Studio Code:
     ![Lab folder structure](../../media/project-structure-self-guided-python.png)
 
 === "C#"
-
-    ## Configure the Workshop
-
-    1. Open a terminal and navigate to the **src/csharp/workshop/AgentWorkshop.Client** folder.
-
-        ```powershell
-        cd build-your-first-agent-with-azure-ai-agent-service-workshop\src\csharp\workshop\AgentWorkshop.Client
-        ```
-
-    2. Add the **Project endpoint** you copied from Azure AI Foundry to the user secrets.
-
-        ```powershell
-        dotnet user-secrets set "ConnectionStrings:AiAgentService" "<your_project_endpoint>"
-        ```
-
-    3. Add the **Model deployment name** to the user secrets.
-
-        ```powershell
-        dotnet user-secrets set "Azure:ModelName" "gpt-4o"
-        ```
-
-    4. Add the **Bing connection ID** to the user secrets for grounding with Bing search.
-
-        ```powershell
-        $subId = $(az account show --query id --output tsv)
-        $rgName = "rg-agent-workshop"
-        $aiAccount = "<ai_account_name>" # Replace with the actual AI account name
-        $aiProject = "<ai_project_name>" # Replace with the actual AI project name
-        $bingConnectionId = "/subscriptions/$subId/resourceGroups/$rgName/providers/Microsoft.CognitiveServices/accounts/$aiAccount/projects/$aiProject/connections/groundingwithbingsearch"
-        dotnet user-secrets set "Azure:BingConnectionId" "$bingConnectionId"
-        ```
 
     ## Project Structure
 
