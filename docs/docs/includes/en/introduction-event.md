@@ -129,7 +129,7 @@ Follow these steps to open the workshop in Visual Studio Code:
     8. The **shared/files** folder: Contains the files created by the agent app.
     9. The **shared/instructions** folder: Contains the instructions passed to the LLM.
 
-    ![Lab folder structure](../media/project-structure-self-guided-python.png)
+    ![Lab folder structure](../../media/project-structure-self-guided-python.png)
 
 === "C#"
 
