@@ -61,7 +61,7 @@ devtunnel login
 
 ## Zava Database Restore
 
-Once you've logged in, run the following command to restore the Zava database.
+Once you've logged in, run the following command to restore the Zava database. The database restore takes about a minute.
 
 Copy and paste the following command block to the terminal and press **Enter**.
 
