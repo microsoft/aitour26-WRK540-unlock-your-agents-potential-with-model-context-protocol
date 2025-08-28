@@ -78,18 +78,18 @@ Follow these steps to open the workshop in Visual Studio Code:
 
 === "Python"
 
-      1. The following commands update the workshop repository, activate the Python virtual environment, and opens the project in VS Code.
+    The following command block updates the workshop repository, activates the Python virtual environment, and opens the project in VS Code.
 
-        Copy and paste the following command block to the terminal and press **Enter**:
+    Copy and paste the following command block to the terminal and press **Enter**:
 
-          ```powershell
-          ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-          ; git pull `
-          ; src\python\workshop\.venv\Scripts\activate `
-          ; code .vscode\python-workspace.code-workspace
-          ```
+    ```powershell
+    ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+    ; git pull `
+    ; src\python\workshop\.venv\Scripts\activate `
+    ; code .vscode\python-workspace.code-workspace
+    ```
 
-        !!! warning "When the project opens in VS Code, two notifications appear in the bottom right corner. Click ✖ to close both notifications."
+    !!! warning "When the project opens in VS Code, two notifications appear in the bottom right corner. Click ✖ to close both notifications."
 
 === "C#"
 
