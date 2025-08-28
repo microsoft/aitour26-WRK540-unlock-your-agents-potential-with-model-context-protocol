@@ -1,3 +1,6 @@
+# LCA Metadata
+# Delay: 30 seconds
+
 # =========================
 # VM Life Cycle Action (PowerShell)
 # Pull outputs from ARM/Bicep deployment and write .env
@@ -31,30 +34,6 @@ $cred = [pscredential]::new($AppId, $sec)
 Connect-AzAccount -ServicePrincipal -Tenant $TenantId -Credential $cred -Subscription $SubId | Out-Null
 $ctx = Get-AzContext
 Log "Logged in as: $($ctx.Account) | Sub: $($ctx.Subscription.Name) ($($ctx.Subscription.Id))"
-
-
-######################################################
-# Foundry Roles
-
-# $username = "@lab.CloudPortalCredential(User1).Username"
-
-# New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-agent-workshop"
-# New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId"
-
-######################################################
-# Allow IP Address of Current Machine
-
-$PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
-$ResourceGroup = "@lab.CloudResourceGroup(rg-zava-agent-wks).Name"
-
-$CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org" -Method Get).Trim()
-$RuleName = "allow-current-ip-@lab.LabInstance.Id"
-New-AzPostgreSqlFlexibleServerFirewallRule `
-  -Name $RuleName `
-  -ResourceGroupName $ResourceGroup `
-  -ServerName $PostgresServerName `
-  -StartIPAddress $CurrentIP `
-  -EndIPAddress   $CurrentIP | Out-Null
 
 #######################################################
 # Create .env
