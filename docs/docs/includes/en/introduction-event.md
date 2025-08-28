@@ -59,17 +59,13 @@ devtunnel login
 
     2. Select **OK**, then **Done**.
 
-## User Roles and Database Restore
+## Zava Database Restore
 
-Once you've logged in, run the following command to assign the **user** role to the resource group and restore the Zava database.
+Once you've logged in, run the following command to restore the Zava database.
 
 Copy and paste the following command block to the terminal and press **Enter**:
 
 ```powershell
-; $username = $env:LAB_USERNAME `
-; $subId = $env:LAB_SUBSCRIPTION_ID `
-; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Cognitive Services User" -Scope "/subscriptions/$subId" `
-; New-AzRoleAssignment -SignInName $username -RoleDefinitionName "Azure AI Developer" -Scope "/subscriptions/$subId/resourceGroups/rg-zava-agent-wks" `
 ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
 ; .\init-db-azure-action.ps1 -UniqueSuffix $env:LAB_INSTANCE_ID -AzurePgPassword "SecurePassword123!"
 ```
