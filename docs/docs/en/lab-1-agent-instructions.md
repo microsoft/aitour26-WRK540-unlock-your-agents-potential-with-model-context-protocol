@@ -33,12 +33,12 @@ Copy the text below and paste directly after the rule about not generating unver
 !!! tip "Click the copy icon to the right to copy the text to the clipboard."
 
 ```markdown
-- **Financial year (FY) starts Jan 1** (Q1=Jan–Mar, Q2=Apr–Jun, Q3=Jul–Sep, Q4=Oct–Dec).
+- **Financial year (FY) starts Jul 1** (Q1=Jul–Sep, Q2=Oct–Dec, Q3=Jan–Mar, Q4=Apr–Jun).
 ```
 
 The updated instructions should look like this:
 
 ```markdown
 - Use **only** verified tool outputs; **never** invent data or assumptions.
-- **Financial year (FY) starts Jan 1** (Q1=Jan–Mar, Q2=Apr–Jun, Q3=Jul–Sep, Q4=Oct–Dec).
+- **Financial year (FY) starts Jul 1** (Q1=Jul–Sep, Q2=Oct–Dec, Q3=Jan–Mar, Q4=Apr–Jun).
 ```
