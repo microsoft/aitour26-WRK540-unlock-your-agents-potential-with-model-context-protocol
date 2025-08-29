@@ -178,6 +178,11 @@ From the web chat client, you can start a conversation with the agent. The agent
         2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
         3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
 
+    !!! tip
+        Switch back to VS Code and select **MCP Server (workspace)** from the TERMINAL panel and you'll see the calls made to the MCP Server by the Azure AI Foundry Agent Service.
+
+        ![](../media/mcp-server-in-action.png)
+
 2.  Generate a pie chart. Copy and paste the following question into the chat:
 
     ```text
