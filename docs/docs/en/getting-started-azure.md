@@ -2,7 +2,7 @@
 
 Select your workshop experience:
 
-=== "@event Attendees"
+=== "@Event Attendees"
 
     {% include-markdown "includes/en/introduction-event.md" %}
 

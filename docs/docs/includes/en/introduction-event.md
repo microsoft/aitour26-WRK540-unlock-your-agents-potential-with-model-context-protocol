@@ -1,4 +1,4 @@
-## Microsoft Build Attendees
+## Microsoft Event Attendees
 
 The instructions on this page assume you are attending an event and have access to a pre-configured lab environment. This environment provides an Azure subscription with all the tools and resources needed to complete the workshop.
 

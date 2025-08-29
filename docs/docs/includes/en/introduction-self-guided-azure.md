@@ -71,17 +71,9 @@ This deployment creates the following resources in your Azure subscription.
 
 Run the following bash script to automate the deployment of the resources required for the workshop. The `deploy.sh` script deploys resources to the `westus` region by default. To run the script:
 
-=== "Linux/Mac OS"
-
-    ```bash
-    cd infra && ./deploy.sh
-    ```
-
-=== "Windows"
-
-    ```powershell
-    cd infra && .\deploy.ps1
-    ```
+```bash
+cd infra && ./deploy.sh
+```
 
 ### Workshop Configuration
 
