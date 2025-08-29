@@ -9,6 +9,7 @@ var rg = builder.AddParameter("ResourceGroupName");
 var foundryResourceName = builder.AddParameter("FoundryResourceName");
 var foundryProjectName = builder.AddParameter("FoundryProjectName");
 var appInsightsName = builder.AddParameter("ApplicationInsightsName");
+var uniqueSuffix = builder.AddParameter("UniqueSuffix");
 
 var appInsights = builder.AddAzureApplicationInsights("app-insights")
     .RunAsExisting(appInsightsName, rg);
@@ -16,7 +17,7 @@ var appInsights = builder.AddAzureApplicationInsights("app-insights")
 var foundry = builder.AddAzureAIFoundry("ai-foundry")
     .RunAsExisting(foundryResourceName, rg);
 
-var devtunnel = builder.AddDevTunnel("mcp-devtunnel");
+var devtunnel = builder.AddDevTunnel($"mcp-devtunnel-{uniqueSuffix}");
 
 IResourceBuilder<IResourceWithConnectionString> storeManagerUser;
 IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource>? zava = null;

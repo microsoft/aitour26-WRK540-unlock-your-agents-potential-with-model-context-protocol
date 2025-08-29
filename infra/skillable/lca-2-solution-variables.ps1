@@ -214,6 +214,9 @@ if (Test-Path $CSHARP_PROJECT_PATH) {
   Log "Setting ConnectionStrings:Postgres"
   $pgConnectionString = "Host=$AzurePgHost;Port=$AzurePgPort;Database=zava;Username=store_manager;Password=StoreManager123!;SSL Mode=Require;Trust Server Certificate=true;"
   dotnet user-secrets set "ConnectionStrings:Postgres" "$pgConnectionString" --project "$CSHARP_PROJECT_PATH"
+
+  Log "Setting Parameters:UniqueSuffix"
+  dotnet user-secrets set "Parameters:UniqueSuffix" "$UniqueSuffix" --project "$CSHARP_PROJECT_PATH"
 }
 else {
   Log "C# project not found at expected location: $CSHARP_PROJECT_PATH. Skipping user-secrets configuration."

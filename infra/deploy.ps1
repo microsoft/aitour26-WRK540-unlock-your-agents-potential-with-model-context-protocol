@@ -101,6 +101,7 @@ if (Test-Path $CSHARP_PROJECT_PATH) {
     dotnet user-secrets set "Azure:ResourceGroup" "$RESOURCE_GROUP_NAME" --project "$CSHARP_PROJECT_PATH"
     dotnet user-secrets set "Azure:Location" "$RG_LOCATION" --project "$CSHARP_PROJECT_PATH"
     dotnet user-secrets set "Azure:SubscriptionId" "$SUBSCRIPTION_ID" --project "$CSHARP_PROJECT_PATH"
+    dotnet user-secrets set "Parameters:UniqueSuffix" "$UNIQUE_SUFFIX" --project "$CSHARP_PROJECT_PATH"
 }
 
 # Clean up output.json

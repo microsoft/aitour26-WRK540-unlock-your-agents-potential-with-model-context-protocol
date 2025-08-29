@@ -98,6 +98,7 @@ if [ -f "$CSHARP_PROJECT_PATH" ]; then
   dotnet user-secrets set "Azure:ResourceGroup" "$RESOURCE_GROUP_NAME" --project "$CSHARP_PROJECT_PATH"
   dotnet user-secrets set "Azure:Location" "$AZURE_LOCATION" --project "$CSHARP_PROJECT_PATH"
   dotnet user-secrets set "Azure:SubscriptionId" "$AZURE_SUBSCRIPTION_ID" --project "$CSHARP_PROJECT_PATH"
+  dotnet user-secrets set "Parameters:UniqueSuffix" "$UNIQUE_SUFFIX" --project "$CSHARP_PROJECT_PATH"
 fi
 
 # Delete the output.json file
