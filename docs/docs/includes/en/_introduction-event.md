@@ -34,13 +34,13 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
     !!! note
         You'll be prompted to open a browser link and log in to your Azure account.
 
-        1. A browser window will open automatically, select **Work or school account** and click **Next**.
+        1. A browser window will open automatically, select **Work or school account** and then select **Continue**.
 
         1. Use the **Username** and **Password** found in the **top section** of the **Resources** tab in the lab environment.
 
-        2. Select **OK**, then **Done**.
+        2. Select **Yes, all apps**
 
-3. Then select the **Default** subscription from the command line, by clicking on **Enter**.
+3. Then select the **Default** subscription from the command line, by selecting **Enter**.
 
 4. Once you've logged in, run the following command to assign the **user** role to the resource group:
 
