@@ -11,9 +11,11 @@ namespace Aspire.Hosting;
 public static class Extensions
 {
     static readonly string sourceFolder = Path.Combine(Environment.CurrentDirectory, "..", "..");
-    static readonly string virtualEnvironmentPath = "/usr/local/python/current";
+    static readonly string virtualEnvironmentPath = OperatingSystem.IsWindows() ?
+        Path.Join(sourceFolder, "python", "workshop", ".venv") :
+        "/usr/local/python/current";
 
-    public static IResourceBuilder<PythonAppResource> WithPostgres(this IResourceBuilder<PythonAppResource> builder, IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> db)
+    public static IResourceBuilder<PythonAppResource> WithPostgres(this IResourceBuilder<PythonAppResource> builder, IResourceBuilder<IResourceWithConnectionString> db)
     {
         builder.WithEnvironment(async (ctx) =>
         {
@@ -30,7 +32,7 @@ public static class Extensions
 
     public static IDistributedApplicationBuilder AddPythonWorkshop(
         this IDistributedApplicationBuilder builder,
-        IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> zava,
+        IResourceBuilder<IResourceWithConnectionString> storeManagerUser,
         IResourceBuilder<DevTunnelResource> devtunnel,
         IResourceBuilder<IResourceWithConnectionString> appInsights,
         IResourceBuilder<ParameterResource> foundryEndpoint,
@@ -41,7 +43,7 @@ public static class Extensions
 
 
         var mcpServer = builder.AddPythonApp("python-mcp-server", Path.Combine(sourceFolder, "python", "mcp_server", "sales_analysis"), "sales_analysis.py", virtualEnvironmentPath: virtualEnvironmentPath)
-            .WithPostgres(zava)
+            .WithPostgres(storeManagerUser)
             .WithHttpEndpoint(env: "PORT")
             .WithOtlpExporter()
             .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
@@ -57,7 +59,7 @@ public static class Extensions
             .WithEnvironment("AZURE_OPENAI_ENDPOINT", aoai)
             .WithEnvironment("APPLICATIONINSIGHTS_CONNECTION_STRING", appInsights)
             .WithEnvironment("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true")
-            .WithPostgres(zava)
+            .WithPostgres(storeManagerUser)
             .WithEnvironment("MAP_MCP_FUNCTIONS", "false")
             .WithReference(mcpServer)
             .WaitFor(mcpServer)

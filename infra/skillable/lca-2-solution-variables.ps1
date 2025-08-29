@@ -173,21 +173,24 @@ if (Test-Path $CSHARP_PROJECT_PATH) {
   if ($aiProjectName) {
     Log "Setting user-secret: Parameters:FoundryProjectName"
     dotnet user-secrets set "Parameters:FoundryProjectName" "$aiProjectName" --project "$CSHARP_PROJECT_PATH"
-  } else {
+  }
+  else {
     Log "Skipping Parameters:FoundryProjectName - aiProjectName is null/empty"
   }
   
   if ($aiFoundryName) {
     Log "Setting user-secret: Parameters:FoundryResourceName"
     dotnet user-secrets set "Parameters:FoundryResourceName" "$aiFoundryName" --project "$CSHARP_PROJECT_PATH"
-  } else {
+  }
+  else {
     Log "Skipping Parameters:FoundryResourceName - aiFoundryName is null/empty"
   }
   
   if ($applicationInsightsName) {
     Log "Setting user-secret: Parameters:ApplicationInsightsName"
     dotnet user-secrets set "Parameters:ApplicationInsightsName" "$applicationInsightsName" --project "$CSHARP_PROJECT_PATH"
-  } else {
+  }
+  else {
     Log "Skipping Parameters:ApplicationInsightsName - applicationInsightsName is null/empty"
   }
   
@@ -207,6 +210,10 @@ if (Test-Path $CSHARP_PROJECT_PATH) {
   
   Log "Setting user-secret: Azure:SubscriptionId"
   dotnet user-secrets set "Azure:SubscriptionId" "$SubId" --project "$CSHARP_PROJECT_PATH"
+
+  Log "Setting ConnectionStrings:Postgres"
+  $pgConnectionString = "Host=$AzurePgHost;Port=$AzurePgPort;Database=zava;Username=store_manager;Password=StoreManager123!;SSL Mode=Require;Trust Server Certificate=true;"
+  dotnet user-secrets set "ConnectionStrings:Postgres" "$pgConnectionString" --project "$CSHARP_PROJECT_PATH"
 }
 else {
   Log "C# project not found at expected location: $CSHARP_PROJECT_PATH. Skipping user-secrets configuration."
