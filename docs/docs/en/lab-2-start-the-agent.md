@@ -18,17 +18,13 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 === "Python"
 
     1. **Open** the `app.py`.
-    2. Scroll down to around line 50 and find the line that adds the Code Interpreter and the MCP tools to the agent's toolset. These line are currently commented out with a `#` at the beginning.
+    2. **Scroll down to around line 50** and find the line that adds the Code Interpreter and the MCP tools to the agent's toolset. These line are currently commented out with a `#` at the beginning.
     3. **Uncomment** the following lines:
-
-          1. After the comment `Add code interpreter tool`, uncomment the 2 lines that adds the Code Interpreter tool to the agent's toolset.
-          2. After the comment `Add MCP tool`, uncomment the rest if the code block, these lines add the MCP Server tools to the agent's toolset.
 
         ```python
         
         # code_interpreter = CodeInterpreterTool()
         # self.toolset.add(code_interpreter)
-
         
         # mcp_tools = McpTool(
         #     server_label="ZavaSalesAnalysisMcpServer",
@@ -45,6 +41,10 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
         # self.toolset.add(mcp_tools)
         ```
 
+        !!! info "What does this code do?"
+            - **Code Interpreter**: Enables the agent to execute Python code for data analysis and visualization.
+            - **MCP Server tools**: Provides access to external data sources with specific allowed tools and no human approval required. For production applications, consider enabling human-in-the-loop authorization for sensitive operations.
+
     4. **Review** the code you uncommented. The code should look exactly like this:
 
         ```python
@@ -60,11 +60,9 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
                 logger.info("Setting up Agent tools...")
                 self.toolset = AsyncToolSet()
 
-                
                 code_interpreter = CodeInterpreterTool()
                 self.toolset.add(code_interpreter)
 
-                
                 mcp_tools = McpTool(
                     server_label="ZavaSalesAnalysisMcpServer",
                     server_url=Config.DEV_TUNNEL_URL,
@@ -82,27 +80,38 @@ In this lab, you'll enable the Code Interpreter to execute Python code generated
 
     ## Start the Agent App
 
-    1. Copy the text below to the clipboard:
+    5. Copy the text below to the clipboard:
 
     ```text
     Debug: Select and Start Debugging
     ```
 
-    2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
-    3. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
-    4. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
+    6. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+    7. Paste the text into the Command Palette and select **Debug: Select and Start Debugging**.
+    8. Select **🌎🤖Debug Compound: Agent and MCP (http)** from the list. This will start the agent app and the web chat client.
+
+    This starts the following processes:
+
+    9.  DevTunnel (workshop) Task
+    10. Web Chat (workshop) Task
+    11. Agent Manager (workshop)
+    12. MCP Server (workshop)
+
+    In VS Code you'll see these running in the TERMINAL panel.
+
+    ![The image shows the running processes in the VS Code TERMINAL panel](../media/vs-code-processes.png)
 
     ## Open the Agent Web Chat Client
 
-    1. Copy the text below to the clipboard:
+    13. Copy the text below to the clipboard:
 
     ```text
     Open Port in Browser
     ```
 
-    2. Press <kbd>F1</kbd> to open the VS Code Command Palette.
-    3. Paste the text into the Command Palette and select **Open Port in Browser**.
-    4. Select **8005** from the list. This will open the agent web chat client in your browser.
+    14. Press <kbd>F1</kbd> to open the VS Code Command Palette.
+    15. Paste the text into the Command Palette and select **Open Port in Browser**.
+    16. Select **8005** from the list. This will open the agent web chat client in your browser.
 
     ![](../media/agent_web_chat.png)
 
@@ -157,9 +166,9 @@ From the web chat client, you can start a conversation with the agent. The agent
     !!! info
         The agent uses the LLM calls three MCP Server tools to fetch the data and display it in a table:
 
-            1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
-            2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
-            3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
+        1. **get_current_utc_date()**: Gets the current date and time so the agent can determine the last quarter relative to the current date.
+        2. **get_multiple_table_schemas()**: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.
+        3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
 
 2.  Generate a pie chart. Copy and paste the following question into the chat:
 
@@ -172,12 +181,12 @@ From the web chat client, you can start a conversation with the agent. The agent
     !!! info
         This might feel like magic, so what’s happening behind the scenes to make it all work?
 
-            Foundry Agent Service orchestrates the following steps:
+        Foundry Agent Service orchestrates the following steps:
 
-            1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
-            2. The agent then uses the **execute_sales_query** tool to fetch the sales
-            3. Using the returned data, the LLM writes Python code to create a Pie Chart.
-            4. Finally, the Code Interpreter executes the Python code to generate the chart.
+        1. Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses **get_multiple_table_schemas()** tools to get the current date and the database schema.
+        2. The agent then uses the **execute_sales_query** tool to fetch the sales
+        3. Using the returned data, the LLM writes Python code to create a Pie Chart.
+        4. Finally, the Code Interpreter executes the Python code to generate the chart.
 
 3.  Continue asking questions about Zava sales data to see the Code Interpreter in action. Here are a few follow-up questions you might like to try:
 

@@ -1,5 +1,3 @@
-**TBC: This label will get the user to update the agent instructions file to remove the annoying emojis the agent uses in its responses.**
-
 ## Introduction
 
 Tracing helps you understand and debug your agent's behavior by showing the sequence of steps, inputs, and outputs during execution. In Azure AI Foundry, tracing lets you observe how your agent processes requests, calls tools, and generates responses. You can use the Azure AI Foundry portal or integrate with OpenTelemetry and Application Insights to collect and analyze trace data, making it easier to troubleshoot and optimize your agent.
@@ -27,7 +25,7 @@ Tracing helps you understand and debug your agent's behavior by showing the sequ
 
       tbd -->
 
-## Run the Agent App
+<!-- ## Run the Agent App
 
 1. Press <kbd>F5</kbd> to run the app.
 2. Select **Preview in Editor** to open the agent app in a new editor tab.
@@ -38,7 +36,7 @@ Copy and paste the following prompt into the agent app to start a conversation:
 
 ```plaintext
 Write an executive report that analysis the top 5 product categories and compares performance of the online store verses the average for the physical stores.
-```
+``` -->
 
 ## View Traces
 
@@ -60,7 +58,7 @@ To view traces in the Azure AI Foundry portal, follow these steps:
 1. You may need to click on the **Refresh** button to see the latest traces as traces may take a few moments to appear.
 2. Select the trace named `Zava Agent Initialization` to view the details.
    ![](media/ai-foundry-trace-agent-init.png)
-3. Select the `creare_agent Zava DIY Sales Agent` trace to view the details of the agent creation process. In the `Input & outputs` section, you'll see the Agent instructions.
+3. Select the `create_agent Zava DIY Sales Agent` trace to view the details of the agent creation process. In the `Input & outputs` section, you'll see the Agent instructions.
 4. Next, select the `Zava Agent Chat Request: Write an executive...` trace to view the details of the chat request. In the `Input & outputs` section, you'll see the user input and the agent's response.
 
 <!-- https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/continuous-evaluation-agents -->

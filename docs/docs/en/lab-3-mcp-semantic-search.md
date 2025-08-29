@@ -103,9 +103,9 @@ From VS Code, stop the agent app by pressing <kbd>Shift + F5</kbd>.
     !!! info "Note"
         The MCP Semantic Search tool works as follows:
 
-            1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
-            2. This vector is used to search for similar product vectors in the PostgreSQL database.
-            3. The agent receives the results and uses them to generate a response.
+        1. The question is converted into a vector using the same OpenAI embedding model (text-embedding-3-small) as the product descriptions.
+        2. This vector is used to search for similar product vectors in the PostgreSQL database.
+        3. The agent receives the results and uses them to generate a response.
 
 ## Write an Executive Report
 

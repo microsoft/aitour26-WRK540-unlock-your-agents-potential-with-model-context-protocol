@@ -49,6 +49,43 @@
 - **Database security:** PostgreSQL is secured with restricted agent privileges and Row‑Level Security (RLS), limiting agents to only their authorized data.
 - **Code Interpreter:** The [Azure AI Agents Service Code Interpreter](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/code-interpreter?view=azure-python-preview&tabs=python&pivots=overview){:target="_blank"} runs LLM‑generated code on demand in a **sandboxed** environment, preventing actions beyond the agent’s scope.
 
-## Extensibility
+### Extensibility
 
 The workshop pattern can be adapted (e.g., customer support) by updating the database + agent instructions in Foundry.
+
+## DevTunnel Architecture
+
+In the workshop environment, the Agent Service runs in Azure but needs to connect to your locally-running MCP Server. DevTunnel creates a secure tunnel that exposes your local MCP Server to the cloud-based Agent Service.
+
+```plaintext
+          Azure Cloud                           Local Development
+    ┌─────────────────────┐                  ┌─────────────────────┐
+    │   Zava Agent App    │                  │                     │
+    │   (Azure-hosted)    │                  │  ┌─────────────────┐│
+    │                     │                  │  │   MCP Server    ││
+    │ ┌─────────────────┐ │                  │  │ (sales_analysis)││
+    │ │ Azure AI        │ │                  │  │ localhost:8000  ││
+    │ │ Agents Service  │ │                  │  └─────────────────┘│
+    │ └─────────────────┘ │                  │           │         │
+    └─────────────────────┘                  │           ▼         │
+              │                              │  ┌─────────────────┐│
+              │ HTTPS requests               │  │ Local PostgreSQL││
+              ▼                              │  │   + pgvector    ││
+    ┌─────────────────────┐                  │  └─────────────────┘│
+    │   DevTunnel         │                  │                     │
+    │   Public Endpoint   │◄─────────────────┼──── Secure Tunnel   │
+    │ (*.devtunnels.ms)   │    Port Forward  │                     │
+    └─────────────────────┘                  └─────────────────────┘
+```
+
+**How DevTunnel Works in the Workshop:**
+
+1. **Local Development**: You run the MCP Server locally on `localhost:8000`
+2. **DevTunnel Creation**: DevTunnel creates a public HTTPS endpoint (e.g., `https://abc123.devtunnels.ms`) connected to `localhost:8000`.
+3. **Azure Integration**: The Azure-hosted Agent Service connects to the MCP Server through the DevTunnel endpoint.
+4. **Transparent Operation**: The agent service operates normally, unaware it's accessing the MCP Server running locally through a tunnel.
+
+This setup allows you to:
+
+- Develop and debug locally while using cloud-hosted AI services
+- Test realistic scenarios without deploying the MCP Server to Azure
