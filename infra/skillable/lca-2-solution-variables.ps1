@@ -107,19 +107,47 @@ POSTGRES_URL="$PostgresUrl"
 
 Log "Created .env at $ENV_FILE_PATH"
 
-# --- Attempt to set .NET user-secrets for C# project (if present) ---
-Log "Configure dotnet user-secrets on VM"
-
-# Read expected outputs with null checks
+# Read expected outputs with null checks for resources.txt
 $aiFoundryName = if ($outs.aiFoundryName) { $outs.aiFoundryName.value } else { $null }
 $aiProjectName = if ($outs.aiProjectName) { $outs.aiProjectName.value } else { $null }
 $applicationInsightsName = if ($outs.applicationInsightsName) { $outs.applicationInsightsName.value } else { $null }
+
+# Write resources summary
+$RESOURCES_FILE_PATH = Join-Path $workshopDir "resources.txt"
+if (Test-Path $RESOURCES_FILE_PATH) { Remove-Item -Path $RESOURCES_FILE_PATH -Force }
+
+@(
+  "Azure AI Foundry Resources:",
+  "- Resource Group Name: $ResourceGroup",
+  "- AI Project Name: $aiProjectName",
+  "- Foundry Resource Name: $aiFoundryName",
+  "- Application Insights Name: $applicationInsightsName"
+) | Out-File -FilePath $RESOURCES_FILE_PATH -Encoding utf8
+
+Log "Created resources.txt at $RESOURCES_FILE_PATH"
+
+# --- Attempt to set .NET user-secrets for C# project (if present) ---
+Log "Configure dotnet user-secrets on VM"
 
 # Log what we found
 Log "Deployment outputs - aiFoundryName: $aiFoundryName, aiProjectName: $aiProjectName, applicationInsightsName: $applicationInsightsName"
 
 # C# project path (match deploy.ps1 relative project)
 $CSHARP_PROJECT_PATH = Join-Path $workshopRoot "csharp\McpAgentWorkshop.AppHost\McpAgentWorkshop.AppHost.csproj"
+$CSHARP_RESOURCES_FILE_PATH = Join-Path $workshopRoot "csharp\resources.txt"
+
+# Write resources summary for C# project
+if (Test-Path $CSHARP_RESOURCES_FILE_PATH) { Remove-Item -Path $CSHARP_RESOURCES_FILE_PATH -Force }
+
+@(
+  "Azure AI Foundry Resources:",
+  "- Resource Group Name: $ResourceGroup",
+  "- AI Project Name: $aiProjectName",
+  "- Foundry Resource Name: $aiFoundryName",
+  "- Application Insights Name: $applicationInsightsName"
+) | Out-File -FilePath $CSHARP_RESOURCES_FILE_PATH -Encoding utf8
+
+Log "Created C# resources.txt at $CSHARP_RESOURCES_FILE_PATH"
 
 if (Test-Path $CSHARP_PROJECT_PATH) {
   Log "Found C# project at $CSHARP_PROJECT_PATH; setting user-secrets"
