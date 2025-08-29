@@ -43,8 +43,8 @@ plugins:
   - search
   - glightbox
   - include-markdown
-  - timetoread:
-      wpm: 180
+  # - timetoread:
+  #     wpm: 180
   - i18n:
       docs_structure: folder
       languages:
