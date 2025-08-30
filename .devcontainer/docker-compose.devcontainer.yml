@@ -1,6 +1,8 @@
 services:
   devcontainer:
-    image: mcr.microsoft.com/devcontainers/base:bookworm
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
     volumes:
       - .:/workspace:cached
     command: sleep infinity
@@ -11,5 +13,4 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ENVIRONMENT=container
       - POSTGRES_URL=postgresql://store_manager:StoreManager123!@db:5432/zava
