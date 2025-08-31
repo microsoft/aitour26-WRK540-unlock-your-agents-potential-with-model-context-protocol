@@ -85,7 +85,6 @@ Follow these steps to open the workshop in Visual Studio Code:
     ```powershell
     ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
     ; git pull `
-    ; src\python\workshop\.venv\Scripts\activate `
     ; code .vscode\python-workspace.code-workspace
     ```
 
