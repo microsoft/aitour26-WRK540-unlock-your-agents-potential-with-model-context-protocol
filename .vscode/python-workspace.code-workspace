@@ -129,30 +129,11 @@
                 }
             },
             {
-                "label": "Open Browser",
-                "type": "shell",
-                "command": "python",
-                "args": [
-                    "-c",
-                    "import webbrowser; webbrowser.open(\"http://127.0.0.1:8005\")"
-                ],
-                "group": "build",
-                "dependsOn": "Web Chat"
-            },
-            {
                 "label": "Start DevTunnel and Web App",
                 "dependsOrder": "parallel",
                 "dependsOn": [
                     "DevTunnel",
                     "Web Chat"
-                ]
-            },
-            {
-                "label": "Start DevTunnel, Web App and Browser",
-                "dependsOrder": "sequence",
-                "dependsOn": [
-                    "Start DevTunnel and Web App",
-                    "Open Browser"
                 ]
             }
         ]
@@ -166,7 +147,7 @@
                     "Debug: MCP Server (workshop)",
                     "Debug: Agent Manager (workshop)"
                 ],
-                "preLaunchTask": "Start DevTunnel, Web App and Browser",
+                "preLaunchTask": "Start DevTunnel and Web App",
                 "stopAll": true
             }
         ],

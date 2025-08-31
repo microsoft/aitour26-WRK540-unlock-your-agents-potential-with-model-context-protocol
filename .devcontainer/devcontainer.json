@@ -37,5 +37,12 @@
         "postgres_password": "postgres",
         "postgres_db": "zava"
     },
+    "forwardPorts": [8005],
+    "portsAttributes": {
+        "8005": {
+            "label": "Web Chat App",
+            "onAutoForward": "openBrowser"
+        }
+    },
     "postCreateCommand": "/bin/bash -c ./.devcontainer/postCreateCommand.sh >> ~/postCreateCommand.log 2>&1"
 }
