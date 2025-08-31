@@ -222,7 +222,7 @@ There are two VS Code workspaces in the workshop, one for Python and one for C#.
 
     ## Project Structure
 
-    The project uses [Aspire](http://aka.ms/dotnet-aspire) to simplify building the agent application, managing the MCP server, and orchestrating all the external dependencies. The solution is comproised for four projects, all prefixed with `McpAgentWorkshop`:
+    The project uses [Aspire](http://aka.ms/dotnet-aspire) to simplify building the agent application, managing the MCP server, and orchestrating all the external dependencies. The solution is comprised for four projects, all prefixed with `McpAgentWorkshop`:
 
     * `AppHost`: The Aspire orchestrator, and launch project for the workshop.
     * `McpServer`: The MCP server project.

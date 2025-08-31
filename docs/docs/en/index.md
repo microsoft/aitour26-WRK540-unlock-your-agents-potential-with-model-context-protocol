@@ -13,7 +13,7 @@ You need to analyze sales data to find trends, understand customer preferences, 
 Learn to build an AI agent that analyzes sales data, answers product questions, and helps customers find products using image search. Key topics:
 
 1. **Azure AI Foundry Agent Service**: Build and deploy AI agents with integrated tools and observability.  
-2. **Model Context Protocol (MCP)**: Connects the Agent Service to external tools, data, over industry stanadard protocols to enhance agent functionality.  
+2. **Model Context Protocol (MCP)**: Connects the Agent Service to external tools, data, over industry standard protocols to enhance agent functionality.  
 3. **Azure AI Foundry**: Rapidly build and deploy AI agents with integrated tools and observability.
 
 ### Just starting your AI Agents journey?
@@ -33,5 +33,3 @@ This shifts much of the application logic from developers to the model. Clear in
 [Azure AI Foundry](https://azure.microsoft.com/products/ai-foundry/){:target="_blank"} is Microsoft’s secure, flexible platform for designing, customizing, and managing AI apps and agents. Everything—models, agents, tools, and observability—lives behind a single portal, SDK, and REST endpoint, so you can ship to cloud or edge with governance and cost controls in place from day one.
 
 ![Azure AI Foundry Architecture](media/azure-ai-foundry.png)
-
-
