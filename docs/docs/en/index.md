@@ -10,7 +10,7 @@ You need to analyze sales data to find trends, understand customer preferences, 
 
 ## What you will learn in the workshop
 
-Learn to build an AI agent that analyzes sales data, answers product questions, and helps customers find products using image search. Key topics:
+Learn to build an AI agent that analyzes sales data, answers product questions, and helps customers find products. Key topics:
 
 1. **Azure AI Foundry Agent Service**: Build and deploy AI agents with integrated tools and observability.  
 2. **Model Context Protocol (MCP)**: Connects the Agent Service to external tools, data, over industry standard protocols to enhance agent functionality.  
