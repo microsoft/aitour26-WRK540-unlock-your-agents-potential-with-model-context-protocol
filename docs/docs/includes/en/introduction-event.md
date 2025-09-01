@@ -61,12 +61,14 @@ devtunnel login
 
 ## Zava Database Restore
 
-Once you've logged in, run the following command to restore the Zava database. The database restore takes about a minute.
+Once you've logged in, run the following command to restore the Zava database. The database restore takes about two minutes.
 
 Copy and paste the following command block to the terminal and press **Enter**.
 
 ```powershell
-; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\infra\skillable `
+; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol
+; git pull 
+; cd infra\skillable
 ; .\init-db-azure-action.ps1 -UniqueSuffix $env:LAB_INSTANCE_ID -AzurePgPassword "SecurePassword123!"
 ```
 
@@ -84,7 +86,6 @@ Follow these steps to open the workshop in Visual Studio Code:
 
     ```powershell
     ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-    ; git pull `
     ; code .vscode\python-workspace.code-workspace
     ```
 
@@ -96,7 +97,6 @@ Follow these steps to open the workshop in Visual Studio Code:
 
         ```powershell
         cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-        ; git pull 
         ```
 
     === "VS Code"
@@ -105,7 +105,6 @@ Follow these steps to open the workshop in Visual Studio Code:
 
             ```powershell
             cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-            ; git pull 
             code .vscode\csharp-workspace.code-workspace
             ```
 
