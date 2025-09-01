@@ -6,9 +6,8 @@ Monitoring keeps your Azure AI Foundry Agent Service available, performant, and 
 
 1. From the VS Code file explorer, open the `resources.txt` file in the `workshop` folder.
 1. **Copy** the value for the `AI Project Name` key to the clipboard.
-1. Navigate to the [Azure AI Portal All Resources](https://ai.azure.com/allResources){:target="_blank"} page.
-1. In the search box, paste the copied `AI Project Name`.
-1. Select the **AI Project** from the search results.
+1. Navigate to the [Azure AI Foundry Portal](https://ai.azure.com){:target="_blank"} page.
+1. Select your project from the list of foundry projects.
 
 ## Open the Monitoring dashboard
 

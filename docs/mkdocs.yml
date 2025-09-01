@@ -17,8 +17,6 @@ nav:
   - Getting Started:
       - Open the Workshop: getting-started.md
       - Architecture Overview: architecture.md
-      # - Deploy Agent Resources: getting-started-azure.md
-      # - Open VS Code Workspace: getting-started-workspace.md
   - Agent Services Labs:
       - AI Foundry Agent Services: agent-service-overview.md
       - Lab 1 Agent Instructions: lab-1-agent-instructions.md
@@ -29,14 +27,13 @@ nav:
       - Observability Overview: observability-overview.md
       - Lab 5 Service Monitoring: lab-5-monitoring.md
       - Lab 6 Understand Tracing: lab-6-tracing.md
-      # - Lab 6 Continuous Evaluation: lab-5-continuous-evaluation.md
-      - Lab 7 Local Tracing with Aspire: lab-7-local-tracing-with-aspire.md
+
   - Star the Repo: getting_started-star-workshop.md
   - Finishing Up: lab-7-finishing-up.md
   - Summary: summary.md
   - Resources: resources.md
   - Home Work:
-      - Debugging with Dev Tunnel: hw-1-start-mcp-server.md
+      - Local Tracing with Aspire: lab-7-local-tracing-with-aspire.md
   - About: about.md
 
 plugins:
