@@ -26,9 +26,6 @@ param(
 # Set error action preference to stop on any error
 $ErrorActionPreference = "Stop"
 
-Write-Host "Using UNIQUE_SUFFIX: $UniqueSuffix" -ForegroundColor Yellow
-Write-Host ""
-
 # Verify the PostgreSQL server exists
 $PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
 $ResourceGroup = "rg-zava-agent-wks"
