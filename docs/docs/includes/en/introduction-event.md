@@ -46,6 +46,8 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
 
 ## Authenticate with the DevTunnel Service
 
+DevTunnel enables the Azure AI Agents Service to access your local MCP Server during the workshop.
+
 ```powershell
 devtunnel login
 ```
