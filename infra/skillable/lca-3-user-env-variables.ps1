@@ -9,3 +9,4 @@
 [Environment]::SetEnvironmentVariable("LAB_APP_SECRET", "@lab.CloudSubscription.AppSecret", "User")
 [Environment]::SetEnvironmentVariable("LAB_APP_ID", "@lab.CloudSubscription.AppId", "User")
 [Environment]::SetEnvironmentVariable("LAB_AZURE_PASSWORD", "@lab.CloudResourceTemplate(WRK540-AITour2026).Parameters[postgresAdminPassword]", "User")
+[Environment]::SetEnvironmentVariable("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true", "User")
