@@ -47,12 +47,14 @@ Preferred: **GitHub Codespaces**, which provides a preconfigured environment wit
 
         [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol)
 
-## Deploy Azure Resources
+---
+
+## Authenticate Azure Services
 
 !!! danger
 Before proceeding, ensure that your Codespace or Dev Container is fully built and ready.
 
-## Authenticate with DevTunnel
+### Authenticate with DevTunnel
 
 DevTunnel provides a port forwarding service that will be used in the workshop to allow the Azure AI Agents Service to access the MCP Server you'll be running on your local development environment. Follow these steps to authenticate:
 
@@ -75,7 +77,7 @@ DevTunnel provides a port forwarding service that will be used in the workshop t
 
 1. Leave the terminal window **open** for the next steps.
 
-## Authenticate with Azure
+### Authenticate with Azure
 
 Authenticate with Azure to allow the agent app access to the Azure AI Agents Service and models. Follow these steps:
 
@@ -104,6 +106,8 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
     8. If prompted, **select** a subscription.
 
 3. Leave the terminal window open for the next steps.
+
+---
 
 ## Deploy the Azure Resources
 
@@ -170,6 +174,8 @@ cd infra && ./deploy.sh
     ```bash
     dotnet user-secrets list
     ```
+
+---
 
 ## Open the VS Code Workspace
 
