@@ -241,6 +241,10 @@ class WebApp:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.get(f"{AGENT_SERVICE_URL}/files/{filename}")
                 if response.status_code == 200:
+                    # Ensure tmp directory exists
+                    tmp_dir = Path("/tmp")
+                    tmp_dir.mkdir(exist_ok=True)
+
                     # Save file temporarily and serve it
                     temp_file = Path("/tmp") / filename
                     with temp_file.open("wb") as f:
