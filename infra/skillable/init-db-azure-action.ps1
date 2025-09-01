@@ -30,8 +30,20 @@ Write-Host "Using UNIQUE_SUFFIX: $UniqueSuffix" -ForegroundColor Yellow
 Write-Host ""
 
 # Verify the PostgreSQL server exists
-# $PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
-# $ResourceGroup = "rg-zava-agent-wks-$UniqueSuffix"
+$PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
+$ResourceGroup = "rg-zava-agent-wks"
+$CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org" -Method Get).Trim()
+
+Write-Host "Enabling Postgres firewall rule for $CurrentIP" -ForegroundColor Cyan
+
+$CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org" -Method Get).Trim()
+$RuleName = "allow-current-ip-$UniqueSuffix"
+New-AzPostgreSqlFlexibleServerFirewallRule `
+  -Name $RuleName `
+  -ResourceGroupName $ResourceGroup `
+  -ServerName $PostgresServerName `
+  -StartIPAddress $CurrentIP `
+  -EndIPAddress   $CurrentIP | Out-Null
 
 
 Write-Host ""
