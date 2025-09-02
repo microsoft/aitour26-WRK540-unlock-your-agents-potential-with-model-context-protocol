@@ -11,7 +11,6 @@ Web interface available at: http://127.0.0.1:8005
 import json
 import logging
 import os
-import tempfile
 from pathlib import Path
 from typing import AsyncGenerator, Dict
 
@@ -256,12 +255,12 @@ class WebApp:
                         "json": "application/json",
                     }
                     content_type = content_type_map.get(file_extension, "application/octet-stream")
-                    
+
                     # Return content directly as bytes
                     return Response(
                         content=response.content,
                         media_type=content_type,
-                        headers={"Content-Disposition": f"inline; filename={filename}"}
+                        headers={"Content-Disposition": f"inline; filename={filename}"},
                     )
 
                 # Agent service returned non-200 status
