@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "14381027625171266368"
+      "templateHash": "9798906103731621544"
     }
   },
   "parameters": {
@@ -363,6 +363,18 @@
       ]
     },
     {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+      "apiVersion": "2023-03-01-preview",
+      "name": "[format('{0}/{1}', variables('postgresServerNameResolved'), 'allow-range-103-177-0-0-to-103-177-255-255')]",
+      "properties": {
+        "startIpAddress": "103.177.0.0",
+        "endIpAddress": "103.177.255.255"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
+      ]
+    },
+    {
       "condition": "[equals(parameters('postgresAuthType'), 'EntraOnly')]",
       "type": "Microsoft.DBforPostgreSQL/flexibleServers/administrators",
       "apiVersion": "2023-03-01-preview",
@@ -390,6 +402,7 @@
         "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/administrators', variables('postgresServerNameResolved'), deployer().objectId)]",
         "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-IPs')]",
         "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-all-azure-internal-IPs')]",
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers/firewallRules', variables('postgresServerNameResolved'), 'allow-range-103-177-0-0-to-103-177-255-255')]",
         "postgresFirewallSingle",
         "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', variables('postgresServerNameResolved'))]"
       ]

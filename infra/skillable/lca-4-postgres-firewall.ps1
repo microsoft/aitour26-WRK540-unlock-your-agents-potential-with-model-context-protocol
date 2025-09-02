@@ -38,11 +38,14 @@ Log "Logged in as: $($ctx.Account) | Sub: $($ctx.Subscription.Name) ($($ctx.Subs
 $PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
 $ResourceGroup = "@lab.CloudResourceGroup(rg-zava-agent-wks).Name"
 
-$CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org" -Method Get).Trim()
-$RuleName = "allow-current-ip-@lab.LabInstance.Id"
+# Set IP range 103.177.0.0 to 103.177.255.255
+$StartIP = "103.177.0.0"
+$EndIP = "103.177.255.255"
+$RuleName = "allow-range-103-177-0-0-to-103-177-255-255"
+Log "Adding firewall rule for IP range: $StartIP to $EndIP"
 New-AzPostgreSqlFlexibleServerFirewallRule `
   -Name $RuleName `
   -ResourceGroupName $ResourceGroup `
   -ServerName $PostgresServerName `
-  -StartIPAddress $CurrentIP `
-  -EndIPAddress   $CurrentIP | Out-Null
+  -StartIPAddress $StartIP `
+  -EndIPAddress   $EndIP | Out-Null

@@ -256,6 +256,15 @@ resource postgresFirewallSingle 'Microsoft.DBforPostgreSQL/flexibleServers/firew
   }
 }]
 
+resource postgresFirewallRange 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2023-03-01-preview' = {
+  parent: postgresServer
+  name: 'allow-range-103-177-0-0-to-103-177-255-255'
+  properties: {
+    startIpAddress: '103.177.0.0'
+    endIpAddress: '103.177.255.255'
+  }
+}
+
 // PostgreSQL Administrator (for Entra ID auth)
 resource postgresAdministrator 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2023-03-01-preview' = if (postgresAuthType == 'EntraOnly') {
   parent: postgresServer
@@ -281,6 +290,7 @@ resource postgresConfiguration 'Microsoft.DBforPostgreSQL/flexibleServers/config
     postgresFirewallAll
     postgresFirewallAzure
     postgresFirewallSingle
+    postgresFirewallRange
   ]
 }
 
