@@ -21,8 +21,8 @@ class Config:
     DEV_TUNNEL_URL: str = ""  # Will be set after class definition
 
     # Model parameters
-    MAX_COMPLETION_TOKENS = 2 * 10240
-    MAX_PROMPT_TOKENS = 6 * 10240
+    MAX_COMPLETION_TOKENS = 4 * 10240
+    MAX_PROMPT_TOKENS = 10 * 10240
 
     # The LLM is used to generate the SQL queries.
     # Set the temperature and top_p low to get more deterministic results.
