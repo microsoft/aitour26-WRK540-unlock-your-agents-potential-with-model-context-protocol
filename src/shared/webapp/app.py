@@ -235,20 +235,34 @@ class WebApp:
             logger.error("Error clearing chat for session %s: %s", session_id, e)
             return {"status": "error", "message": f"Error clearing chat: {e!s}"}
 
-    async def serve_file(self, filename: str) -> FileResponse:
+    async def serve_file(self, filename: str) -> Response:
         """Proxy file serving to agent service or serve locally."""
         try:
             # Try to proxy to agent service first
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.get(f"{AGENT_SERVICE_URL}/files/{filename}")
                 if response.status_code == 200:
-                    # Save file temporarily and serve it
-                    # Use system temp directory (cross-platform)
-                    temp_dir = Path(tempfile.gettempdir())
-                    temp_file = temp_dir / filename
-                    with temp_file.open("wb") as f:
-                        f.write(response.content)
-                    return FileResponse(path=str(temp_file))
+                    # Determine content type based on file extension
+                    file_extension = filename.lower().split(".")[-1] if "." in filename else ""
+                    content_type_map = {
+                        "png": "image/png",
+                        "jpg": "image/jpeg",
+                        "jpeg": "image/jpeg",
+                        "gif": "image/gif",
+                        "svg": "image/svg+xml",
+                        "pdf": "application/pdf",
+                        "txt": "text/plain",
+                        "csv": "text/csv",
+                        "json": "application/json",
+                    }
+                    content_type = content_type_map.get(file_extension, "application/octet-stream")
+                    
+                    # Return content directly as bytes
+                    return Response(
+                        content=response.content,
+                        media_type=content_type,
+                        headers={"Content-Disposition": f"inline; filename={filename}"}
+                    )
 
                 # Agent service returned non-200 status
                 raise HTTPException(
