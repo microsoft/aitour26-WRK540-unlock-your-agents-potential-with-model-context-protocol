@@ -15,10 +15,14 @@ Click any image to open a larger view in a new tab.
 
 ### Copying Code Snippets
 
-Throughout the workshop, you'll often copy text snippets from the docs. 
+Throughout the workshop, you'll often copy text snippets from the docs.
 
 Snippets appear in gray boxes. Hover to reveal the copy icon, then click to copy.
 
 ```text
 # Example text snippet
 ```
+
+## Open the Lab Instructions in Your Computer's Browser
+
+If the lab instructions are slow to scroll in the lab environment, try copying the instructions’ URL and opening it in **your computer’s local browser** for a smoother experience.

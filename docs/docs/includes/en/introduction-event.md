@@ -35,10 +35,9 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
         You'll be prompted to open a browser link and log in to your Azure account.
 
         1. A browser window will open automatically, select **Work or school account** and then select **Continue**.
-
         1. Use the **Username** and **TAP (Temporary Access Pass)** found in the **top section** of the **Resources** tab in the lab environment.
-
-        2. Select **Yes, all apps**
+        1. Select **Yes, all apps**
+        1. Select **Done**
 
 3. Then select the **Default** subscription from the command line, by selecting **Enter**.
 
@@ -53,26 +52,7 @@ devtunnel login
 ```
 
 !!! note
-    You should be prompted to use the account you used for `az login`, if not then:
-
-    1. Select **Work or school account** and click **Continue**.
-
-    2. Use the **Username** and **TAP (Temporary Access Pass)** found in the **top section** of the **Resources** tab in the lab environment.
-
-    3. Select **Yes, all apps**
-
-## Zava Database Restore
-
-Once you've logged in, run the following command to restore the Zava database. The database restore takes about two minutes.
-
-Copy and paste the following command block to the terminal and press **Enter**.
-
-```powershell
-; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol
-; git pull 
-; cd infra\skillable
-; .\init-db-azure-action.ps1 -UniqueSuffix $env:LAB_INSTANCE_ID -AzurePgPassword "SecurePassword123!"
-```
+    You will be prompted to use the account you used for `az login`. Select the account and continue.
 
 Leave the terminal window open for the next steps.
 
@@ -161,5 +141,3 @@ Follow these steps to open the workshop in Visual Studio Code:
 
 !!! tips
     1. The **Burger Menu** in the right-hand panel of the lab environment offers additional features, including the **Split Window View** and the option to end the lab. The **Split Window View** allows you to maximize the lab environment to full screen, optimizing screen space. The lab's **Instructions** and **Resources** panel will open in a separate window.
-    2. If the lab instructions are slow to scroll in the lab environment, try copying the instructions’ URL and opening it in **your computer’s local browser** for a smoother experience.
-    3. If you have trouble viewing an image, simply **click the image to enlarge it**.
