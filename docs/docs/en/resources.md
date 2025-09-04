@@ -16,7 +16,7 @@ The workshop repository on GitHub contains everything needed for the workshop. T
 * Documentation: [🚀 Model Context Protocol (MCP) Curriculum for Beginners](https://github.com/microsoft/mcp-for-beginners/tree/main){:target="_blank"}
 * Documentation: [PostgreSQL on Azure](https://learn.microsoft.com/azure/postgresql/){:target="_blank"}
 * Documentation: [pgvector extension for PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/how-to-use-pgvector){:target="_blank"}
-* Documentation: [Row Level Security (RLS) in PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/security-access-control){:target="_blank"}
+* Documentation: [Row Level Security (RLS) in PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/security-access-control#row-level-security){:target="_blank"}
 
 
 ## Thank you

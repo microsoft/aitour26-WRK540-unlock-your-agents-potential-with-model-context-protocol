@@ -46,7 +46,7 @@ By the end of this session, learners will be able to:
 | Documentation | [🚀 Model Context Protocol (MCP) Curriculum for Beginners](https://github.com/microsoft/mcp-for-beginners/tree/main)| Beginner-friendly MCP curriculum |
 | Documentation | [PostgreSQL on Azure](https://learn.microsoft.com/azure/postgresql/)| PostgreSQL on Azure documentation |
 | Documentation | [pgvector extension for PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/how-to-use-pgvector)| Guide to using pgvector extension |
-| Documentation | [Row Level Security (RLS) in PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/security-access-control)| PostgreSQL Row Level Security documentation |
+| Documentation | [Row Level Security (RLS) in PostgreSQL](https://learn.microsoft.com/azure/postgresql/flexible-server/security-access-control#row-level-security)| PostgreSQL Row Level Security documentation |
 
 ### 📚 Continued Learning Resources
 
