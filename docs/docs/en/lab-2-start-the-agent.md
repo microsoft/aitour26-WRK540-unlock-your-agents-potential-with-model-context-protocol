@@ -157,7 +157,8 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
 
     ![Aspire dashboard](../media//lab-2-start-agent-aspire-dashboard.png)
 
-    Refer to the [troubleshooting guide](./dotnet-troubleshooting.md) if you encounter any issues.
+    !!! tip "Troubleshooting"
+        If the browser does not load, try hard-refreshing the page (Ctrl + F5 or Cmd + Shift + R). If it still does not load, refer to the [troubleshooting guide](./dotnet-troubleshooting.md).
 
 ## Start a Conversation with the Agent
 
@@ -179,9 +180,19 @@ From the web chat client, you can start a conversation with the agent. The agent
         3. **execute_sales_query**: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.
 
     !!! tip
-        Switch back to VS Code and select **MCP Server (workspace)** from the TERMINAL panel and you'll see the calls made to the MCP Server by the Azure AI Foundry Agent Service.
+        === "Python"
 
-        ![](../media/mcp-server-in-action.png)
+            Switch back to VS Code and select **MCP Server (workspace)** from the TERMINAL panel and you'll see the calls made to the MCP Server by the Azure AI Foundry Agent Service.
+
+            ![](../media/mcp-server-in-action.png)
+
+        === "C#"
+
+            In the Aspire dashboard, you can select the logs for the `dotnet-mcp-server` resource to see the calls made to the MCP Server by the Azure AI Foundry Agent Service.
+
+            You can also open the trace view and find the end-to-end trace of the application, from the user input in the web chat, through to the agent calls and MCP tool calls.
+
+            ![Trace overview](../media/lab-7-trace-overview.png)
 
 2.  Generate a pie chart. Copy and paste the following question into the chat:
 
