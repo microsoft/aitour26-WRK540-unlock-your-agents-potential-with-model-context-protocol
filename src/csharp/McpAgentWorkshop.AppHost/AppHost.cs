@@ -9,7 +9,7 @@ var rg = builder.AddParameter("ResourceGroupName");
 var foundryResourceName = builder.AddParameter("FoundryResourceName");
 var foundryProjectName = builder.AddParameter("FoundryProjectName");
 var appInsightsName = builder.AddParameter("ApplicationInsightsName");
-var uniqueSuffix = builder.Configuration["Parameters:UniqueSuffix"] ?? throw new InvalidOperationException("Please set the 'Parameters:UniqueSuffix' configuration value to a unique suffix for resource names.");
+var uniqueSuffix = builder.Configuration["Parameters:UniqueSuffix"] ?? Environment.MachineName.ToLowerInvariant().Replace(".", "-").Replace("_", "-")[..4];
 
 var appInsights = builder.AddAzureApplicationInsights("app-insights")
     .RunAsExisting(appInsightsName, rg);
