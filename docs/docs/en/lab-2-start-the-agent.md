@@ -125,7 +125,7 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
 
 === "C#"
 
-    1. **Open** `AgentService.cs`.
+    1. **Open** `AgentService.cs` from the `McpAgentWorkshop.WorkshopApi` project's `Services` folder.
     2. Navigate to the `InitialiseAgentAsync` method.
     3. **Uncomment** the following lines:
 

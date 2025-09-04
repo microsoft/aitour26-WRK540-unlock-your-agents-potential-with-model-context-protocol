@@ -36,22 +36,22 @@ public partial class AgentService(
 
         devtunnelUrl = devtunnelUrl.EndsWith('/') ? devtunnelUrl : devtunnelUrl + "/";
 
-        var mcpTool = new MCPToolDefinition(
-            ZavaMcpToolLabel,
-            devtunnelUrl + "mcp");
+        // var mcpTool = new MCPToolDefinition(
+        //     ZavaMcpToolLabel,
+        //     devtunnelUrl + "mcp");
 
-        var codeInterpreterTool = new CodeInterpreterToolDefinition();
+        // var codeInterpreterTool = new CodeInterpreterToolDefinition();
 
-        IEnumerable<ToolDefinition> tools = [mcpTool, codeInterpreterTool];
+        // IEnumerable<ToolDefinition> tools = [mcpTool, codeInterpreterTool];
 
-        persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(
-                name: AgentName,
-                model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
-                instructions: instructionsContent,
-                temperature: modelTemperature,
-                tools: tools);
+        // persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(
+        //         name: AgentName,
+        //         model: configuration.GetValue<string>("MODEL_DEPLOYMENT_NAME"),
+        //         instructions: instructionsContent,
+        //         temperature: modelTemperature,
+        //         tools: tools);
 
-        logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
+        // logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
     }
 
     public async IAsyncEnumerable<ChatResponse> ProcessChatMessageAsync(ChatRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
