@@ -85,15 +85,16 @@ If you will be delivering this session, check the [session-delivery-sources](./s
 
 By the end of this session, learners will be able to:
 
--  
--
--
+1. **Azure AI Foundry Agent Service**: Build and deploy AI agents with integrated tools and observability.  
+2. **Model Context Protocol (MCP)**: Connects the Agent Service to external tools and data over industry standard protocols to enhance agent functionality.  
+3. **PostgreSQL**: Use PostgreSQL as a vector database for semantic search and implement Row Level Security (RLS) to protect sensitive data based on user roles.
+4. **Azure AI Foundry**: An enterprise-grade AI development platform providing unified model access, comprehensive monitoring, distributed tracing capabilities, and production-ready governance for AI applications at scale.
 
 ### 💻 Technologies Used
 
-1.
-1.
-1.
+1. Azure AI Foundry
+1. PostgreSQL including Row Level Security (RLS) and Semantic Search with the pgvector extension
+1. Model Context Protocol (MCP)
 
 ### 🔗 Session Resources
 | Resources          | Links                             | Description        |
@@ -121,19 +122,19 @@ By the end of this session, learners will be able to:
 
 <table>
 <tr>
-    <td align="center"><a href="http://github.com/mikekinsman">
-        <img src="https://github.com/mikekinsman.png" width="100px;" alt="INSERT NAME HERE"
-"/><br />
-        <sub><b> INSERT NAME HERE
+    <td align="center"><a href="http://github.com/gloveboxes">
+        <img src="https://github.com/gloveboxes.png" width="100px;" alt="Dave Glover"
+/><br />
+        <sub><b>Dave Glover
 </b></sub></a><br />
-            <a href="https://github.com/mikekinsman" title="talk">📢</a> 
+            <a href="https://github.com/gloveboxes" title="talk">📢</a> 
     </td>
-    <td align="center"><a href="http://github.com/mikekinsman">
-        <img src="https://github.com/mikekinsman.png" width="100px;" alt="INSERT NAME HERE
+    <td align="center"><a href="http://github.com/marlenezw">
+        <img src="https://github.com/marlenezw.png" width="100px;" alt="INSERT NAME HERE
 "/><br />
-        <sub><b>INSERT NAME HERE
+        <sub><b>Marlene Mhangami 
 </b></sub></a><br />
-            <a href="https://github.com/mikekinsman" title="talk">📢</a> 
+            <a href="https://github.com/marlenezw" title="talk">📢</a> 
     </td>
 </tr></table>
 
