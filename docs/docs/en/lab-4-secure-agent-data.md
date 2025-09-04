@@ -14,7 +14,9 @@ In normal operation, the a store manager would authenticate with the agent and t
 
     ### PostgreSQL RLS Security Overview
 
-    Row Level Security (RLS) provides data isolation in a multi-tenant database using policies to control which rows are visible to each user.
+    Row Level Security (RLS) automatically filters database rows based on user permissions. This allows multiple users to share the same database tables while only seeing data they're authorized to access. 
+    
+    In this system, head office users see all data across all stores, while store managers are restricted to viewing only their own store's information. The example below shows how RLS policies are implemented for the `retail.orders` table, with identical policies applied to `retail.order_items`, `retail.inventory`, and `retail.customers` tables.
 
     ```sql
     CREATE POLICY store_manager_orders ON retail.orders
