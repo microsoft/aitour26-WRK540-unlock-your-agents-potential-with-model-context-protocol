@@ -1,10 +1,98 @@
 ## What You'll Learn
 
-In this lab, you enable semantic search capabilities in the Azure AI Agent using the Model Context Protocol (MCP) and the PostgreSQL database with the [PostgreSQL Vector](https://github.com/pgvector/pgvector){:target="\_blank"} extension enabled.
+In this lab, you enable semantic search capabilities in the Azure AI Agent using the MCP Server and the PostgreSQL database with the [PostgreSQL Vector](https://github.com/pgvector/pgvector){:target="\_blank"} extension enabled.
 
 ## Introduction
 
-This lab upgrades the Azure AI Agent with semantic search using Model Context Protocol (MCP) and PostgreSQL. Product names and descriptions were converted into vectors with the OpenAI embedding model (text-embedding-3-small) and stored in the database. This enables the agent to understand user intent and provide more accurate responses.
+This lab upgrades the Azure AI Agent with semantic search using the MCP Server and PostgreSQL. 
+
+All of Zava's product names and descriptions have been converted to vectors with the OpenAI embedding model (text-embedding-3-small) and stored in the database. This enables the agent to understand user intent and provide more accurate responses.
+
+??? info "For Developers: How does PostgreSQL Semantic Search work?"
+
+    ### Vectorizing the Product Descriptions and Names
+
+    To learn more about how Zava product names and descriptions were vectorized, see the [Zava DIY PostgreSQL Database Generator README](https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/tree/main/data/database){:target="_blank"}.
+
+
+
+    === "Python"
+
+        ### LLM calls the MCP Server Tool
+
+        Based on the user's query and the instructions provided, the LLM decides to call the MCP Server tool `semantic_search_products` to find relevant products.
+
+        The following sequence of events occurs:
+
+        1. The MCP tool `semantic_search_products` is invoked with the user's query description.
+        1. The MCP server generates a vector for the query using the OpenAI embedding model (text-embedding-3-small). See the code for vectorizing the query is in the `generate_query_embedding` method.
+        1. The MCP server then performs a semantic search against the PostgreSQL database to find products with similar vectors.
+
+        ### PostgreSQL Semantic Search Overview
+
+        The `semantic_search_products` MCP Server tool then executes a SQL query that uses the vectorized query to find the most similar product vectors in the database. The SQL query uses the `<->` operator provided by the pgvector extension to calculate the distance between vectors.
+
+        ```python
+        async def search_products_by_similarity(
+            self, query_embedding: list[float], 
+                rls_user_id: str, 
+                max_rows: int = 20, 
+                similarity_threshold: float = 30.0
+        ) -> str:
+                ...
+                query = f"""
+                    SELECT 
+                        p.*,
+                        (pde.description_embedding <=> $1::vector) as similarity_distance
+                    FROM {SCHEMA_NAME}.product_description_embeddings pde
+                    JOIN {SCHEMA_NAME}.products p ON pde.product_id = p.product_id
+                    WHERE (pde.description_embedding <=> $1::vector) <= $3
+                    ORDER BY similarity_distance
+                    LIMIT $2
+                """
+
+                rows = await conn.fetch(query, embedding_str, max_rows, distance_threshold)
+                ...
+        ```
+
+
+
+    === "C#"
+
+        ### LLM calls the MCP Server Tool
+
+        Based on the user's query and the instructions provided, the LLM decides to call the MCP Server tool `semantic_search_products` to find relevant products.
+
+        The following sequence of events occurs:
+
+        1. The MCP tool `semantic_search_products` is invoked with the user's query description.
+        2. The MCP server generates a vector for the query using the OpenAI embedding model (text-embedding-3-small). See `GenerateVectorAsync` method in the `EmbeddingGeneratorExtensions.cs` file.
+        3. The MCP server then performs a semantic search against the PostgreSQL database to find products with similar vectors.
+
+        ### PostgreSQL Semantic Search Overview
+
+        The `semantic_search_products` MCP Server tool then executes a SQL query that uses the vectorized query to find the most similar product vectors in the database. The SQL query uses the `<->` operator provided by the pgvector extension to calculate the distance between vectors.
+
+        ```csharp
+        public async Task<IEnumerable<SemanticSearchResult>> SemanticSearchProductsAsync(
+        ...
+            await using var searchCmd = new NpgsqlCommand("""
+            SELECT 
+                p.*,
+                (pde.description_embedding <=> $1::vector) as similarity_distance
+            FROM retail.product_description_embeddings pde
+            JOIN retail.products p ON pde.product_id = p.product_id
+            WHERE (pde.description_embedding <=> $1::vector) <= $3
+            ORDER BY similarity_distance
+            LIMIT $2
+            """, connection);
+            searchCmd.Parameters.AddWithValue(new Vector(embeddings));
+            searchCmd.Parameters.AddWithValue(maxRows);
+            searchCmd.Parameters.AddWithValue(distanceThreshold);
+
+            await using var reader = await searchCmd.ExecuteReaderAsync();
+            var results = new List<SemanticSearchResult>();
+        ```
 
 ## Lab Exercise
 
