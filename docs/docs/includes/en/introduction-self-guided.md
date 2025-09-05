@@ -90,9 +90,9 @@ Authenticate with Azure to allow the agent app access to the Azure AI Agents Ser
     !!! warning
     If you have multiple Azure tenants, specify the correct one using:
 
-        ```shell
-        az login --use-device-code --tenant <tenant_id>
-        ```
+    ```shell
+    az login --use-device-code --tenant <tenant_id>
+    ```
 
 2. Follow these steps to authenticate:
 
