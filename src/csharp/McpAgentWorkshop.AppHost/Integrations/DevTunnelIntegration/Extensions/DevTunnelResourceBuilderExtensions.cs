@@ -2,6 +2,7 @@
 using AspireDevTunnels.AppHost.Resources;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Identity.Client;
 
 namespace AspireDevTunnels.AppHost.Extensions;
 
@@ -144,6 +145,11 @@ public static class DevTunnelResourceBuilderExtensions
         if (devTunnel is null)
         {
             await devTunnelResource.CreateTunnelAsync(cancellationToken);
+
+            if (devTunnelResource.IsPublic)
+            {
+                await devTunnelResource.AllowAnonymousAccessAsync(cancellationToken);
+            }
         }
         else
         {
@@ -200,5 +206,11 @@ public static class DevTunnelResourceBuilderExtensions
                 }
             }
         }
+    }
+
+    public static IResourceBuilder<DevTunnelResource> WithPublicAccess(this IResourceBuilder<DevTunnelResource> devTunnelResourceBuilder)
+    {
+        devTunnelResourceBuilder.Resource.IsPublic = true;
+        return devTunnelResourceBuilder;
     }
 }

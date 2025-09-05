@@ -17,7 +17,8 @@ var appInsights = builder.AddAzureApplicationInsights("app-insights")
 var foundry = builder.AddAzureAIFoundry("ai-foundry")
     .RunAsExisting(foundryResourceName, rg);
 
-var devtunnel = builder.AddDevTunnel($"mcp-devtunnel-{uniqueSuffix}");
+var devtunnel = builder.AddDevTunnel($"mcp-devtunnel-{uniqueSuffix}")
+    .WithPublicAccess();
 
 IResourceBuilder<IResourceWithConnectionString> storeManagerUser;
 IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource>? zava = null;
