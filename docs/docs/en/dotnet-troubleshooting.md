@@ -21,3 +21,6 @@
     Azure:ResourceGroup = ...
     Azure:Location = ...
    ```
+
+1. **dotnet not supported when launching the debugger**: Ensure you install the C# extension in Visual Studio Code. If you have already installed it, try restarting Visual Studio Code.
+   ![Debugger error](../media/troubleshooting/dotnet-debugger-not-supported.png)
