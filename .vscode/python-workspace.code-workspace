@@ -105,35 +105,9 @@
                 }
             },
             {
-                "label": "Web Chat",
-                "type": "shell",
-                "command": "python",
-                "args": [
-                    "app.py"
-                ],
-                "options": {
-                    "cwd": "${workspaceFolder:shared}/webapp"
-                },
-                "group": "build",
-                "isBackground": true,
-                "problemMatcher": {
-                    "owner": "webapp",
-                    "pattern": {
-                        "regexp": "^.*$"
-                    },
-                    "background": {
-                        "activeOnStart": true,
-                        "beginsPattern": "^.*Starting web interface on port.*$",
-                        "endsPattern": "^.*Uvicorn running on.*$"
-                    }
-                }
-            },
-            {
-                "label": "Start DevTunnel and Web App",
-                "dependsOrder": "parallel",
+                "label": "Start DevTunnel",
                 "dependsOn": [
-                    "DevTunnel",
-                    "Web Chat"
+                    "DevTunnel"
                 ]
             }
         ]
@@ -145,9 +119,10 @@
                 "name": "🌎🤖Debug Compound: Agent and MCP (http)",
                 "configurations": [
                     "Debug: MCP Server (workshop)",
-                    "Debug: Agent Manager (workshop)"
+                    "Debug: Agent Manager (workshop)",
+                    "Debug: Web App"
                 ],
-                "preLaunchTask": "Start DevTunnel and Web App",
+                "preLaunchTask": "Start DevTunnel",
                 "stopAll": true
             }
         ],
