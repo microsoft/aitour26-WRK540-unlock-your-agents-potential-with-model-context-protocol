@@ -40,7 +40,9 @@
     "forwardPorts": [8005],
     "portsAttributes": {
         "8005": {
-            "label": "Web Chat App"
+            "label": "Web Chat App",
+            "onAutoForward": "openBrowserOnce",
+            "visibility": "public"
         }
     },
     "postCreateCommand": "/bin/bash -c ./.devcontainer/postCreateCommand.sh >> ~/postCreateCommand.log 2>&1"
