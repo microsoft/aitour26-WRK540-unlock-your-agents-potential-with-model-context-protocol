@@ -41,9 +41,9 @@
     "portsAttributes": {
         "8005": {
             "label": "Web Chat App",
-            "onAutoForward": "openBrowserOnce",
-            "visibility": "public"
+            "onAutoForward": "openBrowserOnce"
         }
     },
-    "postCreateCommand": "/bin/bash -c ./.devcontainer/postCreateCommand.sh >> ~/postCreateCommand.log 2>&1"
+    "postCreateCommand": "/bin/bash -c ./.devcontainer/postCreateCommand.sh >> ~/postCreateCommand.log 2>&1",
+    "postAttachCommand": "/bin/bash .devcontainer/make-port-public.sh 8005"
 }
