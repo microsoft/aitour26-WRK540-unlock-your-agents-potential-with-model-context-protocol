@@ -24,3 +24,17 @@
 
 1. **dotnet not supported when launching the debugger**: Ensure you install the C# extension in Visual Studio Code. If you have already installed it, try restarting Visual Studio Code.
    ![Debugger error](../media/troubleshooting/dotnet-debugger-not-supported.png)
+
+1. **The Aspire dashboard does not load**: If the browser does not load, try hard-refreshing the page (Ctrl + F5 or Cmd + Shift + R). If it still does not load, ensure that the Dev Tunnel is running by checking the terminal window where you started the Dev Tunnel. If it is not running, navigate to the AppHost project directory and run `dotnet run` to start it again.
+
+1. **The browser did not launch with the debugger**: Check the VS Code Debug Console for the URL `http://localhost:15184`. The Aspire dashboard uses a randomly generated key for authentication, which is included in the URL. Copy and paste the URL into your browser to access the Aspire dashboard. The terminal message looks like this:
+
+   ```
+   info: Aspire.Hosting.DistributedApplication[0]
+         Now listening on: http://localhost:15184
+   Aspire.Hosting.DistributedApplication: Information: Now listening on: http://localhost:15184
+   info: Aspire.Hosting.DistributedApplication[0]
+         Login to the dashboard at http://localhost:15184/login?t=<token>
+   ```
+
+1. **The `ai-foundry` resource reports _Failed to provision_.**: This can happen if the Azure connection fails to establish on the first run of the application. Restart the debugger in Visual Studio Code to try again.
