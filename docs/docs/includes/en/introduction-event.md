@@ -68,6 +68,7 @@ Follow these steps to open the workshop in Visual Studio Code:
 
     ```powershell
     ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+    ; git pull `
     ; .\src\python\workshop\.venv\Scripts\activate `
     ; code .vscode\python-workspace.code-workspace
     ```
@@ -76,19 +77,14 @@ Follow these steps to open the workshop in Visual Studio Code:
 
 === "C#"
 
-    1. From a terminal window, execute the following commands to update the workshop repository:
-
-        ```powershell
-        cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-        ```
-
     === "VS Code"
 
         1. Open the workshop in Visual Studio Code. From the terminal window, run the following command:
 
             ```powershell
-            cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
-            code .vscode\csharp-workspace.code-workspace
+            ; cd $HOME\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol `
+            ; git pull `
+            ;code .vscode\csharp-workspace.code-workspace
             ```
 
         !!! note "When the project opens in VS Code, a notification will appear in the bottom right corner to install the C# extension. Click **Install** to install the C# extension, as this will provide the necessary features for C# development."
@@ -98,7 +94,8 @@ Follow these steps to open the workshop in Visual Studio Code:
         2. Open the workshop in Visual Studio 2022. From the terminal window, run the following command:
 
             ```powershell
-            cd $HOME; start .\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\src\csharp\McpAgentWorkshop.slnx
+            ; git pull `
+            ;cd $HOME; start .\aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol\src\csharp\McpAgentWorkshop.slnx
             ```
 
             !!! note "You may be asked what program to open the solution with. Select **Visual Studio 2022**."
