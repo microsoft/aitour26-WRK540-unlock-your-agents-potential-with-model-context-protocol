@@ -42,10 +42,10 @@ Log "Logged in as: $($ctx.Account) | Sub: $($ctx.Subscription.Name) ($($ctx.Subs
 $PostgresServerName = "pg-zava-agent-wks-$UniqueSuffix"
 $ResourceGroup = "@lab.CloudResourceGroup(rg-zava-agent-wks).Name"
 
-# Set IP range 103.177.0.0 to 103.177.255.255
-$StartIP = "103.177.0.0"
-$EndIP = "103.177.255.255"
-$RuleName = "allow-range-103-177-0-0-to-103-177-255-255"
+# Set IP range 0.0.0.0 to 255.255.255.255
+$StartIP = "0.0.0.0"
+$EndIP = "255.255.255.255"
+$RuleName = "allow-range-all"
 Log "Adding firewall rule for IP range: $StartIP to $EndIP"
 New-AzPostgreSqlFlexibleServerFirewallRule `
   -Name $RuleName `
