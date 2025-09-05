@@ -93,9 +93,9 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
     This starts the following processes:
 
     1.  DevTunnel (workshop) Task
-    1.  Web Chat (workshop) Task
-    1.  Agent Manager (workshop)
-    1.  MCP Server (workshop)
+    2.  Web Chat (workshop)
+    3.  Agent Manager (workshop)
+    4.  MCP Server (workshop)
 
     In VS Code you'll see these running in the TERMINAL panel.
 
@@ -110,6 +110,19 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
         [Open Web Chat](http://localhost:8005){:target="_blank"}
 
     === "Self-Guided Learners"
+
+        ## Make Port 8005 Public
+
+        You need to make port 8005 public in order to access the web chat client in your browser.
+
+        1. Select the **Ports** tab in the bottom panel of VS Code.
+        2. Right-click on the **Web Chat App (8005)** port and select **Port Visibility**.
+        3. Select **Public**.
+
+        ![](../media/make-port-public.png)
+
+
+        ## Open the Web Chat Client in the Browser
 
         1.  Copy the text below to the clipboard:
 
