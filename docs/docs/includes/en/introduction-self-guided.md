@@ -22,6 +22,10 @@ The workshop is available in both Python and C#. Use the language selector tabs 
 === "C#"
     The default language for the workshop is set to **C#**.
 
+    !!! warning "The C#/.NET version of this workshop is in beta and has known stability issues."
+
+    Ensure you read the [troubleshooting guide](../../en/dotnet-troubleshooting.md) section **BEFORE** starting the workshop. Else, select the **Python** version of the workshop.
+
 ## Open the Workshop
 
 Preferred: **GitHub Codespaces**, which provides a preconfigured environment with all required tools. Alternatively, run locally with a Visual Studio Code **Dev Container** and **Docker**. Use the tabs below to choose.
