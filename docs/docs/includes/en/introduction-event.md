@@ -17,6 +17,10 @@ The workshop is available in both Python and C#. Please make sure to select the 
 === "C#"
     The default language for the workshop is set to **C#**.
 
+    !!! warning "The C#/.NET version of this workshop is in beta and has known stability issues."
+
+    Ensure you read the [troubleshooting guide](../../en/dotnet-troubleshooting.md) section **BEFORE** starting the workshop. Else, select the **Python** version of the workshop.
+
 ## Authenticate with Azure
 
 You need to authenticate with Azure so the agent app can access the Azure AI Agents Service and models. Follow these steps:
