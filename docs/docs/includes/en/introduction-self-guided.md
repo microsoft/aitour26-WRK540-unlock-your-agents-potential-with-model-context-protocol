@@ -41,15 +41,19 @@ Preferred: **GitHub Codespaces**, which provides a preconfigured environment wit
 
 === "VS Code Dev Container"
 
-    <!-- !!! warning "Apple Silicon Users"
-        The automated deployment script you’ll be running soon isn’t supported on Apple Silicon. Please run the deployment script from Codespaces or from macOS instead of the Dev Container. -->
+    1. Ensure you have the following installed on your local machine:
 
-    Alternatively, you can open the project locally using a Visual Studio Code Dev Container, which will open the project in your local VS Code development environment using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers){:target="_blank"}.
+        - [Docker](https://docs.docker.com/get-docker/){:target="\_blank"}
+        - [Visual Studio Code](https://code.visualstudio.com/download){:target="\_blank"}
+        - The [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers){:target="\_blank"}
+    1. Clone the repository to your local machine:
 
-    1. Start Docker Desktop (install it if not already installed)
-    2. Select **Dev Containers Open** to open the project in a VS Code Dev Container.
+        ```bash
+        git clone https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol.git
+        ```
 
-        [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol)
+    1. Open the cloned repository in Visual Studio Code.
+    1. When prompted, select **Reopen in Container** to open the project in a Dev Container.
 
 ---
 
