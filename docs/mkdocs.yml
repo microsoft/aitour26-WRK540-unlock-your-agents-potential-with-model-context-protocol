@@ -146,6 +146,39 @@ plugins:
             Bonus content: Contenido Adicional
             Local Tracing with Aspire: Trazado Local con Aspire
             About: Acerca de
+        - locale: it
+          name: Italiano
+          site_name: Libera il Potenziale dei tuoi Agenti con MCP
+          admonition_translations:
+            tip: Suggerimento
+            warning: Avvertimento
+            info: Informazione
+            note: Nota
+            danger: Pericolo
+            success: Successo
+            question: Domanda
+          nav_translations:
+            Workshop Introduction: Introduzione al Workshop
+            Workshop Navigation: Navigazione del Workshop
+            Getting Started: Iniziamo
+            Architecture Overview: Panoramica dell'Architettura
+            Agent Services Labs: Lab dei Servizi Agenti
+            AI Foundry Agent Services: Servizi Agenti AI Foundry
+            Lab 1 Agent Instructions: Lab 1 Istruzioni dell'Agente
+            Lab 2 Start your Agent: Lab 2 Avvia il tuo Agente
+            Lab 3 Semantic Search: Lab 3 Ricerca Semantica
+            Lab 4 Securing Agent Data: Lab 4 Protezione Dati dell'Agente
+            Observability Labs: Lab di Osservabilità
+            Observability Overview: Panoramica dell'Osservabilità
+            Lab 5 Service Monitoring: Lab 5 Monitoraggio dei Servizi
+            Lab 6 Understand Tracing: Lab 6 Comprensione del Tracing
+            Star and Connect: Star e Connessioni
+            Finishing Up: Completamento
+            Summary: Riassunto
+            Resources: Risorse
+            Bonus content: Contenuto Bonus
+            Local Tracing with Aspire: Tracing Locale con Aspire
+            About: Informazioni
 
 theme:
   name: material
