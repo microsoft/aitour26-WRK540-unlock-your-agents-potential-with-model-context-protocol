@@ -6,6 +6,17 @@ The instructions on this page assume you are attending an event and have access 
 
 This workshop is designed to teach you about the Azure AI Agents Service and the associated [SDK](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?context=%2Fazure%2Fai-services%2Fagents%2Fcontext%2Fcontext){:target="_blank"}. It consists of multiple labs, each highlighting a specific feature of the Azure AI Agents Service. The labs are meant to be completed in order, as each one builds on the knowledge and work from the previous lab.
 
+## Workshop Cloud Resources
+
+The following resources are pre-provisioned in your lab Azure subscription:
+
+- A resource group named **rg-zava-agent-wks-nnnnnnnn**
+- An **Azure AI Foundry hub** named **fdy-zava-agent-wks-nnnnnnnn**
+- An **Azure AI Foundry project** named **prj-zava-agent-wks-nnnnnnnn**
+- Two models are deployed: **gpt-4o-mini** and **text-embedding-3-small**. [See pricing.](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/){:target="\_blank"}
+- Azure Database for PostgreSQL Flexible Server (B1ms Burstable 32GB) database named **pg-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/details/postgresql/flexible-server){:target="\_blank"}
+- Application Insights resource named **appi-zava-agent-wks-nnnnnnnn**. [See pricing](https://azure.microsoft.com/pricing/calculator/?service=monitor){:target="\_blank"}
+
 ## Select Workshop Programming Language
 
 The workshop is available in both Python and C#. Please make sure to select the language that fits the lab room or preference by using the language selector tabs. Note, don't switch languages mid-workshop.

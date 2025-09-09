@@ -69,7 +69,7 @@ In the workshop environment, the Agent Service runs in Azure but needs to connec
     │ └─────────────────┘ │                  │           │         │
     └─────────────────────┘                  │           ▼         │
               │                              │  ┌─────────────────┐│
-              │ HTTPS requests               │  │ Local PostgreSQL││
+              │ HTTPS requests               │  │   PostgreSQL    ││
               ▼                              │  │   + pgvector    ││
     ┌─────────────────────┐                  │  └─────────────────┘│
     │   DevTunnel         │                  │                     │
