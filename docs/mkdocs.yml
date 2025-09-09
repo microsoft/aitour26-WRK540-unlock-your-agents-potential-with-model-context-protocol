@@ -62,6 +62,7 @@ plugins:
             Workshop Introduction: Workshop Introduction
             Workshop Navigation: Workshop Navigation
             Getting Started: Getting Started
+            Open the Workshop: Open the Workshop
             Architecture Overview: Architecture Overview
             Agent Services Labs: Agent Services Labs
             AI Foundry Agent Services: AI Foundry Agent Services
@@ -95,6 +96,7 @@ plugins:
             Workshop Introduction: Introduction de l'atelier
             Workshop Navigation: Navigation de l'atelier
             Getting Started: Commencer
+            Open the Workshop: Ouvrir l'atelier
             Architecture Overview: Vue d'ensemble de l'architecture
             Agent Services Labs: Labs des services d'agents
             AI Foundry Agent Services: Services d'agents AI Foundry
@@ -128,6 +130,7 @@ plugins:
             Workshop Introduction: Introducción del Taller
             Workshop Navigation: Navegación del Taller
             Getting Started: Comenzando
+            Open the Workshop: Abrir el Taller
             Architecture Overview: Visión General de la Arquitectura
             Agent Services Labs: Laboratorios de Servicios de Agentes
             AI Foundry Agent Services: Servicios de Agentes AI Foundry
@@ -161,6 +164,7 @@ plugins:
             Workshop Introduction: Introduzione al Workshop
             Workshop Navigation: Navigazione del Workshop
             Getting Started: Iniziamo
+            Open the Workshop: Aprire il Workshop
             Architecture Overview: Panoramica dell'Architettura
             Agent Services Labs: Lab dei Servizi Agenti
             AI Foundry Agent Services: Servizi Agenti AI Foundry
@@ -194,6 +198,7 @@ plugins:
             Workshop Introduction: ワークショップ紹介
             Workshop Navigation: ワークショップナビゲーション
             Getting Started: はじめに
+            Open the Workshop: ワークショップを開く
             Architecture Overview: アーキテクチャ概要
             Agent Services Labs: エージェントサービスラボ
             AI Foundry Agent Services: AI Foundry エージェントサービス
@@ -212,6 +217,40 @@ plugins:
             Bonus content: ボーナスコンテンツ
             Local Tracing with Aspire: Aspireでのローカルトレーシング
             About: について
+        - locale: ko
+          name: 한국어
+          site_name: MCP로 에이전트의 잠재력 발휘하기
+          admonition_translations:
+            tip: 팁
+            warning: 경고
+            info: 정보
+            note: 참고
+            danger: 위험
+            success: 성공
+            question: 질문
+          nav_translations:
+            Workshop Introduction: 워크숍 소개
+            Workshop Navigation: 워크숍 네비게이션
+            Getting Started: 시작하기
+            Open the Workshop: 워크숍 열기
+            Architecture Overview: 아키텍처 개요
+            Agent Services Labs: 에이전트 서비스 랩
+            AI Foundry Agent Services: AI Foundry 에이전트 서비스
+            Lab 1 Agent Instructions: 랩 1 에이전트 지시사항
+            Lab 2 Start your Agent: 랩 2 에이전트 시작하기
+            Lab 3 Semantic Search: 랩 3 의미적 검색
+            Lab 4 Securing Agent Data: 랩 4 에이전트 데이터 보안
+            Observability Labs: 가관측성 랩
+            Observability Overview: 가관측성 개요
+            Lab 5 Service Monitoring: 랩 5 서비스 모니터링
+            Lab 6 Understand Tracing: 랩 6 추적 이해하기
+            Star and Connect: 별표와 연결
+            Finishing Up: 마무리
+            Summary: 요약
+            Resources: 리소스
+            Bonus content: 보너스 콘텐츠
+            Local Tracing with Aspire: Aspire를 사용한 로컬 추적
+            About: 정보
 
 theme:
   name: material
