@@ -251,6 +251,40 @@ plugins:
             Bonus content: 보너스 콘텐츠
             Local Tracing with Aspire: Aspire를 사용한 로컬 추적
             About: 정보
+        - locale: zh
+          name: 中文
+          site_name: 使用 MCP 释放代理的潜力
+          admonition_translations:
+            tip: 提示
+            warning: 警告
+            info: 信息
+            note: 注意
+            danger: 危险
+            success: 成功
+            question: 问题
+          nav_translations:
+            Workshop Introduction: 工作坊介绍
+            Workshop Navigation: 工作坊导航
+            Getting Started: 开始
+            Open the Workshop: 打开工作坊
+            Architecture Overview: 架构概述
+            Agent Services Labs: 代理服务实验
+            AI Foundry Agent Services: AI Foundry 代理服务
+            Lab 1 Agent Instructions: 实验 1 代理指令
+            Lab 2 Start your Agent: 实验 2 启动您的代理
+            Lab 3 Semantic Search: 实验 3 语义搜索
+            Lab 4 Securing Agent Data: 实验 4 保护代理数据
+            Observability Labs: 可观测性实验
+            Observability Overview: 可观测性概述
+            Lab 5 Service Monitoring: 实验 5 服务监控
+            Lab 6 Understand Tracing: 实验 6 理解追踪
+            Star and Connect: 加星标和连接
+            Finishing Up: 完成
+            Summary: 总结
+            Resources: 资源
+            Bonus content: 额外内容
+            Local Tracing with Aspire: 使用 Aspire 进行本地追踪
+            About: 关于
 
 theme:
   name: material
