@@ -62,28 +62,32 @@ By the end of this session, learners will be able to:
 
 ## Content Owners
 
-<!-- TODO: Add yourself as a content owner
-1. Change the src in the image tag to {your github url}.png
-2. Change INSERT NAME HERE to your name
-3. Change the github url in the final href to your url. -->
-
 <table>
 <tr>
     <td align="center"><a href="http://github.com/gloveboxes">
         <img src="https://github.com/gloveboxes.png" width="100px;" alt="Dave Glover"
 /><br />
-        <sub><b>Dave Glover
+        <sub><b>Dave Glover (Python)
 </b></sub></a><br />
             <a href="https://github.com/gloveboxes" title="talk">📢</a>
     </td>
     <td align="center"><a href="http://github.com/marlenezw">
-        <img src="https://github.com/marlenezw.png" width="100px;" alt="INSERT NAME HERE
-"/><br />
-        <sub><b>Marlene Mhangami
+        <img src="https://github.com/marlenezw.png" width="100px;" alt="Marlene Mhangami (Python)"/><br />
+        <sub><b>Marlene Mhangami (Python)
 </b></sub></a><br />
             <a href="https://github.com/marlenezw" title="talk">📢</a>
     </td>
-</tr></table>
+</tr>
+<tr>
+    <td align="center"><a href="http://github.com/aaronpowell">
+        <img src="https://github.com/aaronpowell.png" width="100px;" alt="Aaron Powell
+"/><br />
+        <sub><b>Aaron Powell (C#)
+</b></sub></a><br />
+            <a href="https://github.com/aaronpowell" title="talk">📢</a>
+    </td>
+</tr>
+</table>
 
 ##
 
