@@ -179,6 +179,39 @@ plugins:
             Bonus content: Contenuto Bonus
             Local Tracing with Aspire: Tracing Locale con Aspire
             About: Informazioni
+        - locale: ja
+          name: 日本語
+          site_name: MCPでエージェントの可能性を解き放つ
+          admonition_translations:
+            tip: ヒント
+            warning: 警告
+            info: 情報
+            note: 注意
+            danger: 危険
+            success: 成功
+            question: 質問
+          nav_translations:
+            Workshop Introduction: ワークショップ紹介
+            Workshop Navigation: ワークショップナビゲーション
+            Getting Started: はじめに
+            Architecture Overview: アーキテクチャ概要
+            Agent Services Labs: エージェントサービスラボ
+            AI Foundry Agent Services: AI Foundry エージェントサービス
+            Lab 1 Agent Instructions: ラボ1 エージェント指示
+            Lab 2 Start your Agent: ラボ2 エージェントの開始
+            Lab 3 Semantic Search: ラボ3 セマンティック検索
+            Lab 4 Securing Agent Data: ラボ4 エージェントデータの保護
+            Observability Labs: 可観測性ラボ
+            Observability Overview: 可観測性概要
+            Lab 5 Service Monitoring: ラボ5 サービス監視
+            Lab 6 Understand Tracing: ラボ6 トレーシングの理解
+            Star and Connect: スターと接続
+            Finishing Up: 完了
+            Summary: まとめ
+            Resources: リソース
+            Bonus content: ボーナスコンテンツ
+            Local Tracing with Aspire: Aspireでのローカルトレーシング
+            About: について
 
 theme:
   name: material
