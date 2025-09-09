@@ -2,6 +2,7 @@ site_name: Unlock your Agents Potential with MCP
 site_author: Dave Glover
 site_description: >-
   Azure AI Foundry Agent Services with MCP Workshop.
+site_url: https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/
 
 # Repository ..................................................
 repo_name: Unlock your Agents Potential with MCP
@@ -112,6 +113,39 @@ plugins:
             Bonus content: Contenu bonus
             Local Tracing with Aspire: Traçage local avec Aspire
             About: À propos
+        - locale: es
+          name: Español
+          site_name: Libera el Potencial de tus Agentes con MCP
+          admonition_translations:
+            tip: Consejo
+            warning: Advertencia
+            info: Información
+            note: Nota
+            danger: Peligro
+            success: Éxito
+            question: Pregunta
+          nav_translations:
+            Workshop Introduction: Introducción del Taller
+            Workshop Navigation: Navegación del Taller
+            Getting Started: Comenzando
+            Architecture Overview: Visión General de la Arquitectura
+            Agent Services Labs: Laboratorios de Servicios de Agentes
+            AI Foundry Agent Services: Servicios de Agentes AI Foundry
+            Lab 1 Agent Instructions: Lab 1 Instrucciones del Agente
+            Lab 2 Start your Agent: Lab 2 Inicia tu Agente
+            Lab 3 Semantic Search: Lab 3 Búsqueda Semántica
+            Lab 4 Securing Agent Data: Lab 4 Asegurando Datos del Agente
+            Observability Labs: Laboratorios de Observabilidad
+            Observability Overview: Visión General de Observabilidad
+            Lab 5 Service Monitoring: Lab 5 Monitoreo de Servicios
+            Lab 6 Understand Tracing: Lab 6 Entender el Trazado
+            Star and Connect: Dar Estrella y Conectar
+            Finishing Up: Finalizando
+            Summary: Resumen
+            Resources: Recursos
+            Bonus content: Contenido Adicional
+            Local Tracing with Aspire: Trazado Local con Aspire
+            About: Acerca de
 
 theme:
   name: material
