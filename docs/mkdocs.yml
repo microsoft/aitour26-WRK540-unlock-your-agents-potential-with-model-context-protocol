@@ -58,30 +58,60 @@ plugins:
             success: Success
             question: Question
           nav_translations:
-            "Workshop Introduction": "Workshop Introduction"
-            "Workshop Navigation": "Workshop Navigation"
-            "Getting Started": "Getting Started"
-            "Open the Workshop": "Open the Workshop"
-            "Star the GitHub Repo": "Star the GitHub Repo"
-            "Architecture Overview": "Architecture Overview"
-            "Deploy Agent Resources": "Deploy Agent Resources"
-            "Open VS Code Workspace": "Open VS Code Workspace"
-            "Agent Services Labs": "Agent Services Labs"
-            "AI Foundry Agent Services": "AI Foundry Agent Services"
-            "Lab 1 Agent Instructions": "Lab 1 Agent Instructions"
-            "Lab 2 Start your Agent": "Lab 2 Start your Agent"
-            "Lab 3 Semantic Search": "Lab 3 Semantic Search"
-            "Observability Labs": "Observability Labs"
-            "Observability Overview": "Observability Overview"
-            "Lab 4 Service Monitoring": "Lab 4 Service Monitoring"
-            "Lab 5 Understand Tracing": "Lab 5 Understand Tracing"
-            "Lab 6 Continuous Evaluation": "Lab 6 Continuous Evaluation"
-            "Finishing Up": "Finishing Up"
-            "Summary": "Summary"
-            "Resources": "Resources"
-            "Home Work": "Home Work"
-            "Debugging with Dev Tunnel": "Debugging with Dev Tunnel"
-            "About": "About"
+            Workshop Introduction: Workshop Introduction
+            Workshop Navigation: Workshop Navigation
+            Getting Started: Getting Started
+            Architecture Overview: Architecture Overview
+            Agent Services Labs: Agent Services Labs
+            AI Foundry Agent Services: AI Foundry Agent Services
+            Lab 1 Agent Instructions: Lab 1 Agent Instructions
+            Lab 2 Start your Agent: Lab 2 Start your Agent
+            Lab 3 Semantic Search: Lab 3 Semantic Search
+            Lab 4 Securing Agent Data: Lab 4 Securing Agent Data
+            Observability Labs: Observability Labs
+            Observability Overview: Observability Overview
+            Lab 5 Service Monitoring: Lab 5 Service Monitoring
+            Lab 6 Understand Tracing: Lab 6 Understand Tracing
+            Star and Connect: Star and Connect
+            Finishing Up: Finishing Up
+            Summary: Summary
+            Resources: Resources
+            Bonus content: Bonus content
+            Local Tracing with Aspire: Local Tracing with Aspire
+            About: About
+        - locale: fr
+          name: Français
+          site_name: Libérez le potentiel de vos agents avec MCP
+          admonition_translations:
+            tip: Conseil
+            warning: Avertissement
+            info: Information
+            note: Remarque
+            danger: Danger
+            success: Succès
+            question: Question
+          nav_translations:
+            Workshop Introduction: Introduction de l'atelier
+            Workshop Navigation: Navigation de l'atelier
+            Getting Started: Commencer
+            Architecture Overview: Vue d'ensemble de l'architecture
+            Agent Services Labs: Labs des services d'agents
+            AI Foundry Agent Services: Services d'agents AI Foundry
+            Lab 1 Agent Instructions: Lab 1 Instructions de l'agent
+            Lab 2 Start your Agent: Lab 2 Démarrez votre agent
+            Lab 3 Semantic Search: Lab 3 Recherche sémantique
+            Lab 4 Securing Agent Data: Lab 4 Sécurisation des données de l'agent
+            Observability Labs: Labs d'observabilité
+            Observability Overview: Vue d'ensemble de l'observabilité
+            Lab 5 Service Monitoring: Lab 5 Surveillance des services
+            Lab 6 Understand Tracing: Lab 6 Comprendre le traçage
+            Star and Connect: Étoile et connexion
+            Finishing Up: Finalisation
+            Summary: Résumé
+            Resources: Ressources
+            Bonus content: Contenu bonus
+            Local Tracing with Aspire: Traçage local avec Aspire
+            About: À propos
 
 theme:
   name: material
