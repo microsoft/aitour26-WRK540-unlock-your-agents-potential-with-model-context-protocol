@@ -1,7 +1,7 @@
 # Zava Sales Assistant
 
 The instructions for this workshop are published to GitHub Pages at
-[aka.ms/aitour/wrk552](https://aka.ms/aitour/wrk552). This folder `docs` contains the source code for those instructions.
+[aka.ms/aitour26/wrk540](https://aka.ms/aitour26/wrk540). This folder `docs` contains the source code for those instructions.
 
 ## MKDocs
 

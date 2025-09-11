@@ -1,5 +1,3 @@
-# Welcome AI Tour 26 Creators
-
 <p align="center">
 <img src="img/Banner-MS-AI-Tour-26.png" alt="decorative banner" width="1200"/>
 </p>
