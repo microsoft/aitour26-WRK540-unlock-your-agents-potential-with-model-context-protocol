@@ -1,0 +1,1265 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Azure AI Foundry Agent Services with MCP Workshop.">
+      
+      
+        <meta name="author" content="Dave Glover">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/fr/includes/it/introduction-event/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../../media/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>Introduction event - Libérez le potentiel de vos agents avec MCP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../css/custom.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#partecipanti-allevento-microsoft" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../../" title="Libérez le potentiel de vos agents avec MCP" class="md-header__button md-logo" aria-label="Libérez le potentiel de vos agents avec MCP" data-md-component="logo">
+      
+  <img src="../../../../media/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Libérez le potentiel de vos agents avec MCP
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction event
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../../includes/it/introduction-event/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../../es/includes/it/introduction-event/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../../it/includes/it/introduction-event/" hreflang="it" class="md-select__link">
+              Italiano
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../../ja/includes/it/introduction-event/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../../ko/includes/it/introduction-event/" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../../zh/includes/it/introduction-event/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../" title="Libérez le potentiel de vos agents avec MCP" class="md-nav__button md-logo" aria-label="Libérez le potentiel de vos agents avec MCP" data-md-component="logo">
+      
+  <img src="../../../../media/favicon.png" alt="logo">
+
+    </a>
+    Libérez le potentiel de vos agents avec MCP
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction de l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../navigating-the-workshop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Navigation de l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Commencer
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Commencer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ouvrir l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vue d'ensemble de l'architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Labs des services d'agents
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Labs des services d'agents
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-service-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Services d'agents AI Foundry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-1-agent-instructions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 1 Instructions de l'agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-2-start-the-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 2 Démarrez votre agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-3-mcp-semantic-search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 3 Recherche sémantique
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-4-secure-agent-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 4 Sécurisation des données de l'agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Labs d'observabilité
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Labs d'observabilité
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../observability-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vue d'ensemble de l'observabilité
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-5-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 5 Surveillance des services
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-6-tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 6 Comprendre le traçage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../star-and-connect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Étoile et connexion
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-7-finishing-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Finalisation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Résumé
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ressources
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Contenu bonus
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Contenu bonus
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lab-7-local-tracing-with-aspire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Traçage local avec Aspire
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    À propos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#partecipanti-allevento-microsoft" class="md-nav__link">
+    <span class="md-ellipsis">
+      Partecipanti all'Evento Microsoft
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduzione" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduzione
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risorse-cloud-del-workshop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Risorse Cloud del Workshop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selezionare-il-linguaggio-di-programmazione-del-workshop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selezionare il Linguaggio di Programmazione del Workshop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#autenticazione-con-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Autenticazione con Azure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#autenticazione-con-il-servizio-devtunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Autenticazione con il Servizio DevTunnel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aprire-il-workshop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aprire il Workshop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#struttura-del-progetto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Struttura del Progetto
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#struttura-del-progetto_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Struttura del Progetto
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suggerimenti-pro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suggerimenti Pro
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Introduction event</h1>
+
+<h2 id="partecipanti-allevento-microsoft">Partecipanti all'Evento Microsoft<a class="headerlink" href="#partecipanti-allevento-microsoft" title="Permanent link">&para;</a></h2>
+<p>Le istruzioni in questa pagina presuppongono che tu stia partecipando a un evento e abbia accesso a un ambiente lab preconfigurato. Questo ambiente fornisce una sottoscrizione Azure con tutti gli strumenti e le risorse necessari per completare il workshop.</p>
+<h2 id="introduzione">Introduzione<a class="headerlink" href="#introduzione" title="Permanent link">&para;</a></h2>
+<p>Questo workshop è progettato per insegnarti il Servizio Agenti Azure AI e l'<a href="https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?context=%2Fazure%2Fai-services%2Fagents%2Fcontext%2Fcontext" target="_blank">SDK</a> associato. È composto da più lab, ognuno che evidenzia una caratteristica specifica del Servizio Agenti Azure AI. I lab sono pensati per essere completati in ordine, poiché ognuno si basa sulla conoscenza e il lavoro del lab precedente.</p>
+<h2 id="risorse-cloud-del-workshop">Risorse Cloud del Workshop<a class="headerlink" href="#risorse-cloud-del-workshop" title="Permanent link">&para;</a></h2>
+<p>Le seguenti risorse sono pre-fornite nella tua sottoscrizione Azure del lab:</p>
+<ul>
+<li>Un gruppo di risorse chiamato <strong>rg-zava-agent-wks-nnnnnnnn</strong></li>
+<li>Un <strong>hub Azure AI Foundry</strong> chiamato <strong>fdy-zava-agent-wks-nnnnnnnn</strong></li>
+<li>Un <strong>progetto Azure AI Foundry</strong> chiamato <strong>prj-zava-agent-wks-nnnnnnnn</strong></li>
+<li>Due modelli sono distribuiti: <strong>gpt-4o-mini</strong> e <strong>text-embedding-3-small</strong>. <a href="https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/" target="_blank">Vedi prezzi.</a></li>
+<li>Database Azure Database for PostgreSQL Flexible Server (B1ms Burstable 32GB) chiamato <strong>pg-zava-agent-wks-nnnnnnnn</strong>. <a href="https://azure.microsoft.com/pricing/details/postgresql/flexible-server" target="_blank">Vedi prezzi</a></li>
+<li>Risorsa Application Insights chiamata <strong>appi-zava-agent-wks-nnnnnnnn</strong>. <a href="https://azure.microsoft.com/pricing/calculator/?service=monitor" target="_blank">Vedi prezzi</a></li>
+</ul>
+<h2 id="selezionare-il-linguaggio-di-programmazione-del-workshop">Selezionare il Linguaggio di Programmazione del Workshop<a class="headerlink" href="#selezionare-il-linguaggio-di-programmazione-del-workshop" title="Permanent link">&para;</a></h2>
+<p>Il workshop è disponibile sia in Python che in C#. Assicurati di selezionare il linguaggio che si adatta alla stanza lab o alla preferenza utilizzando le schede del selettore di linguaggio. Nota, non cambiare linguaggio a metà workshop.</p>
+<p><strong>Seleziona la scheda del linguaggio che corrisponde alla tua stanza lab:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python</label><label for="__tabbed_1_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Il linguaggio predefinito per il workshop è impostato su <strong>Python</strong>.</p>
+</div>
+<div class="tabbed-block">
+<p>Il linguaggio predefinito per il workshop è impostato su <strong>C#</strong>.</p>
+<div class="admonition warning">
+<p class="admonition-title">La versione C#/.NET di questo workshop è in beta e ha problemi di stabilità noti.</p>
+</div>
+<p>Assicurati di leggere la sezione della <a href="../../../dotnet-troubleshooting/">guida alla risoluzione dei problemi</a> <strong>PRIMA</strong> di iniziare il workshop. Altrimenti, seleziona la versione <strong>Python</strong> del workshop.</p>
+</div>
+</div>
+</div>
+<h2 id="autenticazione-con-azure">Autenticazione con Azure<a class="headerlink" href="#autenticazione-con-azure" title="Permanent link">&para;</a></h2>
+<p>Devi autenticarti con Azure in modo che l'app agent possa accedere al Servizio Agenti Azure AI e ai modelli. Segui questi passaggi:</p>
+<ol>
+<li>
+<p>Apri una finestra terminale. L'app terminale è <strong>fissata</strong> alla barra delle applicazioni di Windows 11.</p>
+<p><a class="glightbox" href="../../../../media/windows-taskbar.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Apri la finestra terminale" src="../../../../media/windows-taskbar.png" width="300" /></a></p>
+</li>
+<li>
+<p>Esegui il seguente comando per autenticarti con Azure:</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">login</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ti verrà richiesto di aprire un link del browser e accedere al tuo account Azure.</p>
+<ol>
+<li>Una finestra del browser si aprirà automaticamente, seleziona <strong>Account di lavoro o scuola</strong> e poi seleziona <strong>Continua</strong>.</li>
+<li>Utilizza il <strong>Nome utente</strong> e il <strong>TAP (Temporary Access Pass)</strong> trovati nella <strong>sezione superiore</strong> della scheda <strong>Risorse</strong> nell'ambiente lab.</li>
+<li>Seleziona <strong>Sì, tutte le app</strong></li>
+<li>Seleziona <strong>Fatto</strong></li>
+</ol>
+</div>
+</li>
+<li>
+<p>Quindi seleziona la sottoscrizione <strong>Predefinita</strong> dalla riga di comando, selezionando <strong>Invio</strong>.</p>
+</li>
+<li>
+<p>Lascia aperta la finestra terminale per i prossimi passaggi.</p>
+</li>
+</ol>
+<h2 id="autenticazione-con-il-servizio-devtunnel">Autenticazione con il Servizio DevTunnel<a class="headerlink" href="#autenticazione-con-il-servizio-devtunnel" title="Permanent link">&para;</a></h2>
+<p>DevTunnel consente al Servizio Agenti Azure AI di accedere al tuo Server MCP locale durante il workshop.</p>
+<div class="highlight"><pre><span></span><code><span class="n">devtunnel</span> <span class="n">login</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Remarque</p>
+<p>Ti verrà richiesto di utilizzare l'account che hai utilizzato per <code>az login</code>. Seleziona l'account e continua.</p>
+</div>
+<p>Lascia aperta la finestra terminale per i prossimi passaggi.</p>
+<h2 id="aprire-il-workshop">Aprire il Workshop<a class="headerlink" href="#aprire-il-workshop" title="Permanent link">&para;</a></h2>
+<p>Segui questi passaggi per aprire il workshop in Visual Studio Code:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Python</label><label for="__tabbed_2_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Il seguente blocco di comandi aggiorna il repository del workshop, attiva l'ambiente virtuale Python e apre il progetto in VS Code.</p>
+<p>Copia e incolla il seguente blocco di comandi nel terminale e premi <strong>Invio</strong>.</p>
+<div class="highlight"><pre><span></span><code><span class="p">;</span> <span class="nb">cd </span><span class="nv">$HOME</span><span class="p">\</span><span class="n">aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol</span> <span class="p">`</span>
+<span class="p">;</span> <span class="n">git</span> <span class="n">pull</span> <span class="p">`</span>
+<span class="p">;</span> <span class="p">.\</span><span class="n">src</span><span class="p">\</span><span class="n">python</span><span class="p">\</span><span class="n">workshop</span><span class="p">\.</span><span class="n">venv</span><span class="p">\</span><span class="n">Scripts</span><span class="p">\</span><span class="n">activate</span> <span class="p">`</span>
+<span class="p">;</span> <span class="n">code</span> <span class="p">.</span><span class="n">vscode</span><span class="p">\</span><span class="n">python-workspace</span><span class="p">.</span><span class="n">code-workspace</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Quando il progetto si apre in VS Code, appaiono due notifiche nell'angolo in basso a destra. Clicca ✖ per chiudere entrambe le notifiche.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VS Code</label><label for="__tabbed_3_2">Visual Studio 2022</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li>
+<p>Apri il workshop in Visual Studio Code. Dalla finestra terminale, esegui il seguente comando:</p>
+<div class="highlight"><pre><span></span><code><span class="p">;</span> <span class="nb">cd </span><span class="nv">$HOME</span><span class="p">\</span><span class="n">aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol</span> <span class="p">`</span>
+<span class="p">;</span> <span class="n">git</span> <span class="n">pull</span> <span class="p">`</span>
+<span class="p">;</span><span class="n">code</span> <span class="p">.</span><span class="n">vscode</span><span class="p">\</span><span class="n">csharp-workspace</span><span class="p">.</span><span class="n">code-workspace</span>
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Quando il progetto si apre in VS Code, apparirà una notifica nell'angolo in basso a destra per installare l'estensione C#. Clicca <strong>Installa</strong> per installare l'estensione C#, in quanto fornirà le funzionalità necessarie per lo sviluppo C#.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>
+<p>Apri il workshop in Visual Studio 2022. Dalla finestra terminale, esegui il seguente comando:</p>
+<div class="highlight"><pre><span></span><code><span class="p">;</span> <span class="n">git</span> <span class="n">pull</span> <span class="p">`</span>
+<span class="p">;</span><span class="nb">cd </span><span class="nv">$HOME</span><span class="p">;</span> <span class="nb">start </span><span class="p">.\</span><span class="n">aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol</span><span class="p">\</span><span class="n">src</span><span class="p">\</span><span class="n">csharp</span><span class="p">\</span><span class="n">McpAgentWorkshop</span><span class="p">.</span><span class="n">slnx</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Potresti essere chiesto con quale programma aprire la solution. Seleziona <strong>Visual Studio 2022</strong>.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h2 id="struttura-del-progetto">Struttura del Progetto<a class="headerlink" href="#struttura-del-progetto" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Python</label><label for="__tabbed_4_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Assicurati di familiarizzare con le <strong>sottocartelle</strong> e i <strong>file</strong> chiave con cui lavorerai durante tutto il workshop.</p>
+<ol>
+<li>Il file <strong>main.py</strong>: Il punto di ingresso per l'app, contenente la sua logica principale.</li>
+<li>Il file <strong>sales_data.py</strong>: La logica di funzione per eseguire query SQL dinamiche contro il database SQLite.</li>
+<li>Il file <strong>stream_event_handler.py</strong>: Contiene la logica del gestore di eventi per lo streaming di token.</li>
+<li>La cartella <strong>shared/files</strong>: Contiene i file creati dall'app agent.</li>
+<li>La cartella <strong>shared/instructions</strong>: Contiene le istruzioni passate all'LLM.</li>
+</ol>
+<p><a class="glightbox" href="../../../../media/project-structure-self-guided-python.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Struttura delle cartelle del lab" src="../../../../media/project-structure-self-guided-python.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<h2 id="struttura-del-progetto_1">Struttura del Progetto<a class="headerlink" href="#struttura-del-progetto_1" title="Permanent link">&para;</a></h2>
+<p>Il progetto utilizza <a href="http://aka.ms/dotnet-aspire">Aspire</a> per semplificare la costruzione dell'applicazione agent, gestire il server MCP e orchestrare tutte le dipendenze esterne. La solution è composta da quattro progetti, tutti con il prefisso <code>McpAgentWorkshop</code>:</p>
+<ul>
+<li><code>AppHost</code>: L'orchestratore Aspire e progetto di avvio per il workshop.</li>
+<li><code>McpServer</code>: Il progetto del server MCP.</li>
+<li><code>ServiceDefaults</code>: Configurazione predefinita per i servizi, come logging e telemetria.</li>
+<li><code>WorkshopApi</code>: L'API Agent per il workshop. La logica dell'applicazione principale è nella classe <code>AgentService</code>.</li>
+</ul>
+<p>Oltre ai progetti .NET nella solution, c'è una cartella <code>shared</code> (visibile come Solution Folder e tramite il file explorer), che contiene:</p>
+<ul>
+<li><code>instructions</code>: Le istruzioni passate all'LLM.</li>
+<li><code>scripts</code>: Script shell helper per varie attività, verranno riferiti quando necessario.</li>
+<li><code>webapp</code>: L'applicazione client front-end. Nota: Questa è un'applicazione Python, di cui Aspire gestirà il ciclo di vita.</li>
+</ul>
+<p><a class="glightbox" href="../../../../media/project-structure-self-guided-csharp.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Struttura delle cartelle del lab" src="../../../../media/project-structure-self-guided-csharp.png" /></a></p>
+</div>
+</div>
+</div>
+<h2 id="suggerimenti-pro">Suggerimenti Pro<a class="headerlink" href="#suggerimenti-pro" title="Permanent link">&para;</a></h2>
+<div class="admonition tips">
+<p class="admonition-title">Tips</p>
+<ol>
+<li>Il <strong>Menu Hamburger</strong> nel pannello destro dell'ambiente lab offre funzionalità aggiuntive, inclusa la <strong>Vista Finestra Divisa</strong> e l'opzione per terminare il lab. La <strong>Vista Finestra Divisa</strong> ti consente di massimizzare l'ambiente lab a schermo intero, ottimizzando lo spazio dello schermo. Le <strong>Istruzioni</strong> del lab e il pannello <strong>Risorse</strong> si apriranno in una finestra separata.</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - present Microsoft
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "navigation.tabs.sticky", "content.tabs.link"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

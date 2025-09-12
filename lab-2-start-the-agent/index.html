@@ -1,0 +1,1499 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Azure AI Foundry Agent Services with MCP Workshop.">
+      
+      
+        <meta name="author" content="Dave Glover">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/lab-2-start-the-agent/">
+      
+      
+        <link rel="prev" href="../lab-1-agent-instructions/">
+      
+      
+        <link rel="next" href="../lab-3-mcp-semantic-search/">
+      
+      
+      <link rel="icon" href="../media/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>Lab 2 Start your Agent - Unlock your Agents Potential with MCP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#what-youll-learn" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Unlock your Agents Potential with MCP" class="md-header__button md-logo" aria-label="Unlock your Agents Potential with MCP" data-md-component="logo">
+      
+  <img src="../media/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Unlock your Agents Potential with MCP
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 2 Start your Agent
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../fr/lab-2-start-the-agent/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../es/lab-2-start-the-agent/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../it/lab-2-start-the-agent/" hreflang="it" class="md-select__link">
+              Italiano
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ja/lab-2-start-the-agent/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ko/lab-2-start-the-agent/" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../zh/lab-2-start-the-agent/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Unlock your Agents Potential with MCP" class="md-nav__button md-logo" aria-label="Unlock your Agents Potential with MCP" data-md-component="logo">
+      
+  <img src="../media/favicon.png" alt="logo">
+
+    </a>
+    Unlock your Agents Potential with MCP
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Workshop Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigating-the-workshop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Workshop Navigation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Open the Workshop
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Agent Services Labs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Agent Services Labs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-service-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI Foundry Agent Services
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-1-agent-instructions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 1 Agent Instructions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Lab 2 Start your Agent
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 2 Start your Agent
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You'll Learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab-exercise" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lab Exercise
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-agent-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Agent App
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-the-agent-web-chat-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open the Agent Web Chat Client
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-port-8005-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      Make Port 8005 Public
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-the-web-chat-client-in-the-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open the Web Chat Client in the Browser
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-agent-app_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Agent App
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-conversation-with-the-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start a Conversation with the Agent
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#leave-the-agent-app-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Leave the Agent App Running
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-3-mcp-semantic-search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 3 Semantic Search
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-4-secure-agent-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 4 Securing Agent Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Observability Labs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Observability Labs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observability Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-5-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 5 Service Monitoring
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-6-tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 6 Understand Tracing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../star-and-connect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Star and Connect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-finishing-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Finishing Up
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Resources
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Bonus content
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Bonus content
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-local-tracing-with-aspire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Local Tracing with Aspire
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You'll Learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab-exercise" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lab Exercise
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-agent-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Agent App
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-the-agent-web-chat-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open the Agent Web Chat Client
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-port-8005-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      Make Port 8005 Public
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-the-web-chat-client-in-the-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open the Web Chat Client in the Browser
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-agent-app_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Agent App
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-conversation-with-the-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start a Conversation with the Agent
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#leave-the-agent-app-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Leave the Agent App Running
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Lab 2 Start your Agent</h1>
+
+<h2 id="what-youll-learn">What You'll Learn<a class="headerlink" href="#what-youll-learn" title="Permanent link">&para;</a></h2>
+<p>In this lab, you'll enable the Code Interpreter to analyze sales data and create charts using natural language.</p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>In this lab, you will extend the Azure AI Agent with two tools:</p>
+<ul>
+<li><strong>Code Interpreter:</strong> Lets the agent generate and run Python code for data analysis and visualization.</li>
+<li><strong>MCP Server tools:</strong> Allow the agent to access external data sources using MCP Tools, in our case data in a PostgreSQL database.</li>
+</ul>
+<h2 id="lab-exercise">Lab Exercise<a class="headerlink" href="#lab-exercise" title="Permanent link">&para;</a></h2>
+<h3 id="enable-the-code-interpreter-and-mcp-server">Enable the Code Interpreter and MCP Server<a class="headerlink" href="#enable-the-code-interpreter-and-mcp-server" title="Permanent link">&para;</a></h3>
+<p>In this lab, you'll enable two powerful tools that work together: the Code Interpreter (which executes AI-generated Python code for data analysis and visualization) and the MCP Server (which provides secure access to Zava's sales data stored in PostgreSQL).</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python</label><label for="__tabbed_1_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li><strong>Open</strong> the <code>app.py</code>.</li>
+<li><strong>Scroll down to line 67</strong> and find the lines that add the Code Interpreter tool and the MCP Server tools to the agent's toolset. These line are currently commented out with <strong># plus space</strong> characters at the beginning.</li>
+<li>
+<p><strong>Uncomment</strong> the following lines:</p>
+<div class="admonition warning">
+<p class="admonition-title">Indentation matters in Python!</p>
+<p>When uncommenting, delete both the <code>#</code> symbol AND the space that follows it. This ensures the code maintains proper Python indentation and aligns correctly with the surrounding code.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># self.toolset.add(code_interpreter_tool)</span>
+<span class="c1"># self.toolset.add(mcp_server_tools)</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">What does this code do?</p>
+<ul>
+<li><strong>Code Interpreter tool</strong>: Enables the agent to execute Python code for data analysis and visualization.</li>
+<li><strong>MCP Server tools</strong>: Provides access to external data sources with specific allowed tools and no human approval required. For production applications, consider enabling human-in-the-loop authorization for sensitive operations.</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Review</strong> the code you uncommented. The code should look exactly like this:</p>
+<p>After uncommenting, your code should look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_setup_agent_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup MCP tools and code interpreter.&quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up Agent tools...&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span> <span class="o">=</span> <span class="n">AsyncToolSet</span><span class="p">()</span>
+
+    <span class="n">code_interpreter_tool</span> <span class="o">=</span> <span class="n">CodeInterpreterTool</span><span class="p">()</span>
+
+    <span class="n">mcp_server_tools</span> <span class="o">=</span> <span class="n">McpTool</span><span class="p">(</span>
+        <span class="n">server_label</span><span class="o">=</span><span class="s2">&quot;ZavaSalesAnalysisMcpServer&quot;</span><span class="p">,</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="n">Config</span><span class="o">.</span><span class="n">DEV_TUNNEL_URL</span><span class="p">,</span>
+        <span class="n">allowed_tools</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;get_multiple_table_schemas&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execute_sales_query&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;get_current_utc_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;semantic_search_products&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">mcp_server_tools</span><span class="o">.</span><span class="n">set_approval_mode</span><span class="p">(</span><span class="s2">&quot;never&quot;</span><span class="p">)</span>  <span class="c1"># No human in the loop</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code_interpreter_tool</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mcp_server_tools</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="start-the-agent-app">Start the Agent App<a class="headerlink" href="#start-the-agent-app" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Copy the text below to the clipboard:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Debug: Select and Start Debugging
+</code></pre></div>
+<ol>
+<li>Press <kbd>F1</kbd> to open the VS Code Command Palette.</li>
+<li>Paste the text into the Command Palette and select <strong>Debug: Select and Start Debugging</strong>.</li>
+<li>Select <strong>🌎🤖Debug Compound: Agent and MCP (http)</strong> from the list. This will start the agent app and the web chat client.</li>
+</ol>
+<p>This starts the following processes:</p>
+<ol>
+<li>DevTunnel (workshop) Task</li>
+<li>Web Chat (workshop)</li>
+<li>Agent Manager (workshop)</li>
+<li>MCP Server (workshop)</li>
+</ol>
+<p>In VS Code you'll see these running in the TERMINAL panel.</p>
+<p><a class="glightbox" href="../media/vs-code-processes.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The image shows the running processes in the VS Code TERMINAL panel" src="../media/vs-code-processes.png" /></a></p>
+<h2 id="open-the-agent-web-chat-client">Open the Agent Web Chat Client<a class="headerlink" href="#open-the-agent-web-chat-client" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">@Event Attendees</label><label for="__tabbed_2_2">Self-Guided Learners</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Select the following link to open the Web Chat app in the browser.</p>
+<p><a href="http://localhost:8005" target="_blank">Open Web Chat</a></p>
+</div>
+<div class="tabbed-block">
+<h2 id="make-port-8005-public">Make Port 8005 Public<a class="headerlink" href="#make-port-8005-public" title="Permanent link">&para;</a></h2>
+<p>You need to make port 8005 public in order to access the web chat client in your browser.</p>
+<ol>
+<li>Select the <strong>Ports</strong> tab in the bottom panel of VS Code.</li>
+<li>Right-click on the <strong>Web Chat App (8005)</strong> port and select <strong>Port Visibility</strong>.</li>
+<li>Select <strong>Public</strong>.</li>
+</ol>
+<p><a class="glightbox" href="../media/make-port-public.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../media/make-port-public.png" /></a></p>
+<h2 id="open-the-web-chat-client-in-the-browser">Open the Web Chat Client in the Browser<a class="headerlink" href="#open-the-web-chat-client-in-the-browser" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Copy the text below to the clipboard:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Open Port in Browser
+</code></pre></div>
+<ol>
+<li>Press <kbd>F1</kbd> to open the VS Code Command Palette.</li>
+<li>Paste the text into the Command Palette and select <strong>Open Port in Browser</strong>.</li>
+<li>Select <strong>8005</strong> from the list. This will open the agent web chat client in your browser.</li>
+</ol>
+</div>
+</div>
+</div>
+<p><a class="glightbox" href="../media/agent_web_chat.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../media/agent_web_chat.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<ol>
+<li><strong>Open</strong> <code>AgentService.cs</code> from the <code>McpAgentWorkshop.WorkshopApi</code> project's <code>Services</code> folder.</li>
+<li>Navigate to the <code>InitialiseAgentAsync</code> method.</li>
+<li>
+<p><strong>Uncomment</strong> the following lines:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// var mcpTool = new MCPToolDefinition(</span>
+<span class="c1">//     ZavaMcpToolLabel,</span>
+<span class="c1">//     devtunnelUrl + &quot;mcp&quot;);</span>
+
+<span class="c1">// var codeInterpreterTool = new CodeInterpreterToolDefinition();</span>
+
+<span class="c1">// IEnumerable&lt;ToolDefinition&gt; tools = [mcpTool, codeInterpreterTool];</span>
+
+<span class="c1">// persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(</span>
+<span class="c1">//         name: AgentName,</span>
+<span class="c1">//         model: configuration.GetValue&lt;string&gt;(&quot;MODEL_DEPLOYMENT_NAME&quot;),</span>
+<span class="c1">//         instructions: instructionsContent,</span>
+<span class="c1">//         temperature: modelTemperature,</span>
+<span class="c1">//         tools: tools);</span>
+
+<span class="c1">// logger.LogInformation(&quot;Agent created with ID: {AgentId}&quot;, persistentAgent.Id);</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="start-the-agent-app_1">Start the Agent App<a class="headerlink" href="#start-the-agent-app_1" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Press <kbd>F1</kbd> to open the VS Code Command Palette.</li>
+<li>Select <strong>Debug Aspire</strong> as the launch configuration.</li>
+</ol>
+<p>Once the debugger has launched, a browser window will open with the Aspire dashboard. Once all resources have started, you can launch the workshop web application by clicking the link <strong>Workshop Frontend</strong>.</p>
+<p><a class="glightbox" href="../media/lab-2-start-agent-aspire-dashboard.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Aspire dashboard" src="../media/lab-2-start-agent-aspire-dashboard.png" /></a></p>
+<div class="admonition tip">
+<p class="admonition-title">Troubleshooting</p>
+<p>If the browser does not load, try hard-refreshing the page (Ctrl + F5 or Cmd + Shift + R). If it still does not load, refer to the <a href="../dotnet-troubleshooting/">troubleshooting guide</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<h2 id="start-a-conversation-with-the-agent">Start a Conversation with the Agent<a class="headerlink" href="#start-a-conversation-with-the-agent" title="Permanent link">&para;</a></h2>
+<p>From the web chat client, you can start a conversation with the agent. The agent is designed to answer questions about Zava's sales data and generate visualizations using the Code Interpreter.</p>
+<ol>
+<li>
+<p>Product sales analysis. Copy and paste the following question into the chat:</p>
+<div class="highlight"><pre><span></span><code>Show the top 10 products by revenue by store for the last quarter
+</code></pre></div>
+<p>After a moment, the agent will respond with a table showing the top 10 products by revenue for each store.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The agent uses the LLM calls three MCP Server tools to fetch the data and display it in a table:</p>
+<ol>
+<li><strong>get_current_utc_date()</strong>: Gets the current date and time so the agent can determine the last quarter relative to the current date.</li>
+<li><strong>get_multiple_table_schemas()</strong>: Gets the schemas of the tables in the database required to by the LLM to generate valid SQL.</li>
+<li><strong>execute_sales_query</strong>: Executes a SQL query to fetch the top 10 products by revenue for the last quarter from the PostgreSQL database.</li>
+</ol>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Python</label><label for="__tabbed_3_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Switch back to VS Code and select <strong>MCP Server (workspace)</strong> from the TERMINAL panel and you'll see the calls made to the MCP Server by the Azure AI Foundry Agent Service.</p>
+<p><a class="glightbox" href="../media/mcp-server-in-action.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../media/mcp-server-in-action.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<p>In the Aspire dashboard, you can select the logs for the <code>dotnet-mcp-server</code> resource to see the calls made to the MCP Server by the Azure AI Foundry Agent Service.</p>
+<p>You can also open the trace view and find the end-to-end trace of the application, from the user input in the web chat, through to the agent calls and MCP tool calls.</p>
+<p><a class="glightbox" href="../media/lab-7-trace-overview.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Trace overview" src="../media/lab-7-trace-overview.png" /></a></p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Generate a pie chart. Copy and paste the following question into the chat:</p>
+<div class="highlight"><pre><span></span><code>Show sales by store as a pie chart for this financial year
+</code></pre></div>
+<p>The agent will respond with a pie chart showing the sales distribution by store for the current financial year.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This might feel like magic, so what’s happening behind the scenes to make it all work?</p>
+<p>Foundry Agent Service orchestrates the following steps:</p>
+<ol>
+<li>Like the previous question, the agent determines if it has the table schemas required for the query. If not, it uses <strong>get_multiple_table_schemas()</strong> tools to get the current date and the database schema.</li>
+<li>The agent then uses the <strong>execute_sales_query</strong> tool to fetch the sales</li>
+<li>Using the returned data, the LLM writes Python code to create a Pie Chart.</li>
+<li>Finally, the Code Interpreter executes the Python code to generate the chart.</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Continue asking questions about Zava sales data to see the Code Interpreter in action. Here are a few follow-up questions you might like to try:</p>
+<ul>
+<li><code>Determine which products or categories drive sales. Show as a Bar Chart.</code></li>
+<li><code>What would be the impact of a shock event (e.g., 20% sales drop in one region) on global sales distribution? Show as a Grouped Bar Chart.</code></li>
+<li>Follow up with <code>What if the shock event was 50%?</code></li>
+<li><code>Which regions have sales above or below the average? Show as a Bar Chart with Deviation from Average.</code></li>
+<li><code>Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.</code></li>
+<li><code>Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.</code></li>
+</ul>
+</li>
+</ol>
+<!-- ## Stop the Agent App
+
+1. Switch back to the VS Code editor.
+1. Press <kbd>Shift + F5</kbd> to stop the agent app. -->
+
+<h2 id="leave-the-agent-app-running">Leave the Agent App Running<a class="headerlink" href="#leave-the-agent-app-running" title="Permanent link">&para;</a></h2>
+<p>Leave the agent app running as you will use it in the next lab to extend the agent with more tools and capabilities.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../lab-1-agent-instructions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Lab 1 Agent Instructions">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Lab 1 Agent Instructions
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../lab-3-mcp-semantic-search/" class="md-footer__link md-footer__link--next" aria-label="Next: Lab 3 Semantic Search">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Lab 3 Semantic Search
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - present Microsoft
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "navigation.tabs.sticky", "content.tabs.link"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

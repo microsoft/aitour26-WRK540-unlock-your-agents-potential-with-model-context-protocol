@@ -1,0 +1,1500 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Azure AI Foundry Agent Services with MCP Workshop.">
+      
+      
+        <meta name="author" content="Dave Glover">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/ko/lab-2-start-the-agent/">
+      
+      
+        <link rel="prev" href="../lab-1-agent-instructions/">
+      
+      
+        <link rel="next" href="../lab-3-mcp-semantic-search/">
+      
+      
+      <link rel="icon" href="../../media/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>랩 2 에이전트 시작하기 - MCP로 에이전트의 잠재력 발휘하기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../" title="MCP로 에이전트의 잠재력 발휘하기" class="md-header__button md-logo" aria-label="MCP로 에이전트의 잠재력 발휘하기" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MCP로 에이전트의 잠재력 발휘하기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              랩 2 에이전트 시작하기
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="언어설정">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../lab-2-start-the-agent/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/lab-2-start-the-agent/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../es/lab-2-start-the-agent/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../it/lab-2-start-the-agent/" hreflang="it" class="md-select__link">
+              Italiano
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/lab-2-start-the-agent/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/lab-2-start-the-agent/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="MCP로 에이전트의 잠재력 발휘하기" class="md-nav__button md-logo" aria-label="MCP로 에이전트의 잠재력 발휘하기" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    MCP로 에이전트의 잠재력 발휘하기
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    워크숍 소개
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigating-the-workshop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    워크숍 네비게이션
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    시작하기
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            시작하기
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    워크숍 열기
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    아키텍처 개요
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    에이전트 서비스 랩
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            에이전트 서비스 랩
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-service-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI Foundry 에이전트 서비스
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-1-agent-instructions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 1 에이전트 지시사항
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    랩 2 에이전트 시작하기
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 2 에이전트 시작하기
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      학습 내용
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      소개
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      실습 연습
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 웹 채팅 클라이언트 열기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8005" class="md-nav__link">
+    <span class="md-ellipsis">
+      포트 8005를 공개하기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      브라우저에서 웹 채팅 클라이언트 열기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트와 대화 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱을 실행 상태로 유지
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-3-mcp-semantic-search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 3 의미적 검색
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-4-secure-agent-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 4 에이전트 데이터 보안
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    가관측성 랩
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            가관측성 랩
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    가관측성 개요
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-5-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 5 서비스 모니터링
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-6-tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    랩 6 추적 이해하기
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../star-and-connect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    별표와 연결
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-finishing-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    마무리
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    요약
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    리소스
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    보너스 콘텐츠
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            보너스 콘텐츠
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-local-tracing-with-aspire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Aspire를 사용한 로컬 추적
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    정보
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      학습 내용
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      소개
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      실습 연습
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 웹 채팅 클라이언트 열기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8005" class="md-nav__link">
+    <span class="md-ellipsis">
+      포트 8005를 공개하기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      브라우저에서 웹 채팅 클라이언트 열기
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트와 대화 시작
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      에이전트 앱을 실행 상태로 유지
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>랩 2 에이전트 시작하기</h1>
+
+<h2 id="_1">학습 내용<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>이 실습에서는 코드 인터프리터를 활성화하여 자연어를 사용해 판매 데이터를 분석하고 차트를 생성합니다.</p>
+<h2 id="_2">소개<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>이 실습에서는 Azure AI 에이전트를 두 가지 도구로 확장합니다:</p>
+<ul>
+<li><strong>코드 인터프리터:</strong> 에이전트가 데이터 분석과 시각화를 위해 Python 코드를 생성하고 실행할 수 있게 합니다.</li>
+<li><strong>MCP 서버 도구:</strong> 에이전트가 MCP 도구를 사용하여 외부 데이터 소스에 액세스할 수 있게 하며, 우리의 경우 PostgreSQL 데이터베이스의 데이터입니다.</li>
+</ul>
+<h2 id="_3">실습 연습<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="mcp">코드 인터프리터와 MCP 서버 활성화<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
+<p>이 실습에서는 함께 작동하는 두 가지 강력한 도구를 활성화합니다: 코드 인터프리터(데이터 분석 및 시각화를 위해 AI 생성 Python 코드를 실행)와 MCP 서버(PostgreSQL에 저장된 Zava의 판매 데이터에 대한 안전한 액세스를 제공).</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python</label><label for="__tabbed_1_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li><strong>열기</strong> <code>app.py</code> 파일을.</li>
+<li><strong>67번째 줄까지 스크롤</strong>하여 에이전트의 도구 세트에 코드 인터프리터 도구와 MCP 서버 도구를 추가하는 줄을 찾습니다. 이 줄들은 현재 시작 부분에 <strong># 플러스 공백</strong> 문자로 주석 처리되어 있습니다.</li>
+<li>
+<p><strong>주석 해제</strong> 다음 줄들을:</p>
+<div class="admonition warning">
+<p class="admonition-title">Python에서는 들여쓰기가 중요합니다!</p>
+<p>주석을 해제할 때는 <code>#</code> 기호와 그 다음에 오는 공백을 모두 삭제하세요. 이렇게 하면 코드가 적절한 Python 들여쓰기를 유지하고 주변 코드와 올바르게 정렬됩니다.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># self.toolset.add(code_interpreter_tool)</span>
+<span class="c1"># self.toolset.add(mcp_server_tools)</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">이 코드는 무엇을 하나요?</p>
+<ul>
+<li><strong>코드 인터프리터 도구</strong>: 에이전트가 데이터 분석과 시각화를 위해 Python 코드를 실행할 수 있게 합니다.</li>
+<li><strong>MCP 서버 도구</strong>: 특정 허용된 도구로 외부 데이터 소스에 대한 액세스를 제공하며 인간의 승인이 필요하지 않습니다. 프로덕션 애플리케이션의 경우 민감한 작업에 대해 휴먼 인 더 루프 인증을 활성화하는 것을 고려하세요.</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>검토</strong> 주석을 해제한 코드를. 코드는 정확히 다음과 같아야 합니다:</p>
+<p>주석을 해제한 후, 코드는 다음과 같아야 합니다:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_setup_agent_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup MCP tools and code interpreter.&quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up Agent tools...&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span> <span class="o">=</span> <span class="n">AsyncToolSet</span><span class="p">()</span>
+
+    <span class="n">code_interpreter_tool</span> <span class="o">=</span> <span class="n">CodeInterpreterTool</span><span class="p">()</span>
+
+    <span class="n">mcp_server_tools</span> <span class="o">=</span> <span class="n">McpTool</span><span class="p">(</span>
+        <span class="n">server_label</span><span class="o">=</span><span class="s2">&quot;ZavaSalesAnalysisMcpServer&quot;</span><span class="p">,</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="n">Config</span><span class="o">.</span><span class="n">DEV_TUNNEL_URL</span><span class="p">,</span>
+        <span class="n">allowed_tools</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;get_multiple_table_schemas&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execute_sales_query&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;get_current_utc_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;semantic_search_products&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">mcp_server_tools</span><span class="o">.</span><span class="n">set_approval_mode</span><span class="p">(</span><span class="s2">&quot;never&quot;</span><span class="p">)</span>  <span class="c1"># No human in the loop</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code_interpreter_tool</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">toolset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mcp_server_tools</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="_4">에이전트 앱 시작<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ol>
+<li>아래 텍스트를 클립보드에 복사:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Debug: Select and Start Debugging
+</code></pre></div>
+<ol>
+<li><kbd>F1</kbd>을 눌러 VS Code 명령 팔레트를 엽니다.</li>
+<li>텍스트를 명령 팔레트에 붙여넣고 <strong>Debug: Select and Start Debugging</strong>을 선택합니다.</li>
+<li>목록에서 <strong>🌎🤖Debug Compound: Agent and MCP (http)</strong>를 선택합니다. 이것은 에이전트 앱과 웹 채팅 클라이언트를 시작합니다.</li>
+</ol>
+<p>이것은 다음 프로세스들을 시작합니다:</p>
+<ol>
+<li>DevTunnel (workshop) Task</li>
+<li>Web Chat (workshop)</li>
+<li>Agent Manager (workshop)</li>
+<li>MCP Server (workshop)</li>
+</ol>
+<p>VS Code의 TERMINAL 패널에서 이들이 실행되는 것을 볼 수 있습니다.</p>
+<p><a class="glightbox" href="../../media/vs-code-processes.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="이미지는 VS Code TERMINAL 패널에서 실행 중인 프로세스들을 보여줍니다" src="../../media/vs-code-processes.png" /></a></p>
+<h2 id="_5">에이전트 웹 채팅 클라이언트 열기<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">@이벤트 참가자</label><label for="__tabbed_2_2">자율 학습자</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>다음 링크를 선택하여 브라우저에서 웹 채팅 앱을 엽니다.</p>
+<p><a href="http://localhost:8005" target="_blank">웹 채팅 열기</a></p>
+</div>
+<div class="tabbed-block">
+<h2 id="8005">포트 8005를 공개하기<a class="headerlink" href="#8005" title="Permanent link">&para;</a></h2>
+<p>브라우저에서 웹 채팅 클라이언트에 액세스하려면 포트 8005를 공개해야 합니다.</p>
+<ol>
+<li>VS Code 하단 패널에서 <strong>Ports</strong> 탭을 선택합니다.</li>
+<li><strong>Web Chat App (8005)</strong> 포트를 우클릭하고 <strong>Port Visibility</strong>를 선택합니다.</li>
+<li><strong>Public</strong>을 선택합니다.</li>
+</ol>
+<p><a class="glightbox" href="../../media/make-port-public.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../media/make-port-public.png" /></a></p>
+<h2 id="_6">브라우저에서 웹 채팅 클라이언트 열기<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ol>
+<li>아래 텍스트를 클립보드에 복사:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Open Port in Browser
+</code></pre></div>
+<ol>
+<li><kbd>F1</kbd>을 눌러 VS Code 명령 팔레트를 엽니다.</li>
+<li>텍스트를 명령 팔레트에 붙여넣고 <strong>Open Port in Browser</strong>를 선택합니다.</li>
+<li>목록에서 <strong>8005</strong>를 선택합니다. 이것은 브라우저에서 에이전트 웹 채팅 클라이언트를 엽니다.</li>
+</ol>
+</div>
+</div>
+</div>
+<p><a class="glightbox" href="../../media/agent_web_chat.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../media/agent_web_chat.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<ol>
+<li><strong>열기</strong> <code>McpAgentWorkshop.WorkshopApi</code> 프로젝트의 <code>Services</code> 폴더에서 <code>AgentService.cs</code>를.</li>
+<li><code>InitialiseAgentAsync</code> 메서드로 이동합니다.</li>
+<li>
+<p><strong>주석 해제</strong> 다음 줄들을:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// var mcpTool = new MCPToolDefinition(</span>
+<span class="c1">//     ZavaMcpToolLabel,</span>
+<span class="c1">//     devtunnelUrl + &quot;mcp&quot;);</span>
+
+<span class="c1">// var codeInterpreterTool = new CodeInterpreterToolDefinition();</span>
+
+<span class="c1">// IEnumerable&lt;ToolDefinition&gt; tools = [mcpTool, codeInterpreterTool];</span>
+
+<span class="c1">// persistentAgent = await persistentAgentsClient.Administration.CreateAgentAsync(</span>
+<span class="c1">//         name: AgentName,</span>
+<span class="c1">//         model: configuration.GetValue&lt;string&gt;(&quot;MODEL_DEPLOYMENT_NAME&quot;),</span>
+<span class="c1">//         instructions: instructionsContent,</span>
+<span class="c1">//         temperature: modelTemperature,</span>
+<span class="c1">//         tools: tools);</span>
+
+<span class="c1">// logger.LogInformation(&quot;Agent created with ID: {AgentId}&quot;, persistentAgent.Id);</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="_7">에이전트 앱 시작<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ol>
+<li><kbd>F1</kbd>을 눌러 VS Code 명령 팔레트를 엽니다.</li>
+<li>시작 구성으로 <strong>Debug Aspire</strong>를 선택합니다.</li>
+</ol>
+<p>디버거가 시작되면 Aspire 대시보드가 있는 브라우저 창이 열립니다. 모든 리소스가 시작되면 <strong>Workshop Frontend</strong> 링크를 클릭하여 워크샵 웹 애플리케이션을 시작할 수 있습니다.</p>
+<p><a class="glightbox" href="../../media/lab-2-start-agent-aspire-dashboard.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Aspire 대시보드" src="../../media/lab-2-start-agent-aspire-dashboard.png" /></a></p>
+<div class="admonition tip">
+<p class="admonition-title">문제 해결</p>
+<p>브라우저가 로드되지 않으면 페이지를 강제로 새로고침해 보세요(Ctrl + F5 또는 Cmd + Shift + R). 여전히 로드되지 않으면 <a href="../dotnet-troubleshooting/">문제 해결 가이드</a>를 참조하세요.</p>
+</div>
+</div>
+</div>
+</div>
+<h2 id="_8">에이전트와 대화 시작<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>웹 채팅 클라이언트에서 에이전트와 대화를 시작할 수 있습니다. 에이전트는 Zava의 판매 데이터에 대한 질문에 답하고 코드 인터프리터를 사용하여 시각화를 생성하도록 설계되었습니다.</p>
+<ol>
+<li>
+<p>제품 판매 분석. 다음 질문을 채팅에 복사해서 붙여넣으세요:</p>
+<div class="highlight"><pre><span></span><code>Show the top 10 products by revenue by store for the last quarter
+</code></pre></div>
+<p>잠깐 후에, 에이전트는 각 매장별 매출 상위 10개 제품을 보여주는 테이블로 응답합니다.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>에이전트는 데이터를 가져와서 테이블에 표시하기 위해 세 개의 MCP 서버 도구를 호출하는 LLM을 사용합니다:</p>
+<ol>
+<li><strong>get_current_utc_date()</strong>: 현재 날짜와 시간을 가져와서 에이전트가 현재 날짜를 기준으로 지난 분기를 결정할 수 있게 합니다.</li>
+<li><strong>get_multiple_table_schemas()</strong>: 유효한 SQL을 생성하기 위해 LLM이 필요로 하는 데이터베이스 테이블의 스키마를 가져옵니다.</li>
+<li><strong>execute_sales_query</strong>: PostgreSQL 데이터베이스에서 지난 분기의 매출 상위 10개 제품을 가져오는 SQL 쿼리를 실행합니다.</li>
+</ol>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Python</label><label for="__tabbed_3_2">C#</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>VS Code로 돌아가서 TERMINAL 패널에서 <strong>MCP Server (workspace)</strong>를 선택하면 Azure AI Foundry 에이전트 서비스가 MCP 서버에 한 호출들을 볼 수 있습니다.</p>
+<p><a class="glightbox" href="../../media/mcp-server-in-action.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../media/mcp-server-in-action.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<p>Aspire 대시보드에서 <code>dotnet-mcp-server</code> 리소스의 로그를 선택하여 Azure AI Foundry 에이전트 서비스가 MCP 서버에 한 호출들을 볼 수 있습니다.</p>
+<p>또한 트레이스 보기를 열어서 웹 채팅의 사용자 입력부터 에이전트 호출과 MCP 도구 호출까지 애플리케이션의 종단간 트레이스를 찾을 수 있습니다.</p>
+<p><a class="glightbox" href="../../media/lab-7-trace-overview.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="트레이스 개요" src="../../media/lab-7-trace-overview.png" /></a></p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>파이 차트 생성. 다음 질문을 채팅에 복사해서 붙여넣으세요:</p>
+<div class="highlight"><pre><span></span><code>Show sales by store as a pie chart for this financial year
+</code></pre></div>
+<p>에이전트는 현재 회계연도의 매장별 판매 분포를 보여주는 파이 차트로 응답합니다.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>이것은 마법처럼 느껴질 수 있으니, 모든 것이 작동하게 하기 위해 무대 뒤에서 무슨 일이 일어나고 있는지 살펴보겠습니다.</p>
+<p>Foundry 에이전트 서비스는 다음 단계들을 조율합니다:</p>
+<ol>
+<li>이전 질문과 마찬가지로, 에이전트는 쿼리에 필요한 테이블 스키마를 가지고 있는지 확인합니다. 없다면, <strong>get_multiple_table_schemas()</strong> 도구를 사용하여 현재 날짜와 데이터베이스 스키마를 가져옵니다.</li>
+<li>그런 다음 에이전트는 <strong>execute_sales_query</strong> 도구를 사용하여 판매 데이터를 가져옵니다</li>
+<li>반환된 데이터를 사용하여, LLM은 파이 차트를 생성하는 Python 코드를 작성합니다.</li>
+<li>마지막으로, 코드 인터프리터가 Python 코드를 실행하여 차트를 생성합니다.</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Zava 판매 데이터에 대한 질문을 계속해서 코드 인터프리터의 동작을 확인하세요. 시도해볼 수 있는 몇 가지 후속 질문들입니다:</p>
+<ul>
+<li><code>Determine which products or categories drive sales. Show as a Bar Chart.</code></li>
+<li><code>What would be the impact of a shock event (e.g., 20% sales drop in one region) on global sales distribution? Show as a Grouped Bar Chart.</code></li>
+<li>이어서 <code>What if the shock event was 50%?</code></li>
+<li><code>Which regions have sales above or below the average? Show as a Bar Chart with Deviation from Average.</code></li>
+<li><code>Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.</code></li>
+<li><code>Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.</code></li>
+</ul>
+</li>
+</ol>
+<!-- ## Stop the Agent App
+
+1. Switch back to the VS Code editor.
+1. Press <kbd>Shift + F5</kbd> to stop the agent app. -->
+
+<h2 id="_9">에이전트 앱을 실행 상태로 유지<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>다음 실습에서 에이전트를 더 많은 도구와 기능으로 확장하는 데 사용할 것이므로 에이전트 앱을 실행 상태로 유지하세요.</p>
+<p><em>GitHub Copilot을 사용하여 번역되었습니다.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="../lab-1-agent-instructions/" class="md-footer__link md-footer__link--prev" aria-label="이전: 랩 1 에이전트 지시사항">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                랩 1 에이전트 지시사항
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../lab-3-mcp-semantic-search/" class="md-footer__link md-footer__link--next" aria-label="다음: 랩 3 의미적 검색">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                랩 3 의미적 검색
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - present Microsoft
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "navigation.tabs.sticky", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

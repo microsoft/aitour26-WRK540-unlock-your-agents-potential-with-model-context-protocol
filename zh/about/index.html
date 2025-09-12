@@ -1,0 +1,1248 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Azure AI Foundry Agent Services with MCP Workshop.">
+      
+      
+        <meta name="author" content="Dave Glover">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/zh/about/">
+      
+      
+        <link rel="prev" href="../lab-7-local-tracing-with-aspire/">
+      
+      
+      
+      <link rel="icon" href="../../media/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>关于 - 使用 MCP 释放代理的潜力</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#zava-diy" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../" title="使用 MCP 释放代理的潜力" class="md-header__button md-logo" aria-label="使用 MCP 释放代理的潜力" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            使用 MCP 释放代理的潜力
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              关于
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../about/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/about/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../es/about/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../it/about/" hreflang="it" class="md-select__link">
+              Italiano
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/about/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ko/about/" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="使用 MCP 释放代理的潜力" class="md-nav__button md-logo" aria-label="使用 MCP 释放代理的潜力" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    使用 MCP 释放代理的潜力
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工作坊介绍
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigating-the-workshop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工作坊导航
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开始
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            开始
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    打开工作坊
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    代理服务实验
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            代理服务实验
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-service-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI Foundry 代理服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-1-agent-instructions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 1 代理指令
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-2-start-the-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 2 启动您的代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-3-mcp-semantic-search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 3 语义搜索
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-4-secure-agent-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 4 保护代理数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    可观测性实验
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            可观测性实验
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    可观测性概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-5-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 5 服务监控
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-6-tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    实验 6 理解追踪
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../star-and-connect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    加星标和连接
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-finishing-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    完成
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    额外内容
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            额外内容
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-local-tracing-with-aspire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用 Aspire 进行本地追踪
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 所需模型
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 合成数据生成
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 产品数据集
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 所需模型
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 合成数据生成
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zava-diy_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zava DIY 产品数据集
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>关于</h1>
+
+<h2 id="zava-diy">Zava DIY 所需模型<a class="headerlink" href="#zava-diy" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gpt-4o-mini</li>
+<li>text-embedding-small-3</li>
+</ul>
+<h2 id="zava-diy_1">Zava DIY 合成数据生成<a class="headerlink" href="#zava-diy_1" title="Permanent link">&para;</a></h2>
+<p>Zava DIY 是一个专为开发人员设计的工具，用于创建用于测试和开发目的的合成数据。它允许用户生成可在各种应用程序中使用的真实数据集，确保数据满足特定要求而不会损害隐私或安全性。</p>
+<p><a href="https://github.com/microsoft/ai-tour-26-zava-diy-dataset-plus-mcp/tree/main" target="_blank">Zava DIY 产品数据集</a> GitHub 仓库。</p>
+<p>该数据库包括：</p>
+<ul>
+<li><strong>8 个门店</strong>遍布华盛顿州，每个门店都有独特的库存和销售数据</li>
+<li><strong>50,000+ 客户记录</strong>覆盖华盛顿州和在线客户</li>
+<li><strong>400+ DIY 产品</strong>包括工具、户外设备和家居装修用品</li>
+<li><strong>400+ 产品图像</strong>链接到数据库以支持基于图像的搜索</li>
+<li><strong>200,000+ 订单交易</strong>包含详细的销售历史</li>
+<li><strong>3000+ 库存项目</strong>跨越多个门店</li>
+<li><strong>图像嵌入向量</strong>用于产品图像，支持 AI 驱动的相似性搜索（使用 <a href="https://huggingface.co/openai/clip-vit-base-patch32/blob/main/README.md" target="_blank">openai/clip-vit-base-patch32</a> 编码）</li>
+<li><strong>文本嵌入向量</strong>用于产品描述，增强搜索和推荐功能 <a href="https://ai.azure.com/catalog/models/text-embedding-3-small" target="_blank">openai/text-embedding-3-small</a></li>
+</ul>
+<p>该数据库支持复杂查询和分析，能够高效访问销售、库存和客户数据。PostgreSQL 行级安全性 (RLS) 将代理限制为仅访问其分配门店的数据，确保安全性和隐私性。</p>
+<h2 id="zava-diy_2">Zava DIY 产品数据集<a class="headerlink" href="#zava-diy_2" title="Permanent link">&para;</a></h2>
+<p>Zava DIY PostgreSQL 数据库提供了一个具有真实数据模式的综合零售生态系统：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>数量</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>客户</strong></td>
+<td>50,000+</td>
+<td>华盛顿州各地的真实人口统计资料</td>
+</tr>
+<tr>
+<td><strong>产品</strong></td>
+<td>400+</td>
+<td>完整的 DIY 家居装修产品目录</td>
+</tr>
+<tr>
+<td><strong>门店</strong></td>
+<td>8</td>
+<td>华盛顿州各地的实体店 + 在线商店</td>
+</tr>
+<tr>
+<td><strong>订单项目</strong></td>
+<td>200,000+</td>
+<td>包含价格和数量的详细行项目</td>
+</tr>
+<tr>
+<td><strong>库存记录</strong></td>
+<td>3,000+</td>
+<td>特定门店的库存水平</td>
+</tr>
+<tr>
+<td><strong>向量嵌入</strong></td>
+<td>400+</td>
+<td>AI 驱动的产品相似性搜索</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_1">🏪 门店位置<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>高流量门店</strong>：西雅图、贝尔维尔、在线商店</li>
+<li><strong>区域门店</strong>：塔科马、斯波坎</li>
+<li><strong>专业市场</strong>：埃弗里特、雷德蒙德、柯克兰</li>
+<li><strong>地理分布</strong>：华盛顿州市场的真实覆盖</li>
+</ul>
+<h3 id="_2">📦 产品类别<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>数据集包括以下产品类别及所有可用产品：</p>
+<ul>
+<li>
+<p><strong>电气</strong>：AFCI 断路器 15 安培、AFCI 插座 15 安培、装甲电缆 BX 12-2、带支架的吊顶盒、彩色编码胶带套装、LED 调光开关、双极断路器 30A、EMT 导管 1/2 英寸、柔性导管 1/2 英寸、绝缘胶带、GFCI 断路器 20 安培、GFCI 插座 20 安培、润滑帽线缆螺母、重型延长线 100 英尺、高温电气胶带、室内延长线 25 英尺、接线盒 4x4、LED 吸顶灯、大线缆螺母、液密导管、运动传感器开关、多插座电源插排、旧工作盒、户外延长线 50 英尺、户外 LED 泛光灯、单联插座盒、PVC 导管 3/4 英寸、厨房吊灯、推入式连接器、可收缩线缆卷筒、刚性导管 1 英寸、Romex 电线 12-2 250 英尺、Romex 电线 14-2 250 英尺、自熔硅胶胶带、单极断路器 15A、单极断路器 20A、单极开关、标准插座 15 安培、THHN 电线 12 AWG、三路开关、定时开关、轨道照明套件、旋转连接器、带充电功能的 USB 插座、地下电缆 12-2、3 灯泡梳妆镜灯、乙烯基电气胶带、防水插座、防水盒、线缆螺母套装</p>
+</li>
+<li>
+<p><strong>花园和户外</strong>：通用肥料 50 磅、重型铁砧剪、仙人掌盆栽混合土、雪松覆盖物 3 立方英尺、陶瓷花盆 12 英寸、饮用水安全软管、可扩展软管 100 英尺、野花混合种子、花园软管 50 英尺、钢齿花园耙、富含营养的花园土、长柄花园铲、阳光阴影草种、悬挂式花篮、硬木覆盖物 2 立方英尺、重型软管 75 英尺、香草花园种子套装、冲击式喷头、地埋式喷头、LED 泛光灯 30W、景观射灯套件、春季草坪肥料、喷雾器套件、有机堆肥 40 磅、有机传家宝种子、摆动式喷头、塑料花盆套装、8 英尺杆锯修枝器、优质盆栽混合土 40 磅、3 臂旋转喷头、黑色橡胶覆盖物、播种起苗混合土、自浇水花盆、缓释颗粒、渗水软管 25 英尺、太阳能甲板灯套装、太阳能路径灯套装、稻草覆盖物包、串灯 48 英尺、番茄植物营养液、筛选表土 40 磅、蔬菜种子启动套件、木桶花盆</p>
+</li>
+<li>
+<p><strong>手动工具</strong>：可调扳手 10 英寸、球头锤 12 盎司、球头六角套装、SAE 组合扳手套装、线锯、数字卡尺 6 英寸、精加工锤 13 盎司、平头螺丝刀套装、折叠尺 6 英尺、绝缘螺丝刀套装、水平仪 24 英寸、电工钳 9 英寸、锁定钳 10 英寸、长臂六角套装、公制六角扳手套装、公制扳手套装、尖嘴钳 6 英寸、十字螺丝刀套装、管钳套装、精密螺丝刀套件、专业羊角锤 16 盎司、棘轮螺丝刀、齿锉套装、SAE 六角扳手套装、大锤 3 磅、速度角尺 7 英寸、T 型手柄六角套装、卷尺 25 英尺、扭矩扳手 1/2 驱动、剥线钳、木锉套装</p>
+</li>
+<li>
+<p><strong>五金器材</strong>：角度支架 4 英寸、桶形闩锁 4 英寸、18 号钉枪钉、对接铰链 3-1/2 英寸、拉丝镍柜门把手套装、凸轮式柜锁、中心距 4 英寸柜门拉手、马车螺栓套装、门链锁安全装置、普通钉子套装、隐藏式柜门铰链、台面支撑架、钥匙锁芯门锁、甲板螺钉 2-1/2 英寸、杠杆式门把手套装、球形门锁套装、5 英寸拉手、干墙螺钉 1-5/8 英寸、眼形螺栓套装、挡泥板垫片套件、2 英寸饰面钉、固定脚轮 3 英寸、SAE 平垫圈套装、浮动搁板支架、家具脚轮套装、5 级六角螺栓套件、钩眼闩锁、镀锌 L 形支架、拉力螺栓 1/2 x 6 英寸、锁紧垫圈套装、锁定脚轮套装、机械螺钉套件、砌体钉、公制垫圈套装、同钥匙挂锁套装、钢琴铰链 2 英尺、气动脚轮 4 英寸、屋顶钉 1-1/4 英寸、橡胶垫圈套装、6 英寸安全搭扣、自攻螺钉、8 英寸搁板支架、滑动门闩、自闭弹簧铰链、重型带状铰链、2 英寸万向脚轮、T 型手柄柜门五金、镀锌拇指闩锁、切换螺栓套装、木螺钉套装</p>
+</li>
+<li>
+<p><strong>木材和建筑材料</strong>：Advantech 底层地板、8 英尺踢脚线条、桦木胶合板 4x8x1/2、吹入式保温材料 R-30、CDX 胶合板 4x8x3/4、雪松 2x4x8、雪松板 1x8x10、雪松柱 6x6x8、护墙板线条、抗裂混合料、8 英尺松木王冠线条、甲板柱 6x6x10、花旗松 2x6x10、Durock 水泥板、外墙水泥板、快凝混凝土 50 磅、玻璃纤维保温棉 R-13、防火石膏板、泡沫板保温材料、Hardiebacker 3x5x1/4、高强度混合料 80 磅、轻质石膏板 4x8、MDF 装饰板 1x4、船用胶合板 4x8x3/4、防潮石膏板、OSB 护套 4x8x7/16、OSB 壁板、OSB 底层地板 4x8x3/4、防腐处理景观木材、防腐处理柱 4x4x8、PVC 装饰板 1x6、Permabase 板 4x8、松木板 1x4x8、松木立柱 2x4x8、杨木板 1x6x8、压力处理 2x4x8、压力处理胶合板、四分之一圆形条 8 英尺、Quikrete 混合料 80 磅、预拌混凝土 60 磅、反射保温材料、圆形围栏柱 8 英尺、隔音石膏板 4x8、喷雾泡沫套件、标准石膏板 4x8x1/2、处理过的 2x8x12 托梁、窗套套装、WonderBoard Lite、ZIP 系统护套</p>
+</li>
+<li>
+<p><strong>油漆和饰面</strong>：喷雾底漆、斜角刷套装、艺术家细节刷套装、帆布防护布 9x12、帆布跑道 4x15、透明缎面聚氨酯、甲板和围栏着色剂、一次性油漆盘套装、石膏板底漆、弹性外墙漆、4 英尺延长杆、外墙丙烯酸漆、缎面外墙乳胶漆、外墙底漆-油漆组合、地板聚氨酯、泡沫刷套装、凝胶着色剂、光泽聚氨酯、光泽喷漆、内墙蛋壳漆、内墙半光漆、砌体底漆、哑光喷漆、9 英寸金属油漆盘、金属底漆、微纤维滚筒套、4 英寸小滚筒套件、毛滚筒套、天然刷毛刷套装、油性聚氨酯、油性木材着色剂、一涂内墙漆、油漆桶网格、喷枪、油漆盘衬套、纸质防护布、塑料防护布、预贴遮蔽膜、优质内墙乳胶平光漆、9 英寸滚筒架、带网格滚动托盘、防锈喷雾、半透明甲板着色剂、实色甲板着色剂、阻渍底漆、合成刷套装、纹理喷漆、通用粘合底漆、水性聚氨酯、水性木材着色剂、零 VOC 内墙漆</p>
+</li>
+<li>
+<p><strong>管道</strong>：角阀、1/2 英寸球阀、浴室洗脸盆水龙头、1 英寸止回阀、压缩接头、铜管配件套件、1 英寸 L 型铜管、1/2 英寸 L 型铜管、3/4 英寸 L 型铜管、排水清洁化学品、25 英尺排水蛇、玻璃纤维管道保温材料、注水阀组件、柔性 PVC 管、1/2 泡沫管道保温材料、3/4 英寸闸阀、重型特氟龙胶带、水力喷射排水清洁器、厨房水槽水龙头、户外龙头、白色 PTFE 螺纹胶带、PVC 弯头套装、PVC 管 1-1/2 英寸 x 10 英尺、PVC 管 2 英寸 x 10 英尺、PVC 管 3 英寸 x 10 英尺、PVC 管 4 英寸 x 10 英尺、PVC 三通接头套装、粉色管道工胶带、管道密封棒、管道加热带、3/4 英寸管道保温材料、管道保温胶带、管接头化合物、管螺纹密封膏、管道工润滑脂、14 盎司管道工油灰、柱塞套装、预保温铜管、减压阀、推入式连接器、淋浴龙头装饰套件、硅胶管道工油灰、1/2 英寸软铜盘管、马桶疏通器、通用马桶挡板、马桶完整维修套件、标准马桶座圈、马桶蜡环、公用水槽水龙头、黄色燃气管线胶带</p>
+</li>
+<li>
+<p><strong>电动工具</strong>：4-1/2 英寸角磨机、桶握线锯、10 英寸基本斜切锯、3x21 英寸砂带机、台式钻床、无刷冲击起子、7-1/4 英寸圆锯、紧凑型 3x18 砂带机、紧凑型冲击起子、紧凑型往复锯、10 英寸复合斜切锯、无绳角磨机、6-1/2 无绳圆锯、18V 锂离子无绳钻、20V 无绳线锯、10 英寸无绳斜切锯、18V 无绳往复锯、18V 无绳雕刻机、3 英寸切割工具、石膏板砂光机、锉刀砂带机、1-3/4 HP 固定底座雕刻机、1/2 英寸冲击钻、重型线锯、20V 冲击钻、18V 冲击起子、1/2 英寸冲击扳手、7 英寸大型角磨机、4-1/2 小型圆锯、斜切锯支架、鼠标砂光机、摆动多功能工具、1/4 片轨道砂光机、手掌砂光机、2-1/4 HP 下沉式雕刻机、5 英寸随机轨道砂光机、有线往复锯、直角钻、直角冲击、雕刻机台组合、滚动线锯、12 英寸滑动斜切锯、固定砂带机、轨道锯、1 HP 修边机、变速砂带机、变速磨机、变速线锯、蜗轮传动锯</p>
+</li>
+<li>
+<p><strong>存储和整理</strong>：可调高度工作台、带抽屉的底柜、吊钩套件、4x8 吊顶存储架、吊顶轨道系统、化学品存储柜、27 夸脱透明存储箱、角落搁架单元、手工艺存储抽屉、桌面整理抽屉、便携式折叠工作台、车库吊顶起重机、车库工作台套件、健身房风格储物柜组、重型货架系统、35 加仑重型手提箱、重型挂钩套装、6 英尺重型工作台、10 抽屉大型抽屉单元、磁性工具架、2 门金属储物柜、灰色金属挂板、72 英寸金属存储柜、金属工具柜、移动工作车、模块化柜体系统、架空存储平台、50 件挂板挂钩套装、4x8 挂板面板、挂板存储箱、挂板工具架套装、个人储物柜、塑料工具箱套装、20 英寸便携式工具箱、可收缩软管挂架、滚动抽屉车、26 英寸滚动工具箱、橡胶涂层挂钩、存储安全网、小零件整理器、可堆叠箱套装、可堆叠抽屉套装、5 层钢制搁架、18 英寸帆布工具包、壁挂式橱柜、防水存储箱、铁丝网储物柜、镀铬铁丝搁架、木制储物柜长凳、木制存储搁架</p>
+</li>
+</ul>
+<h3 id="_3">🌡️ 季节性模式<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>数据集包含真实的季节性变化：</p>
+<ul>
+<li><strong>春季激增</strong>：油漆和园艺产品在 3-5 月达到峰值</li>
+<li><strong>夏季建设</strong>：电动工具和木材在 6-8 月达到峰值</li>
+<li><strong>秋季准备</strong>：五金器材和存储产品增加</li>
+<li><strong>冬季维护</strong>：手动工具和室内项目</li>
+</ul>
+<h3 id="_4">💰 财务建模<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>所有产品<strong>一致的 33% 毛利率</strong></li>
+<li><strong>年度增长模式</strong> (2020-2026)</li>
+<li>基于市场规模的<strong>门店性能差异</strong></li>
+<li>与产品需求一致的<strong>季节性收入波动</strong></li>
+</ul>
+<p><em>使用 GitHub Copilot 翻译。</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../lab-7-local-tracing-with-aspire/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 使用 Aspire 进行本地追踪">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                使用 Aspire 进行本地追踪
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - present Microsoft
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "navigation.tabs.sticky", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>

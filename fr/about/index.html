@@ -1,0 +1,1248 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Azure AI Foundry Agent Services with MCP Workshop.">
+      
+      
+        <meta name="author" content="Dave Glover">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol/fr/about/">
+      
+      
+        <link rel="prev" href="../lab-7-local-tracing-with-aspire/">
+      
+      
+      
+      <link rel="icon" href="../../media/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
+    
+    
+      
+        <title>À propos - Libérez le potentiel de vos agents avec MCP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#modeles-requis-pour-zava-diy" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../" title="Libérez le potentiel de vos agents avec MCP" class="md-header__button md-logo" aria-label="Libérez le potentiel de vos agents avec MCP" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Libérez le potentiel de vos agents avec MCP
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              À propos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="amber" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../about/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../es/about/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../it/about/" hreflang="it" class="md-select__link">
+              Italiano
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ja/about/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../ko/about/" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../zh/about/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="Libérez le potentiel de vos agents avec MCP" class="md-nav__button md-logo" aria-label="Libérez le potentiel de vos agents avec MCP" data-md-component="logo">
+      
+  <img src="../../media/favicon.png" alt="logo">
+
+    </a>
+    Libérez le potentiel de vos agents avec MCP
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/microsoft/aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Unlock your Agents Potential with MCP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction de l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigating-the-workshop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Navigation de l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Commencer
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Commencer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ouvrir l'atelier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vue d'ensemble de l'architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Labs des services d'agents
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Labs des services d'agents
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-service-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Services d'agents AI Foundry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-1-agent-instructions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 1 Instructions de l'agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-2-start-the-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 2 Démarrez votre agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-3-mcp-semantic-search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 3 Recherche sémantique
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-4-secure-agent-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 4 Sécurisation des données de l'agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Labs d'observabilité
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Labs d'observabilité
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vue d'ensemble de l'observabilité
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-5-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 5 Surveillance des services
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-6-tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Lab 6 Comprendre le traçage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../star-and-connect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Étoile et connexion
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-finishing-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Finalisation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Résumé
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ressources
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Contenu bonus
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Contenu bonus
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab-7-local-tracing-with-aspire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Traçage local avec Aspire
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    À propos
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    À propos
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#modeles-requis-pour-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèles requis pour Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generation-de-donnees-synthetiques-pour-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Génération de données synthétiques pour Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jeu-de-donnees-de-produits-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jeu de données de produits Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#modeles-requis-pour-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèles requis pour Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generation-de-donnees-synthetiques-pour-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Génération de données synthétiques pour Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jeu-de-donnees-de-produits-zava-diy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Jeu de données de produits Zava DIY
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>À propos</h1>
+
+<h2 id="modeles-requis-pour-zava-diy">Modèles requis pour Zava DIY<a class="headerlink" href="#modeles-requis-pour-zava-diy" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gpt-4o-mini</li>
+<li>text-embedding-small-3</li>
+</ul>
+<h2 id="generation-de-donnees-synthetiques-pour-zava-diy">Génération de données synthétiques pour Zava DIY<a class="headerlink" href="#generation-de-donnees-synthetiques-pour-zava-diy" title="Permanent link">&para;</a></h2>
+<p>Zava DIY est un outil conçu pour aider les développeurs à créer des données synthétiques à des fins de test et de développement. Il permet aux utilisateurs de générer des jeux de données réalistes qui peuvent être utilisés dans diverses applications, en veillant à ce que les données répondent à des exigences spécifiques sans compromettre la confidentialité ou la sécurité.</p>
+<p><a href="https://github.com/microsoft/ai-tour-26-zava-diy-dataset-plus-mcp/tree/main" target="_blank">Jeu de données de produits Zava DIY</a> Dépôt GitHub.</p>
+<p>La base de données comprend :</p>
+<ul>
+<li><strong>8 magasins</strong> dans l'État de Washington, chacun avec des données d'inventaire et de ventes uniques</li>
+<li><strong>Plus de 50 000 enregistrements clients</strong> dans l'État de Washington et en ligne</li>
+<li><strong>Plus de 400 produits de bricolage</strong> incluant outils, équipement d'extérieur et fournitures d'amélioration de la maison</li>
+<li><strong>Plus de 400 images de produits</strong> liées à la base de données pour les recherches basées sur l'image</li>
+<li><strong>Plus de 200 000 transactions de commande</strong> avec un historique de vente détaillé</li>
+<li><strong>Plus de 3 000 articles d'inventaire</strong> répartis dans plusieurs magasins</li>
+<li><strong>Embeddings d'images</strong> pour les images de produits permettant des recherches de similarité alimentées par l'IA (encodées en utilisant <a href="https://huggingface.co/openai/clip-vit-base-patch32/blob/main/README.md" target="_blank">openai/clip-vit-base-patch32</a>)</li>
+<li><strong>Embeddings de texte</strong> pour les descriptions de produits améliorant les capacités de recherche et de recommandation <a href="https://ai.azure.com/catalog/models/text-embedding-3-small" target="_blank">openai/text-embedding-3-small</a></li>
+</ul>
+<p>La base de données prend en charge les requêtes complexes et l'analyse, permettant un accès efficace aux données de vente, d'inventaire et clients. La sécurité au niveau des lignes PostgreSQL (RLS) restreint les agents aux seules données de leurs magasins assignés, garantissant la sécurité et la confidentialité.</p>
+<h2 id="jeu-de-donnees-de-produits-zava-diy">Jeu de données de produits Zava DIY<a class="headerlink" href="#jeu-de-donnees-de-produits-zava-diy" title="Permanent link">&para;</a></h2>
+<p>La base de données PostgreSQL Zava DIY fournit un écosystème de vente au détail complet avec des modèles de données réalistes :</p>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Quantité</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Clients</strong></td>
+<td>50 000+</td>
+<td>Profils démographiques réalistes dans l'État de Washington</td>
+</tr>
+<tr>
+<td><strong>Produits</strong></td>
+<td>400+</td>
+<td>Catalogue complet d'amélioration de la maison de bricolage</td>
+</tr>
+<tr>
+<td><strong>Magasins</strong></td>
+<td>8</td>
+<td>Emplacements physiques + en ligne dans l'État de Washington</td>
+</tr>
+<tr>
+<td><strong>Articles de commande</strong></td>
+<td>200 000+</td>
+<td>Articles détaillés avec prix et quantités</td>
+</tr>
+<tr>
+<td><strong>Enregistrements d'inventaire</strong></td>
+<td>3 000+</td>
+<td>Niveaux de stock spécifiques par magasin</td>
+</tr>
+<tr>
+<td><strong>Embeddings vectoriels</strong></td>
+<td>400+</td>
+<td>Recherche de similarité de produits alimentée par l'IA</td>
+</tr>
+</tbody>
+</table>
+<h3 id="emplacements-des-magasins">🏪 Emplacements des magasins<a class="headerlink" href="#emplacements-des-magasins" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Magasins à fort trafic</strong> : Seattle, Bellevue, En ligne</li>
+<li><strong>Magasins régionaux</strong> : Tacoma, Spokane</li>
+<li><strong>Marchés spécialisés</strong> : Everett, Redmond, Kirkland</li>
+<li><strong>Distribution géographique</strong> : Pénétration réaliste du marché de l'État de Washington</li>
+</ul>
+<h3 id="categories-de-produits">📦 Catégories de produits<a class="headerlink" href="#categories-de-produits" title="Permanent link">&para;</a></h3>
+<p>Le jeu de données comprend les catégories de produits suivantes avec tous les produits disponibles :</p>
+<ul>
+<li>
+<p><strong>Électricité</strong> : Disjoncteur AFCI 15A, Prise AFCI 15A, Câble blindé BX 12-2, Boîte de plafond avec support, Jeu de rubans colorés, Interrupteur variateur LED, Disjoncteur bipolaire 30A, Conduit EMT 1/2 pouce, Conduit flexible 1/2 pouce, Ruban isolant, Disjoncteur GFCI 20A, Prise GFCI 20A, Serre-fils à graisse, Cordon robuste 100 pieds, Ruban électrique haute température, Rallonge intérieure 25 pieds, Boîte de jonction 4x4, Plafonnier LED encastré, Gros serre-fils, Conduit étanche aux liquides, Interrupteur détecteur de mouvement, Multiprise de puissance, Boîte de rénovation, Rallonge extérieure 50 pieds, Projecteur extérieur LED, Boîte de prise simple, Conduit PVC 3/4 pouce, Lampe suspendue cuisine, Connecteurs à insertion, Enrouleur de cordon rétractable, Conduit rigide 1 pouce, Fil Romex 12-2 250 pieds, Fil Romex 14-2 250 pieds, Ruban silicone auto-fusionnant, Disjoncteur unipolaire 15A, Disjoncteur unipolaire 20A, Interrupteur simple, Prise standard 15A, Fil THHN 12 AWG, Interrupteur à trois voies, Interrupteur temporisé, Kit d'éclairage sur rail, Connecteurs à torsion, Prise USB avec charge, Câble souterrain 12-2, Applique de vanité 3 ampoules, Ruban électrique vinyle, Prise résistante aux intempéries, Boîte étanche, Assortiment de serre-fils</p>
+</li>
+<li>
+<p><strong>Jardin et extérieur</strong> : Engrais tout usage 50 lb, Sécateur à enclume robuste, Terreau pour cactus, Paillis de cèdre 3 pi cu, Jardinière en céramique 12 pouces, Tuyau d'eau potable, Tuyau extensible 100 pieds, Mélange de graines de fleurs sauvages, Tuyau d'arrosage 50 pieds, Râteau de jardin à dents d'acier, Terre de jardin enrichie, Bêche de jardin à long manche, Graines de gazon soleil et ombre, Jardinière suspendue, Paillis de bois franc 2 pi cu, Tuyau robuste 75 pieds, Ensemble de graines de jardin d'herbes, Arroseur à impact, Tête d'arroseur enterré, Projecteur LED 30W, Kit de spot paysager, Engrais de pelouse printemps, Kit d'arroseur brumisateur, Compost organique 40 lb, Graines d'héritage biologique, Arroseur oscillant, Ensemble de jardinières en plastique, Scie-perche 8 pieds, Terreau premium 40 lb, Arroseur rotatif 3 bras, Paillis en caoutchouc noir, Mélange de démarrage de graines, Jardinière auto-arrosante, Granules à libération lente, Tuyau suintant 25 pieds, Ensemble de lumières de terrasse solaires, Ensemble de lumières de chemin solaires, Balle de paillis de paille, Guirlandes lumineuses 48 pieds, Nourriture pour plants de tomate, Terre végétale tamisée 40 lb, Kit de démarrage de graines de légumes, Jardinière en baril de bois</p>
+</li>
+<li>
+<p><strong>Outils à main</strong> : Clé ajustable 10 pouces, Marteau à panne ronde 12 oz, Jeu d'hexagones à bout sphérique, Jeu de clés mixtes SAE, Scie à chantourner, Pied à coulisse numérique 6 pouces, Marteau de finition 13 oz, Jeu de tournevis plats, Règle pliante 6 pieds, Jeu de tournevis isolés, Niveau 24 pouces, Pince de monteur 9 pouces, Pince-étau 10 pouces, Jeu d'hexagones à long bras, Jeu de clés hexagonales métriques, Jeu de clés métriques, Pince à bec effilé 6 pouces, Jeu de tournevis Phillips, Jeu de clés à pipe, Kit de tournevis de précision, Marteau à panne fendue professionnel 16 oz, Tournevis à cliquet, Jeu de limes riffoir, Jeu de clés hexagonales SAE, Masse 3 lb, Équerre rapide 7 pouces, Jeu d'hexagones à poignée en T, Mètre ruban 25 pieds, Clé dynamométrique 1/2 pouce, Pince à dénuder, Jeu de râpes à bois</p>
+</li>
+<li>
+<p><strong>Quincaillerie</strong> : Équerre d'angle 4 pouces, Loquet à barillet 4 pouces, Clous brad 18 jauges, Charnière bout à bout 3-1/2 pouce, Jeu de boutons d'armoire nickel brossé, Serrure d'armoire type came, Poignée d'armoire 4 pouces entraxe, Jeu de boulons carrossage, Verrou de chaîne sécurité porte, Assortiment de clous ordinaires, Charnière d'armoire dissimulée, Support de comptoir, Verrou à pêne dormant à clé, Vis de terrasse 2-1/2 pouce, Ensemble de poignée de porte à levier, Jeu de serrure de poignée de porte, Poignée de tiroir 5 pouces, Vis de cloison sèche 1-5/8 pouce, Boulons à œil assortis, Kit de rondelles de garde-boue, Clous de finition 2 pouces, Roulette fixe 3 pouces, Assortiment de rondelles plates SAE, Support d'étagère flottante, Jeu de roulettes de meuble, Kit de boulons hexagonaux grade 5, Loquet à crochet et œil, Équerre en L galvanisée, Tire-fonds 1/2 x 6 pouces, Jeu de rondelles de blocage, Jeu de roulettes verrouillables, Kit de vis mécaniques, Clous de maçonnerie, Assortiment de rondelles métriques, Jeu de cadenas à clé identique, Charnière piano 2 pieds, Roulette pneumatique 4 pouces, Clous de toiture 1-1/4 pouce, Jeu de rondelles en caoutchouc, Moraillon de sécurité 6 pouces, Vis autotaraudeuses, Support d'étagère 8 pouces, Loquet coulissant, Charnière à ressort auto-fermante, Charnière à sangle robuste, Roulette pivotante 2 pouces, Poignée en T quincaillerie d'armoire, Loquet à pouce galvanisé, Jeu de chevilles à bascule, Assortiment de vis à bois</p>
+</li>
+<li>
+<p><strong>Bois et matériaux de construction</strong> : Sous-plancher Advantech, Moulure de plinthe 8 pi, Contreplaqué de bouleau 4x8x1/2, Isolant soufflé R-30, Contreplaqué CDX 4x8x3/4, Cèdre 2x4x8, Planche de cèdre 1x8x10, Poteau de cèdre 6x6x8, Moulure de cimaise, Mélange résistant aux fissures, Moulure couronne pin 8 pi, Poteau de terrasse 6x6x10, Sapin de Douglas 2x6x10, Panneau de ciment Durock, Panneau de ciment extérieur, Béton à prise rapide 50 lb, Matelas de fibre de verre R-13, Cloison sèche résistante au feu, Panneau d'isolant mousse, Hardiebacker 3x5x1/4, Mélange haute résistance 80 lb, Cloison sèche légère 4x8, Planche de garniture MDF 1x4, Contreplaqué marin 4x8x3/4, Cloison sèche résistante à l'humidité, Revêtement OSB 4x8x7/16, Panneau de bardage OSB, Sous-plancher OSB 4x8x3/4, Madrier de paysage traité sous pression, Poteau traité sous pression 4x4x8, Planche de garniture PVC 1x6, Panneau Permabase 4x8, Planche de pin 1x4x8, Montant de pin 2x4x8, Planche de peuplier 1x6x8, Traité sous pression 2x4x8, Contreplaqué traité sous pression, Quart de rond 8 pi, Mélange Quikrete 80 lb, Béton prêt à l'emploi 60 lb, Isolant réfléchissant, Poteau de clôture rond 8 pi, Cloison sèche insonorisante 4x8, Kit de mousse pulvérisée, Cloison sèche standard 4x8x1/2, Solive traitée 2x8x12, Ensemble de moulures de fenêtre, WonderBoard Lite, Revêtement système ZIP</p>
+</li>
+<li>
+<p><strong>Peinture et finitions</strong> : Apprêt en aérosol, Jeu de pinceaux inclinés, Jeu de pinceaux de détail d'artiste, Bâche de toile 9x12, Chemin de toile 4x15, Polyuréthane transparent satiné, Teinture de terrasse et clôture, Jeu de bacs à peinture jetables, Apprêt de cloison sèche, Peinture extérieure élastomère, Perche d'extension 4 pieds, Peinture acrylique extérieure, Peinture latex extérieure satinée, Combo apprêt-peinture extérieure, Polyuréthane de plancher, Jeu de pinceaux mousse, Gel teinture, Polyuréthane brillant, Peinture en aérosol brillante, Peinture intérieure coquille d'œuf, Peinture intérieure semi-brillante, Apprêt de maçonnerie, Peinture en aérosol fini mat, Bac à peinture métal 9 pouces, Apprêt métal, Couvercles de rouleau microfibre, Kit de mini rouleau 4 pouces, Jeu de couvercles de rouleau nap, Jeu de pinceaux à soies naturelles, Polyuréthane à base d'huile, Teinture de bois à base d'huile, Peinture intérieure une couche, Grille de seau à peinture, Pistolet à peinture, Jeu de doublures de bac à peinture, Bâche de papier, Bâche de plastique, Film de masquage pré-collé, Latex intérieur premium mat, Cadre de rouleau 9 pouces, Bac roulant avec grille, Spray anti-rouille, Teinture de terrasse semi-transparente, Teinture de terrasse couleur solide, Apprêt bloquant les taches, Jeu de pinceaux synthétiques, Peinture en aérosol texturée, Apprêt d'adhérence universel, Polyuréthane à base d'eau, Teinture de bois à base d'eau, Peinture intérieure zéro COV</p>
+</li>
+<li>
+<p><strong>Plomberie</strong> : Vanne d'arrêt d'angle, Vanne à bille 1/2 pouce, Robinet de lavabo de salle de bain, Clapet anti-retour 1 pouce, Raccords de compression, Kit de raccords de cuivre, Tuyau de cuivre 1 pouce Type L, Tuyau de cuivre 1/2 pouce Type L, Tuyau de cuivre 3/4 pouce Type L, Produit chimique de nettoyage de drain, Furet de drain 25 pieds, Isolant de tuyau en fibre de verre, Ensemble de valve de remplissage, Tuyau PVC flexible, Isolant de tuyau mousse 1/2, Vanne à guillotine 3/4 pouce, Ruban téflon robuste, Nettoyeur de drain hydro jet, Robinet d'évier de cuisine, Robinet de robinet extérieur, Ruban de filetage PTFE blanc, Assortiment de coudes PVC, Tuyau PVC 1-1/2 pouce x 10 pi, Tuyau PVC 2 pouces x 10 pi, Tuyau PVC 3 pouces x 10 pi, Tuyau PVC 4 pouces x 10 pi, Jeu de raccords en T PVC, Ruban de plombier rose, Bâton de graisse de tuyau, Câble chauffant de tuyau, Isolant de tuyau 3/4 pouce, Ruban d'isolant de tuyau, Composé de joint de tuyau, Pâte d'étanchéité de filetage de tuyau, Graisse de plombier, Mastic de plombier 14 oz, Jeu de ventouses, Tuyau de cuivre pré-isolé, Soupape de sécurité, Connecteurs à emboîtement, Kit de garniture de robinet de douche, Mastic de plombier silicone, Bobine de cuivre souple 1/2 pouce, Tarière de toilette, Clapet de toilette universel, Kit de réparation de toilette complet, Siège de toilette standard, Anneau de cire de toilette, Robinet d'évier utilitaire, Ruban de conduite de gaz jaune</p>
+</li>
+<li>
+<p><strong>Outils électriques</strong> : Meuleuse d'angle 4-1/2 pouce, Scie sauteuse à poignée barillet, Scie à onglets de base 10 pouces, Ponceuse à bande 3x21 pouces, Perceuse à colonne d'établi, Visseuse à chocs sans balais, Scie circulaire 7-1/4 pouce, Ponceuse à bande compacte 3x18, Visseuse à chocs compacte, Scie réciprocante compacte, Scie à onglets composée 10 pouces, Meuleuse d'angle sans fil, Scie circulaire sans fil 6-1/2, Perceuse sans fil 18V Li-Ion, Scie sauteuse sans fil 20V, Scie à onglets sans fil 10 pouces, Scie réciprocante sans fil 18V, Défonceuse sans fil 18V, Outil de coupe 3 pouces, Ponceuse de cloison sèche, Ponceuse à bande de lime, Défonceuse à base fixe 1-3/4 HP, Perceuse à percussion 1/2 pouce, Scie sauteuse robuste, Perceuse à chocs 20V, Visseuse à chocs 18V, Clé à chocs 1/2 pouce, Grande meuleuse d'angle 7 pouces, Mini scie circulaire 4-1/2, Support de scie à onglets, Ponceuse souris, Multi-outil oscillant, Ponceuse orbitale 1/4 feuille, Ponceuse palmaire, Défonceuse plongeante 2-1/4 HP, Ponceuse orbitale aléatoire 5 pouces, Scie réciprocante filaire, Perceuse à angle droit, Chocs à angle droit, Combo table de défonceuse, Scie sauteuse à défilement, Scie à onglets coulissante 12 pouces, Ponceuse à bande stationnaire, Scie sur rail, Défonceuse de finition 1 HP, Ponceuse à bande à vitesse variable, Meuleuse à vitesse variable, Scie sauteuse à vitesse variable, Scie à vis sans fin</p>
+</li>
+<li>
+<p><strong>Rangement et organisation</strong> : Établi à hauteur ajustable, Armoire de base avec tiroirs, Kit de crochets de plafond, Rack de stockage de plafond 4x8, Système de rail de plafond, Armoire de stockage chimique, Bac de stockage transparent 27 litres, Unité d'étagère d'angle, Tiroirs de rangement d'artisanat, Organisateur de bureau à tiroirs, Établi pliant portable, Palan de plafond de garage, Kit d'établi de garage, Banque de casiers style gymnase, Système de rack robuste, Bac robuste 35 gallons, Jeu de crochets muraux robustes, Établi robuste 6 pieds, Grande unité de tiroirs 10 tiroirs, Porte-outil magnétique, Casier métallique 2 portes, Panneau perforé métallique gris, Armoire de stockage métallique 72 pouces, Armoire à outils métallique, Chariot de travail mobile, Système d'armoire modulaire, Plateforme de stockage aérien, Jeu de crochets de panneau perforé 50 pièces, Panneau perforé 4x8, Bacs de stockage de panneau perforé, Jeu de porte-outils de panneau perforé, Casier de stockage personnel, Jeu de boîte à outils en plastique, Boîte à outils portable 20 pouces, Cintre de tuyau rétractable, Chariot à tiroirs roulant, Coffre à outils roulant 26 pouces, Crochets revêtus de caoutchouc, Filet de sécurité pour stockage, Organisateur de petites pièces, Jeu de bacs empilables, Jeu de tiroirs empilables, Étagère en acier 5 niveaux, Sac à outils toile 18 pouces, Armoire de montage mural, Boîte de stockage étanche, Casier en treillis métallique, Étagère en fil chromé, Banc de casier en bois, Étagères de stockage en bois</p>
+</li>
+</ul>
+<h3 id="modeles-saisonniers">🌡️ Modèles saisonniers<a class="headerlink" href="#modeles-saisonniers" title="Permanent link">&para;</a></h3>
+<p>Le jeu de données comprend des variations saisonnières réalistes :</p>
+<ul>
+<li><strong>Poussée printanière</strong> : Les produits de peinture et de jardin atteignent leur pic en mars-mai</li>
+<li><strong>Construction d'été</strong> : Les outils électriques et le bois atteignent leur pic en juin-août</li>
+<li><strong>Préparation d'automne</strong> : Les produits de quincaillerie et de stockage augmentent</li>
+<li><strong>Entretien d'hiver</strong> : Outils à main et projets d'intérieur</li>
+</ul>
+<h3 id="modelisation-financiere">💰 Modélisation financière<a class="headerlink" href="#modelisation-financiere" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Marge brute constante de 33%</strong> sur tous les produits</li>
+<li><strong>Modèles de croissance d'année en année</strong> (2020-2026)</li>
+<li><strong>Variations de performance des magasins</strong> basées sur la taille du marché</li>
+<li><strong>Fluctuations saisonnières des revenus</strong> alignées sur la demande de produits</li>
+</ul>
+<p><em>Traduit en utilisant GitHub Copilot.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../lab-7-local-tracing-with-aspire/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Traçage local avec Aspire">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Traçage local avec Aspire
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - present Microsoft
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "navigation.tabs.sticky", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
