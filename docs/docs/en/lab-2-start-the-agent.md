@@ -18,64 +18,47 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
 === "Python"
 
     1. **Open** the `app.py`.
-    2. **Scroll down to around line 50** and find the line that adds the Code Interpreter and the MCP tools to the agent's toolset. These line are currently commented out with a `#` at the beginning.
+    2. **Scroll down to line 67** and find the lines that add the Code Interpreter tool and the MCP Server tools to the agent's toolset. These line are currently commented out with **# plus space** characters at the beginning.
     3. **Uncomment** the following lines:
 
-        ```python
-        
-        # code_interpreter = CodeInterpreterTool()
-        # self.toolset.add(code_interpreter)
-        
-        # mcp_tools = McpTool(
-        #     server_label="ZavaSalesAnalysisMcpServer",
-        #     server_url=Config.DEV_TUNNEL_URL,
-        #     allowed_tools=[
-        #         "get_multiple_table_schemas",
-        #         "execute_sales_query",
-        #         "get_current_utc_date",
-        #         "semantic_search_products",
-        #     ],
-        # )
+        !!! warning "Indentation matters in Python!"
+            When uncommenting, delete both the `#` symbol AND the space that follows it. This ensures the code maintains proper Python indentation and aligns correctly with the surrounding code.
 
-        # mcp_tools.set_approval_mode("never")  # No human in the loop
-        # self.toolset.add(mcp_tools)
+        ```python
+        # self.toolset.add(code_interpreter_tool)
+        # self.toolset.add(mcp_server_tools)
         ```
 
         !!! info "What does this code do?"
-            - **Code Interpreter**: Enables the agent to execute Python code for data analysis and visualization.
+            - **Code Interpreter tool**: Enables the agent to execute Python code for data analysis and visualization.
             - **MCP Server tools**: Provides access to external data sources with specific allowed tools and no human approval required. For production applications, consider enabling human-in-the-loop authorization for sensitive operations.
 
     4. **Review** the code you uncommented. The code should look exactly like this:
 
-        ```python
-
         After uncommenting, your code should look like this:
 
         ```python
-        class AgentManager:
-            """Manages Azure AI Agent lifecycle and dependencies."""
+        async def _setup_agent_tools(self) -> None:
+            """Setup MCP tools and code interpreter."""
+            logger.info("Setting up Agent tools...")
+            self.toolset = AsyncToolSet()
 
-            async def _setup_agent_tools(self) -> None:
-                """Setup MCP tools and code interpreter."""
-                logger.info("Setting up Agent tools...")
-                self.toolset = AsyncToolSet()
+            code_interpreter_tool = CodeInterpreterTool()
 
-                code_interpreter = CodeInterpreterTool()
-                self.toolset.add(code_interpreter)
+            mcp_server_tools = McpTool(
+                server_label="ZavaSalesAnalysisMcpServer",
+                server_url=Config.DEV_TUNNEL_URL,
+                allowed_tools=[
+                    "get_multiple_table_schemas",
+                    "execute_sales_query",
+                    "get_current_utc_date",
+                    "semantic_search_products",
+                ],
+            )
+            mcp_server_tools.set_approval_mode("never")  # No human in the loop
 
-                mcp_tools = McpTool(
-                    server_label="ZavaSalesAnalysisMcpServer",
-                    server_url=Config.DEV_TUNNEL_URL,
-                    allowed_tools=[
-                        "get_multiple_table_schemas",
-                        "execute_sales_query",
-                        "get_current_utc_date",
-                        "semantic_search_products",
-                    ],
-                )
-
-                mcp_tools.set_approval_mode("never")  # No human in the loop
-                self.toolset.add(mcp_tools)
+            self.toolset.add(code_interpreter_tool)
+            self.toolset.add(mcp_server_tools)
         ```
 
     ## Start the Agent App

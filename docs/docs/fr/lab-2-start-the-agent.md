@@ -1,84 +1,67 @@
-## Ce que vous allez apprendre
+## Ce que vous apprendrez
 
-Dans ce lab, vous activerez l'Interpréteur de Code pour analyser les données de vente et créer des graphiques en utilisant le langage naturel.
+Dans ce laboratoire, vous activerez l'Interpréteur de Code pour analyser les données de vente et créer des graphiques en utilisant le langage naturel.
 
 ## Introduction
 
-Dans ce lab, vous étendrez l'Agent Azure AI avec deux outils :
+Dans ce laboratoire, vous étendrez l'Agent IA Azure avec deux outils :
 
 - **Interpréteur de Code :** Permet à l'agent de générer et d'exécuter du code Python pour l'analyse de données et la visualisation.
-- **Outils de serveur MCP :** Permettent à l'agent d'accéder aux sources de données externes en utilisant les outils MCP, dans notre cas les données dans une base de données PostgreSQL.
+- **Outils du Serveur MCP :** Permettent à l'agent d'accéder aux sources de données externes en utilisant les Outils MCP, dans notre cas des données dans une base de données PostgreSQL.
 
-## Exercice de lab
+## Exercice de Laboratoire
 
-### Activer l'Interpréteur de Code et le serveur MCP
+### Activer l'Interpréteur de Code et le Serveur MCP
 
-Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'Interpréteur de Code (qui exécute le code Python généré par l'IA pour l'analyse de données et la visualisation) et le Serveur MCP (qui fournit un accès sécurisé aux données de vente de Zava stockées dans PostgreSQL).
+Dans ce laboratoire, vous activerez deux outils puissants qui travaillent ensemble : l'Interpréteur de Code (qui exécute du code Python généré par IA pour l'analyse de données et la visualisation) et le Serveur MCP (qui fournit un accès sécurisé aux données de vente de Zava stockées dans PostgreSQL).
 
 === "Python"
 
     1. **Ouvrez** le fichier `app.py`.
-    2. **Faites défiler vers la ligne 50 environ** et trouvez la ligne qui ajoute l'Interpréteur de Code et les outils MCP au jeu d'outils de l'agent. Ces lignes sont actuellement commentées avec un `#` au début.
+    2. **Faites défiler jusqu'à la ligne 67** et trouvez les lignes qui ajoutent l'outil Interpréteur de Code et les outils du Serveur MCP au jeu d'outils de l'agent. Ces lignes sont actuellement commentées avec des caractères **# plus espace** au début.
     3. **Décommentez** les lignes suivantes :
 
-        ```python
-        
-        # code_interpreter = CodeInterpreterTool()
-        # self.toolset.add(code_interpreter)
-        
-        # mcp_tools = McpTool(
-        #     server_label="ZavaSalesAnalysisMcpServer",
-        #     server_url=Config.DEV_TUNNEL_URL,
-        #     allowed_tools=[
-        #         "get_multiple_table_schemas",
-        #         "execute_sales_query",
-        #         "get_current_utc_date",
-        #         "semantic_search_products",
-        #     ],
-        # )
+        !!! warning "L'indentation compte en Python !"
+            Lors du décommentage, supprimez à la fois le symbole `#` ET l'espace qui le suit. Cela garantit que le code maintient une indentation Python appropriée et s'aligne correctement avec le code environnant.
 
-        # mcp_tools.set_approval_mode("never")  # No human in the loop
-        # self.toolset.add(mcp_tools)
+        ```python
+        # self.toolset.add(code_interpreter_tool)
+        # self.toolset.add(mcp_server_tools)
         ```
 
         !!! info "Que fait ce code ?"
-            - **Interpréteur de Code** : Permet à l'agent d'exécuter du code Python pour l'analyse de données et la visualisation.
-            - **Outils de serveur MCP** : Fournit l'accès aux sources de données externes avec des outils autorisés spécifiques et aucune approbation humaine requise. Pour les applications de production, considérez l'activation de l'autorisation humaine dans la boucle pour les opérations sensibles.
+            - **Outil Interpréteur de Code** : Permet à l'agent d'exécuter du code Python pour l'analyse de données et la visualisation.
+            - **Outils du Serveur MCP** : Fournit l'accès aux sources de données externes avec des outils spécifiques autorisés et aucune approbation humaine requise. Pour les applications de production, considérez l'activation de l'autorisation humaine dans la boucle pour les opérations sensibles.
 
     4. **Examinez** le code que vous avez décommenté. Le code devrait ressembler exactement à ceci :
 
-        ```python
-
-        Après avoir décommenté, votre code devrait ressembler à ceci :
+        Après décommentage, votre code devrait ressembler à ceci :
 
         ```python
-        class AgentManager:
-            """Manages Azure AI Agent lifecycle and dependencies."""
+        async def _setup_agent_tools(self) -> None:
+            """Setup MCP tools and code interpreter."""
+            logger.info("Setting up Agent tools...")
+            self.toolset = AsyncToolSet()
 
-            async def _setup_agent_tools(self) -> None:
-                """Setup MCP tools and code interpreter."""
-                logger.info("Setting up Agent tools...")
-                self.toolset = AsyncToolSet()
+            code_interpreter_tool = CodeInterpreterTool()
 
-                code_interpreter = CodeInterpreterTool()
-                self.toolset.add(code_interpreter)
+            mcp_server_tools = McpTool(
+                server_label="ZavaSalesAnalysisMcpServer",
+                server_url=Config.DEV_TUNNEL_URL,
+                allowed_tools=[
+                    "get_multiple_table_schemas",
+                    "execute_sales_query",
+                    "get_current_utc_date",
+                    "semantic_search_products",
+                ],
+            )
+            mcp_server_tools.set_approval_mode("never")  # No human in the loop
 
-                mcp_tools = McpTool(
-                    server_label="ZavaSalesAnalysisMcpServer",
-                    server_url=Config.DEV_TUNNEL_URL,
-                    allowed_tools=[
-                        "get_multiple_table_schemas",
-                        "execute_sales_query",
-                        "get_current_utc_date",
-                        "semantic_search_products",
-                    ],
-                )
-
-                mcp_tools.set_approval_mode("never")  # No human in the loop
-                self.toolset.add(mcp_tools)
+            self.toolset.add(code_interpreter_tool)
+            self.toolset.add(mcp_server_tools)
         ```
 
-    ## Démarrer l'application Agent
+    ## Démarrer l'Application de l'Agent
 
     1. Copiez le texte ci-dessous dans le presse-papiers :
 
@@ -86,43 +69,43 @@ Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'
     Debug: Select and Start Debugging
     ```
 
-    1. Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes VS Code.
+    1. Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes de VS Code.
     1. Collez le texte dans la Palette de Commandes et sélectionnez **Debug: Select and Start Debugging**.
-    1. Sélectionnez **🌎🤖Debug Compound: Agent and MCP (http)** dans la liste. Cela démarrera l'application agent et le client de chat web.
+    1. Sélectionnez **🌎🤖Debug Compound: Agent and MCP (http)** dans la liste. Cela démarrera l'application de l'agent et le client de chat web.
 
-    Ceci démarre les processus suivants :
+    Cela démarre les processus suivants :
 
-    1.  Tâche DevTunnel (workshop)
+    1.  DevTunnel (workshop) Task
     2.  Web Chat (workshop)
     3.  Agent Manager (workshop)
     4.  MCP Server (workshop)
 
-    Dans VS Code, vous verrez ces processus s'exécuter dans le panneau TERMINAL.
+    Dans VS Code, vous verrez ceux-ci s'exécuter dans le panneau TERMINAL.
 
     ![L'image montre les processus en cours d'exécution dans le panneau TERMINAL de VS Code](../media/vs-code-processes.png)
 
-    ## Ouvrir le client de chat web de l'agent
+    ## Ouvrir le Client de Chat Web de l'Agent
 
-    === "@Participants à l'événement"
+    === "@Participants à l'Événement"
 
-        Sélectionnez le lien suivant pour ouvrir l'application Web Chat dans le navigateur.
+        Sélectionnez le lien suivant pour ouvrir l'application de Chat Web dans le navigateur.
 
-        [Ouvrir Web Chat](http://localhost:8005){:target="_blank"}
+        [Ouvrir Chat Web](http://localhost:8005){:target="_blank"}
 
-    === "Apprenants auto-guidés"
+    === "Apprenants Auto-guidés"
 
-        ## Rendre le port 8005 public
+        ## Rendre le Port 8005 Public
 
-        Vous devez rendre le port 8005 public pour pouvoir accéder au client de chat web dans votre navigateur.
+        Vous devez rendre public le port 8005 pour pouvoir accéder au client de chat web dans votre navigateur.
 
         1. Sélectionnez l'onglet **Ports** dans le panneau inférieur de VS Code.
-        2. Cliquez droit sur le port **Web Chat App (8005)** et sélectionnez **Port Visibility**.
+        2. Faites un clic droit sur le port **Web Chat App (8005)** et sélectionnez **Port Visibility**.
         3. Sélectionnez **Public**.
 
         ![](../media/make-port-public.png)
 
 
-        ## Ouvrir le client de chat web dans le navigateur
+        ## Ouvrir le Client de Chat Web dans le Navigateur
 
         1.  Copiez le texte ci-dessous dans le presse-papiers :
 
@@ -130,7 +113,7 @@ Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'
         Open Port in Browser
         ```
 
-        2.  Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes VS Code.
+        2.  Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes de VS Code.
         3.  Collez le texte dans la Palette de Commandes et sélectionnez **Open Port in Browser**.
         4.  Sélectionnez **8005** dans la liste. Cela ouvrira le client de chat web de l'agent dans votre navigateur.
 
@@ -138,7 +121,7 @@ Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'
 
 === "C#"
 
-    1. **Ouvrez** `AgentService.cs` depuis le dossier `Services` du projet `McpAgentWorkshop.WorkshopApi`.
+    1. **Ouvrez** `AgentService.cs` du dossier `Services` du projet `McpAgentWorkshop.WorkshopApi`.
     2. Naviguez vers la méthode `InitialiseAgentAsync`.
     3. **Décommentez** les lignes suivantes :
 
@@ -161,9 +144,9 @@ Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'
         // logger.LogInformation("Agent created with ID: {AgentId}", persistentAgent.Id);
         ```
 
-    ## Démarrer l'application Agent
+    ## Démarrer l'Application de l'Agent
 
-    4. Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes VS Code.
+    4. Appuyez sur <kbd>F1</kbd> pour ouvrir la Palette de Commandes de VS Code.
     5. Sélectionnez **Debug Aspire** comme configuration de lancement.
 
     Une fois le débogueur lancé, une fenêtre de navigateur s'ouvrira avec le tableau de bord Aspire. Une fois que toutes les ressources ont démarré, vous pouvez lancer l'application web de l'atelier en cliquant sur le lien **Workshop Frontend**.
@@ -171,76 +154,76 @@ Dans ce lab, vous activerez deux outils puissants qui fonctionnent ensemble : l'
     ![Tableau de bord Aspire](../media//lab-2-start-agent-aspire-dashboard.png)
 
     !!! tip "Dépannage"
-        Si le navigateur ne se charge pas, essayez d'actualiser la page de force (Ctrl + F5 ou Cmd + Shift + R). S'il ne se charge toujours pas, référez-vous au [guide de dépannage](./dotnet-troubleshooting.md).
+        Si le navigateur ne se charge pas, essayez de rafraîchir la page de force (Ctrl + F5 ou Cmd + Shift + R). Si cela ne se charge toujours pas, consultez le [guide de dépannage](./dotnet-troubleshooting.md).
 
-## Commencer une conversation avec l'agent
+## Démarrer une Conversation avec l'Agent
 
-Depuis le client de chat web, vous pouvez commencer une conversation avec l'agent. L'agent est conçu pour répondre aux questions sur les données de vente de Zava et générer des visualisations en utilisant l'Interpréteur de Code.
+Depuis le client de chat web, vous pouvez démarrer une conversation avec l'agent. L'agent est conçu pour répondre aux questions sur les données de vente de Zava et générer des visualisations en utilisant l'Interpréteur de Code.
 
 1.  Analyse des ventes de produits. Copiez et collez la question suivante dans le chat :
 
     ```text
-    Montre les 10 meilleurs produits par revenus par magasin pour le dernier trimestre
+    Show the top 10 products by revenue by store for the last quarter
     ```
 
-    Après un moment, l'agent répondra avec un tableau montrant les 10 meilleurs produits par revenus pour chaque magasin.
+    Après un moment, l'agent répondra avec un tableau montrant les 10 produits principaux par revenus pour chaque magasin.
 
     !!! info
-        L'agent utilise le LLM pour appeler trois outils de serveur MCP pour récupérer les données et les afficher dans un tableau :
+        L'agent utilise le LLM qui appelle trois outils du Serveur MCP pour récupérer les données et les afficher dans un tableau :
 
         1. **get_current_utc_date()** : Obtient la date et l'heure actuelles pour que l'agent puisse déterminer le dernier trimestre par rapport à la date actuelle.
-        2. **get_multiple_table_schemas()** : Obtient les schémas des tables dans la base de données requises par le LLM pour générer un SQL valide.
-        3. **execute_sales_query** : Exécute une requête SQL pour récupérer les 10 meilleurs produits par revenus pour le dernier trimestre depuis la base de données PostgreSQL.
+        2. **get_multiple_table_schemas()** : Obtient les schémas des tables dans la base de données requis par le LLM pour générer du SQL valide.
+        3. **execute_sales_query** : Exécute une requête SQL pour récupérer les 10 produits principaux par revenus pour le dernier trimestre depuis la base de données PostgreSQL.
 
     !!! tip
         === "Python"
 
-            Revenez à VS Code et sélectionnez **MCP Server (workspace)** dans le panneau TERMINAL et vous verrez les appels effectués au serveur MCP par le Service d'Agent Azure AI Foundry.
+            Revenez à VS Code et sélectionnez **MCP Server (workspace)** dans le panneau TERMINAL et vous verrez les appels effectués au Serveur MCP par le Service d'Agent Azure AI Foundry.
 
             ![](../media/mcp-server-in-action.png)
 
         === "C#"
 
-            Dans le tableau de bord Aspire, vous pouvez sélectionner les logs pour la ressource `dotnet-mcp-server` pour voir les appels effectués au serveur MCP par le Service d'Agent Azure AI Foundry.
+            Dans le tableau de bord Aspire, vous pouvez sélectionner les journaux pour la ressource `dotnet-mcp-server` pour voir les appels effectués au Serveur MCP par le Service d'Agent Azure AI Foundry.
 
-            Vous pouvez également ouvrir la vue de trace et trouver la trace de bout en bout de l'application, depuis l'entrée utilisateur dans le chat web, jusqu'aux appels d'agent et appels d'outils MCP.
+            Vous pouvez également ouvrir la vue de trace et trouver la trace de bout en bout de l'application, de l'entrée utilisateur dans le chat web, jusqu'aux appels d'agent et aux appels d'outils MCP.
 
-            ![Aperçu des traces](../media/lab-7-trace-overview.png)
+            ![Aperçu de la trace](../media/lab-7-trace-overview.png)
 
-2.  Générer un graphique circulaire. Copiez et collez la question suivante dans le chat :
+2.  Générer un graphique en secteurs. Copiez et collez la question suivante dans le chat :
 
     ```text
-    Montre les ventes par magasin sous forme de graphique circulaire pour cette année financière
+    Show sales by store as a pie chart for this financial year
     ```
 
-    L'agent répondra avec un graphique circulaire montrant la distribution des ventes par magasin pour l'année financière actuelle.
+    L'agent répondra avec un graphique en secteurs montrant la distribution des ventes par magasin pour l'année fiscale actuelle.
 
     !!! info
         Cela peut sembler magique, alors que se passe-t-il en coulisses pour que tout fonctionne ?
 
         Le Service d'Agent Foundry orchestre les étapes suivantes :
 
-        1. Comme la question précédente, l'agent détermine s'il a les schémas de table requis pour la requête. Sinon, il utilise les outils **get_multiple_table_schemas()** pour obtenir la date actuelle et le schéma de base de données.
+        1. Comme pour la question précédente, l'agent détermine s'il dispose des schémas de table requis pour la requête. Si ce n'est pas le cas, il utilise les outils **get_multiple_table_schemas()** pour obtenir la date actuelle et le schéma de la base de données.
         2. L'agent utilise ensuite l'outil **execute_sales_query** pour récupérer les ventes
-        3. En utilisant les données retournées, le LLM écrit du code Python pour créer un graphique circulaire.
-        4. Finalement, l'Interpréteur de Code exécute le code Python pour générer le graphique.
+        3. En utilisant les données retournées, le LLM écrit du code Python pour créer un Graphique en Secteurs.
+        4. Enfin, l'Interpréteur de Code exécute le code Python pour générer le graphique.
 
-3.  Continuez à poser des questions sur les données de vente Zava pour voir l'Interpréteur de Code en action. Voici quelques questions de suivi que vous pourriez essayer :
+3.  Continuez à poser des questions sur les données de vente de Zava pour voir l'Interpréteur de Code en action. Voici quelques questions de suivi que vous pourriez vouloir essayer :
 
-    - `Détermine quels produits ou catégories stimulent les ventes. Montre sous forme de graphique à barres.`
-    - `Quel serait l'impact d'un événement de choc (par ex., une baisse de 20% des ventes dans une région) sur la distribution globale des ventes ? Montre sous forme de graphique à barres groupées.`
-      - Suivi avec `Et si l'événement de choc était de 50% ?`
-    - `Quelles régions ont des ventes au-dessus ou en-dessous de la moyenne ? Montre sous forme de graphique à barres avec déviation de la moyenne.`
-    - `Quelles régions ont des remises au-dessus ou en-dessous de la moyenne ? Montre sous forme de graphique à barres avec déviation de la moyenne.`
-    - `Simule les ventes futures par région en utilisant une simulation Monte Carlo pour estimer les intervalles de confiance. Montre sous forme de ligne avec bandes de confiance utilisant des couleurs vives.`
+    - `Determine which products or categories drive sales. Show as a Bar Chart.`
+    - `What would be the impact of a shock event (e.g., 20% sales drop in one region) on global sales distribution? Show as a Grouped Bar Chart.`
+      - Suivi avec `What if the shock event was 50%?`
+    - `Which regions have sales above or below the average? Show as a Bar Chart with Deviation from Average.`
+    - `Which regions have discounts above or below the average? Show as a Bar Chart with Deviation from Average.`
+    - `Simulate future sales by region using a Monte Carlo simulation to estimate confidence intervals. Show as a Line with Confidence Bands using vivid colors.`
 
-<!-- ## Arrêter l'application Agent
+<!-- ## Stop the Agent App
 
-1. Revenez à l'éditeur VS Code.
-1. Appuyez sur <kbd>Shift + F5</kbd> pour arrêter l'application agent. -->
+1. Switch back to the VS Code editor.
+1. Press <kbd>Shift + F5</kbd> to stop the agent app. -->
 
-## Laisser l'application Agent en fonctionnement
+## Laisser l'Application de l'Agent en Cours d'Exécution
 
-Laissez l'application agent en fonctionnement car vous l'utiliserez dans le prochain lab pour étendre l'agent avec plus d'outils et de capacités.
+Laissez l'application de l'agent en cours d'exécution car vous l'utiliserez dans le prochain laboratoire pour étendre l'agent avec plus d'outils et de capacités.
 
 *Traduit en utilisant GitHub Copilot.*

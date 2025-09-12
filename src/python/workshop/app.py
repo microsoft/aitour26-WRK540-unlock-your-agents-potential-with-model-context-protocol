@@ -50,22 +50,22 @@ class AgentManager:
         logger.info("Setting up Agent tools...")
         self.toolset = AsyncToolSet()
 
-        # code_interpreter = CodeInterpreterTool()
-        # self.toolset.add(code_interpreter)
+        code_interpreter_tool = CodeInterpreterTool()
 
-        # mcp_tools = McpTool(
-        #     server_label="ZavaSalesAnalysisMcpServer",
-        #     server_url=Config.DEV_TUNNEL_URL,
-        #     allowed_tools=[
-        #         "get_multiple_table_schemas",
-        #         "execute_sales_query",
-        #         "get_current_utc_date",
-        #         "semantic_search_products",
-        #     ],
-        # )
+        mcp_server_tools = McpTool(
+            server_label="ZavaSalesAnalysisMcpServer",
+            server_url=Config.DEV_TUNNEL_URL,
+            allowed_tools=[
+                "get_multiple_table_schemas",
+                "execute_sales_query",
+                "get_current_utc_date",
+                "semantic_search_products",
+            ],
+        )
+        mcp_server_tools.set_approval_mode("never")  # No human in the loop
 
-        # mcp_tools.set_approval_mode("never")  # No human in the loop
-        # self.toolset.add(mcp_tools)
+        # self.toolset.add(code_interpreter_tool)
+        # self.toolset.add(mcp_server_tools)
 
     def __init__(self) -> None:
         self.utilities = Utilities()
