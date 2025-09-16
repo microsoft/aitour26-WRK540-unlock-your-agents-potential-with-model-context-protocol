@@ -59,6 +59,32 @@ Get the current UTC date and time in ISO format.
 
 **Returns:** Current UTC date/time in ISO format (YYYY-MM-DDTHH:MM:SS.fffffZ)
 
+### `get_sales_by_region`
+
+Get aggregated sales data grouped by geographic regions. This is a specialized query that groups Zava stores into logical business regions and provides comprehensive sales analytics.
+
+**Regions Defined:**
+
+- **Seattle Metro**: Seattle, Bellevue, Kirkland, Redmond (Core metropolitan market)
+- **Online**: Zava Retail Online (E-commerce channel)  
+- **Puget Sound**: Everett, Tacoma (Secondary regional markets)
+- **Eastern Washington**: Spokane (Outlying market)
+
+**Returns:** Formatted table with the following metrics by region:
+
+- Total Orders: Number of distinct orders placed
+- Total Sales: Dollar amount of all sales 
+- Average Order Item Value: Mean value per order line item
+- Unique Customers: Count of distinct customers
+- Percentage of Total Sales: Market share by region
+
+**Use Cases:**
+
+- Regional performance analysis
+- Market share evaluation
+- Strategic planning and resource allocation
+- Geographic sales trend identification
+
 ## Security Features
 
 ### Row Level Security (RLS)
@@ -228,6 +254,7 @@ Start the **zava-sales-analysis-stdio** server using the `.vscode/mcp.json` conf
 
 1. Show top 20 products by sales revenue
 1. Show sales by store
+1. Show sales by region
 1. What were the last quarter's sales by category?
 
 ## Architecture
@@ -292,6 +319,34 @@ ORDER BY total_revenue DESC
 LIMIT 20;
 """
 results = await execute_sales_query(query)
+```
+
+### Getting Regional Sales Analysis
+
+```python
+# Get comprehensive sales data grouped by geographic regions
+regional_sales = await get_sales_by_region()
+```
+
+**Sample Output:**
+```
+## Sales by Region
+
+| Region | Total Orders | Total Sales | Avg Order Item Value | Unique Customers | % of Total |
+|--------|-------------|-------------|---------------------|------------------|------------|
+| **Seattle Metro** | 99,683 | $23,308,356.58 | $111.64 | 25,021 | 50.8% |
+| **Online** | 55,595 | $13,026,455.73 | $111.73 | 11,650 | 28.4% |
+| **Puget Sound** | 32,556 | $7,575,771.63 | $110.91 | 10,276 | 16.5% |
+| **Eastern Washington** | 9,831 | $2,274,063.58 | $110.57 | 3,053 | 5.0% |
+
+### Key Insights:
+
+1. **Regional Performance**: Shows the relative performance of each geographic region
+2. **Market Share**: Percentage distribution helps identify the strongest markets
+3. **Customer Base**: Unique customer counts indicate market penetration by region
+4. **Average Order Value**: Helps identify regions with higher-value transactions
+
+*Results are limited to 20 regions for readability*
 ```
 
 ## Security Considerations
