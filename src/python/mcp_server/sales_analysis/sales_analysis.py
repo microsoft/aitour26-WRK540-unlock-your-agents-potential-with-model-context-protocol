@@ -226,6 +226,103 @@ async def get_current_utc_date() -> str:
         return f"Error retrieving current UTC date: {e!s}"
 
 
+@mcp.tool()
+async def get_sales_by_region(ctx: Context) -> str:
+    """Get aggregated sales data grouped by geographic regions. This query groups Zava stores into logical regions and provides comprehensive sales metrics including total orders, total sales, average order item value, and unique customers by region.
+
+    The regions are defined as follows:
+    - Seattle Metro: Seattle, Bellevue, Kirkland, Redmond
+    - Online: Zava Retail Online
+    - Puget Sound: Everett, Tacoma  
+    - Eastern Washington: Spokane
+
+    Returns:
+        Formatted table showing sales metrics by region with key insights.
+    """
+    
+    rls_user_id = get_rls_user_id(ctx)
+    
+    logger.info("Manager ID: %s", rls_user_id)
+    logger.info("Executing sales by region query")
+
+    try:
+        # SQL query to aggregate sales by region
+        query = """
+        WITH regional_mapping AS (
+            SELECT 
+                store_id,
+                store_name,
+                CASE 
+                    WHEN store_name IN ('Zava Retail Seattle', 'Zava Retail Bellevue', 'Zava Retail Kirkland', 'Zava Retail Redmond') THEN 'Seattle Metro'
+                    WHEN store_name = 'Zava Retail Online' THEN 'Online'
+                    WHEN store_name IN ('Zava Retail Everett', 'Zava Retail Tacoma') THEN 'Puget Sound'
+                    WHEN store_name = 'Zava Retail Spokane' THEN 'Eastern Washington'
+                    ELSE 'Other'
+                END AS region
+            FROM retail.stores
+        ),
+        regional_sales AS (
+            SELECT 
+                rm.region,
+                COUNT(DISTINCT o.order_id) AS total_orders,
+                ROUND(SUM(oi.total_amount), 2) AS total_sales,
+                ROUND(AVG(oi.total_amount), 2) AS avg_order_item_value,
+                COUNT(DISTINCT o.customer_id) AS unique_customers
+            FROM regional_mapping rm
+            JOIN retail.orders o ON rm.store_id = o.store_id
+            JOIN retail.order_items oi ON o.order_id = oi.order_id
+            GROUP BY rm.region
+        )
+        SELECT 
+            region,
+            total_orders,
+            CONCAT('$', TO_CHAR(total_sales, 'FM999,999,999.00')) AS total_sales_formatted,
+            total_sales,
+            CONCAT('$', TO_CHAR(avg_order_item_value, 'FM999.00')) AS avg_order_item_value_formatted,
+            unique_customers,
+            ROUND((total_sales / SUM(total_sales) OVER ()) * 100, 1) AS percentage_of_total_sales
+        FROM regional_sales
+        ORDER BY total_sales DESC
+        LIMIT 20
+        """
+        
+        result = await db_provider.execute_query(query, rls_user_id=rls_user_id)
+        
+        # Format the results into a readable table format
+        formatted_result = "## Sales by Region\n\n"
+        formatted_result += "| Region | Total Orders | Total Sales | Avg Order Item Value | Unique Customers | % of Total |\n"
+        formatted_result += "|--------|-------------|-------------|---------------------|------------------|------------|\n"
+        
+        # Parse the query results and format them
+        lines = result.strip().split('\n')
+        if len(lines) > 1:  # Skip header line if present
+            for line in lines[1:]:  # Skip the header
+                if line.strip() and '|' in line:
+                    parts = [p.strip() for p in line.split('|')[1:-1]]  # Remove empty first and last parts
+                    if len(parts) >= 6:
+                        region = parts[0]
+                        total_orders = parts[1]
+                        total_sales_formatted = parts[2]
+                        avg_formatted = parts[4]
+                        unique_customers = parts[5]
+                        percentage = parts[6] if len(parts) > 6 else "N/A"
+                        
+                        formatted_result += f"| **{region}** | {total_orders:,} | {total_sales_formatted} | {avg_formatted} | {unique_customers:,} | {percentage}% |\n"
+        
+        formatted_result += "\n### Key Insights:\n\n"
+        formatted_result += "1. **Regional Performance**: Shows the relative performance of each geographic region\n"
+        formatted_result += "2. **Market Share**: Percentage distribution helps identify the strongest markets\n"
+        formatted_result += "3. **Customer Base**: Unique customer counts indicate market penetration by region\n"
+        formatted_result += "4. **Average Order Value**: Helps identify regions with higher-value transactions\n\n"
+        formatted_result += "*Results are limited to 20 regions for readability*"
+        
+        return formatted_result
+
+    except Exception as e:
+        logger.error("Error executing sales by region query: %s", e)
+        return f"Error executing sales by region query: {e!s}"
+
+
 async def run_http_server() -> None:
     """Run the MCP server in HTTP mode."""
 

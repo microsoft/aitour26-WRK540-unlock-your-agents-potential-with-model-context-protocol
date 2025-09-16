@@ -104,4 +104,153 @@ public class SalesTools
             return "An unexpected error occurred while executing the sales query.";
         }
     }
+
+    [McpServerTool, Description("Get aggregated sales data grouped by geographic regions. This query groups Zava stores into logical regions (Seattle Metro: Seattle, Bellevue, Kirkland, Redmond; Online: Zava Retail Online; Puget Sound: Everett, Tacoma; Eastern Washington: Spokane) and provides comprehensive sales metrics including total orders, total sales, average order item value, and unique customers by region.")]
+    public async Task<string> GetSalesByRegionAsync(
+        NpgsqlConnection connection,
+        ILogger<SalesTools> logger,
+        IHttpContextAccessor httpContextAccessor
+    )
+    {
+        var activity = Diagnostics.ActivitySource.StartActivity(
+            name: nameof(GetSalesByRegionAsync),
+            kind: ActivityKind.Server,
+            links: Diagnostics.ActivityLinkFromCurrent());
+
+        var rlsUserId = httpContextAccessor.GetRequestUserId();
+        logger.LogInformation("RLS User ID: {RlsUserId}", rlsUserId);
+
+        const string query = """
+            WITH regional_mapping AS (
+                SELECT 
+                    store_id,
+                    store_name,
+                    CASE 
+                        WHEN store_name IN ('Zava Retail Seattle', 'Zava Retail Bellevue', 'Zava Retail Kirkland', 'Zava Retail Redmond') THEN 'Seattle Metro'
+                        WHEN store_name = 'Zava Retail Online' THEN 'Online'
+                        WHEN store_name IN ('Zava Retail Everett', 'Zava Retail Tacoma') THEN 'Puget Sound'
+                        WHEN store_name = 'Zava Retail Spokane' THEN 'Eastern Washington'
+                        ELSE 'Other'
+                    END AS region
+                FROM retail.stores
+            ),
+            regional_sales AS (
+                SELECT 
+                    rm.region,
+                    COUNT(DISTINCT o.order_id) AS total_orders,
+                    ROUND(SUM(oi.total_amount), 2) AS total_sales,
+                    ROUND(AVG(oi.total_amount), 2) AS avg_order_item_value,
+                    COUNT(DISTINCT o.customer_id) AS unique_customers
+                FROM regional_mapping rm
+                JOIN retail.orders o ON rm.store_id = o.store_id
+                JOIN retail.order_items oi ON o.order_id = oi.order_id
+                GROUP BY rm.region
+            )
+            SELECT 
+                region,
+                total_orders,
+                CONCAT('$', TO_CHAR(total_sales, 'FM999,999,999.00')) AS total_sales_formatted,
+                total_sales,
+                CONCAT('$', TO_CHAR(avg_order_item_value, 'FM999.00')) AS avg_order_item_value_formatted,
+                unique_customers,
+                ROUND((total_sales / SUM(total_sales) OVER ()) * 100, 1) AS percentage_of_total_sales
+            FROM regional_sales
+            ORDER BY total_sales DESC
+            LIMIT 20
+            """;
+
+        try
+        {
+            if (activity is not null)
+            {
+                activity.SetTag("app.manager_id", rlsUserId);
+                activity.SetTag("db.query_type", "sales_by_region");
+            }
+
+            await using var command = connection.CreateCommand();
+
+            // Set RLS user ID for query execution
+            command.CommandText = "SELECT set_config('app.current_rls_user_id', $1, false)";
+            command.Parameters.AddWithValue(rlsUserId);
+            await command.ExecuteNonQueryAsync();
+            command.Parameters.Clear();
+
+            // Execute the sales by region query
+            command.CommandText = query;
+            await using var reader = await command.ExecuteReaderAsync();
+
+            var results = new List<object>();
+            var columns = new List<string>();
+
+            if (reader.HasRows)
+            {
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    columns.Add(reader.GetName(i));
+                }
+
+                while (await reader.ReadAsync())
+                {
+                    var row = new Dictionary<string, object>();
+                    for (var i = 0; i < reader.FieldCount; i++)
+                    {
+                        row[columns[i]] = reader.GetValue(i);
+                    }
+                    results.Add(row);
+                }
+
+                activity?.SetTag("db.results.count", results.Count);
+
+                // Format results into a readable table
+                var formatted = FormatRegionalSalesResults(results);
+                return formatted;
+            }
+            else
+            {
+                activity?.SetTag("db.results.count", 0);
+                return "No regional sales data found.";
+            }
+        }
+        catch (NpgsqlException ex)
+        {
+            logger.LogError(ex, "An error occurred while executing the regional sales query.");
+            return "An error occurred while executing the regional sales query.";
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An unexpected error occurred while executing the regional sales query.");
+            return "An unexpected error occurred while executing the regional sales query.";
+        }
+    }
+
+    private static string FormatRegionalSalesResults(List<object> results)
+    {
+        var formatted = "## Sales by Region\n\n";
+        formatted += "| Region | Total Orders | Total Sales | Avg Order Item Value | Unique Customers | % of Total |\n";
+        formatted += "|--------|-------------|-------------|---------------------|------------------|------------|\n";
+
+        foreach (var result in results)
+        {
+            if (result is Dictionary<string, object> row)
+            {
+                var region = row.GetValueOrDefault("region", "")?.ToString() ?? "";
+                var totalOrders = row.GetValueOrDefault("total_orders", 0);
+                var totalSalesFormatted = row.GetValueOrDefault("total_sales_formatted", "")?.ToString() ?? "";
+                var avgFormatted = row.GetValueOrDefault("avg_order_item_value_formatted", "")?.ToString() ?? "";
+                var uniqueCustomers = row.GetValueOrDefault("unique_customers", 0);
+                var percentage = row.GetValueOrDefault("percentage_of_total_sales", 0);
+
+                formatted += $"| **{region}** | {totalOrders:N0} | {totalSalesFormatted} | {avgFormatted} | {uniqueCustomers:N0} | {percentage}% |\n";
+            }
+        }
+
+        formatted += "\n### Key Insights:\n\n";
+        formatted += "1. **Regional Performance**: Shows the relative performance of each geographic region\n";
+        formatted += "2. **Market Share**: Percentage distribution helps identify the strongest markets\n";
+        formatted += "3. **Customer Base**: Unique customer counts indicate market penetration by region\n";
+        formatted += "4. **Average Order Value**: Helps identify regions with higher-value transactions\n\n";
+        formatted += "*Results are limited to 20 regions for readability*";
+
+        return formatted;
+    }
 }

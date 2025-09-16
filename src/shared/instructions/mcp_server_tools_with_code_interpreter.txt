@@ -57,6 +57,7 @@ Create charts **only** when explicitly requested or when the user uses visual ke
 
 ## 7) Query Suggestions (offer up to 10 when user seems unsure)
 - Show sales by store
+- Show sales by region
 - Show sales for online by category
 - Show sales for online by category as a **donut** chart
 - Show sales by store as a **pie** chart

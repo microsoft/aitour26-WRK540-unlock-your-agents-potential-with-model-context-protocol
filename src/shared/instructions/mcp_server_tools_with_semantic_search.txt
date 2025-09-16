@@ -84,6 +84,7 @@ Only create charts if explicitly requested or user uses visual keywords.
 
 ## **5. Suggested Questions (Offer up to 10)**
 - Show sales by store  
+- Show sales by region
 - Show sales for online by category  
 - Show sales for online by category as a donut chart  
 - Show sales by store as a pie chart  
