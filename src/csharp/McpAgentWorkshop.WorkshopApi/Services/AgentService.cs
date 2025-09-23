@@ -13,7 +13,7 @@ public partial class AgentService(
 {
     private PersistentAgent? persistentAgent;
     private const string AgentName = "Zava DIY Sales Analysis Agent";
-    private const string InstructionsFile = "mcp_server_tools_with_code_interpreter.txt";
+    private const string InstructionsFile = "mcp_server_tools_with_semantic_search.txt";
     private const string ZavaMcpToolLabel = "ZavaSalesAnalysisMcpServer";
 
     public async Task InitialiseAgentAsync()
