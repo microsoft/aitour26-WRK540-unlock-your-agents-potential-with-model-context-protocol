@@ -29,8 +29,8 @@ Most of the resources you created in this lab are pay-as-you-go resources, meani
 
 * Visit the [Azure Portal](https://portal.azure.com){:target="_blank"}
 * Click **Resource groups**
-* Click on your resource group `rg-agent-workshop-****`
+* Click on your resource group `rg-zava-agent-wks-****`
 * Click **Delete Resource group**
-* In the field at the bottom "Enter resource group name to confirm deletion" enter `rg-agent-workshop-****`
+* In the field at the bottom "Enter resource group name to confirm deletion" enter `rg-zava-agent-wks-****`
 * Click **Delete**
   * At the Delete Confirmation prompt, click "Delete"

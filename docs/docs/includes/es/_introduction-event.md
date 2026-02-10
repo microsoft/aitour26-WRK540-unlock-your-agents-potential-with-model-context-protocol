@@ -47,7 +47,7 @@ Necesitas autenticarte con Azure para que la aplicación del agente pueda accede
     ```powershell
     $subId = $(az account show --query id --output tsv) `
     ;$objectId = $(az ad signed-in-user show --query id -o tsv) `
-    ; az role assignment create --role "f6c7c914-8db3-469d-8ca1-694a8f32e121" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-agent-workshop" --assignee-principal-type 'User'
+    ; az role assignment create --role "f6c7c914-8db3-469d-8ca1-694a8f32e121" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
     ```
 
 5. Deja la ventana de terminal abierta para los siguientes pasos.
@@ -188,7 +188,7 @@ A continuación, iniciamos sesión en Microsoft Foundry para recuperar el endpoi
 
         ```powershell
         $subId = $(az account show --query id --output tsv)
-        $rgName = "rg-agent-workshop"
+        $rgName = "rg-zava-agent-wks"
         $aiAccount = "<ai_account_name>" # Reemplaza con el nombre real de la cuenta de IA
         $aiProject = "<ai_project_name>" # Reemplaza con el nombre real del proyecto de IA
         $bingConnectionId = "/subscriptions/$subId/resourceGroups/$rgName/providers/Microsoft.CognitiveServices/accounts/$aiAccount/projects/$aiProject/connections/groundingwithbingsearch"

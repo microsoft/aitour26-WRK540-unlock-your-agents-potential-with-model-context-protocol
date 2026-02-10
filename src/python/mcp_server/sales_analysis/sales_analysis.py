@@ -38,7 +38,7 @@ semantic_search_provider = SemanticSearchTextEmbedding()
 
 
 # Create MCP server with lifespan support
-mcp = FastMCP("mcp-zava-sales", stateless_http=True)
+mcp = FastMCP("mcp-zava-sales", transport="streamable-http")
 
 
 def get_header(ctx: Context, header_name: str) -> Optional[str]:

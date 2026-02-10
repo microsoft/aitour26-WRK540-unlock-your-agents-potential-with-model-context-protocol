@@ -18,7 +18,7 @@ En este laboratorio, habilitarás dos herramientas poderosas que trabajan juntas
 === "Python"
 
     1. **Abre** el `app.py`.
-    2. **Desplázate hacia abajo hasta la línea 67** y encuentra las líneas que agregan la herramienta Intérprete de Código y las herramientas del Servidor MCP al conjunto de herramientas del agente. Estas líneas están actualmente comentadas con caracteres **# más espacio** al principio.
+    2. **Desplázate hacia abajo hasta alrededor de la línea 68** y encuentra las líneas que agregan la herramienta Intérprete de Código y las herramientas del Servidor MCP al conjunto de herramientas del agente. Estas líneas están actualmente comentadas con caracteres **# más espacio** al principio.
     3. **Descomenta** las siguientes líneas:
 
         !!! warning "¡La indentación importa en Python!"

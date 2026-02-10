@@ -163,7 +163,7 @@ Desde VS Code, detén la aplicación del agente presionando <kbd>Shift + F5</kbd
                - Ver la búsqueda semántica ejecutarse contra la base de datos PostgreSQL
 
     7. A continuación, necesitas habilitar las instrucciones del Agente para usar la herramienta de búsqueda semántica. Regresa al archivo `app.py`.
-    8. Desplázate hacia abajo hasta alrededor de la línea 30 y encuentra la línea `# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"`.
+    8. Desplázate hacia abajo hasta alrededor de la línea 39 y encuentra la línea `# INSTRUCTIONS_FILE = "instructions/mcp_server_tools_with_semantic_search.txt"`.
     9. Descomenta la línea eliminando el `#` al principio. Esto habilitará al agente para usar la herramienta de búsqueda semántica.
 
         ```python

@@ -47,7 +47,7 @@ You need to authenticate with Azure so the agent app can access the Azure AI Age
     ```powershell
     $subId = $(az account show --query id --output tsv) `
     ;$objectId = $(az ad signed-in-user show --query id -o tsv) `
-    ; az role assignment create --role "f6c7c914-8db3-469d-8ca1-694a8f32e121" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-agent-workshop" --assignee-principal-type 'User'
+    ; az role assignment create --role "f6c7c914-8db3-469d-8ca1-694a8f32e121" --assignee-object-id $objectId --scope /subscriptions/$subId/resourceGroups/"rg-zava-agent-wks" --assignee-principal-type 'User'
     ```
 
 5. Leave the terminal window open for the next steps.
@@ -188,7 +188,7 @@ Next, we log in to Microsoft Foundry to retrieve the project endpoint, which the
 
         ```powershell
         $subId = $(az account show --query id --output tsv)
-        $rgName = "rg-agent-workshop"
+        $rgName = "rg-zava-agent-wks"
         $aiAccount = "<ai_account_name>" # Replace with the actual AI account name
         $aiProject = "<ai_project_name>" # Replace with the actual AI project name
         $bingConnectionId = "/subscriptions/$subId/resourceGroups/$rgName/providers/Microsoft.CognitiveServices/accounts/$aiAccount/projects/$aiProject/connections/groundingwithbingsearch"

@@ -18,7 +18,7 @@ In this lab, you'll enable two powerful tools that work together: the Code Inter
 === "Python"
 
     1. **Open** the `app.py`.
-    2. **Scroll down to line 67** and find the lines that add the Code Interpreter tool and the MCP Server tools to the agent's toolset. These line are currently commented out with **# plus space** characters at the beginning.
+    2. **Scroll down to around line 68** and find the lines that add the Code Interpreter tool and the MCP Server tools to the agent's toolset. These lines are currently commented out with **# plus space** characters at the beginning.
     3. **Uncomment** the following lines:
 
         !!! warning "Indentation matters in Python!"
