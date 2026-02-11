@@ -29,9 +29,9 @@ La mayoría de los recursos que creaste en este laboratorio son recursos de pago
 
 * Visita el [Portal de Azure](https://portal.azure.com){:target="_blank"}
 * Haz clic en **Grupos de recursos**
-* Haz clic en tu grupo de recursos `rg-agent-workshop-****`
+* Haz clic en tu grupo de recursos `rg-zava-agent-wks-****`
 * Haz clic en **Eliminar grupo de recursos**
-* En el campo en la parte inferior "Ingresa el nombre del grupo de recursos para confirmar la eliminación" ingresa `rg-agent-workshop-****`
+* En el campo en la parte inferior "Ingresa el nombre del grupo de recursos para confirmar la eliminación" ingresa `rg-zava-agent-wks-****`
 * Haz clic en **Eliminar**
   * En el aviso de Confirmación de Eliminación, haz clic en "Eliminar"
 
