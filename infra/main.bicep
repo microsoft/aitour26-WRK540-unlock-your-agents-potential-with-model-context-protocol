@@ -21,7 +21,7 @@ param models array = [
   {
     name: 'gpt-4o'
     format: 'OpenAI'
-    version: '2024-07-18'
+    version: '2024-11-20'
     skuName: 'GlobalStandard'
     capacity: 120
   }
