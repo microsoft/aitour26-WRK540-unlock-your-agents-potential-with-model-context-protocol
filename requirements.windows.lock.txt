@@ -35,7 +35,7 @@ azure-ai-agents==1.2.0b4
     #   azure-ai-projects
 azure-ai-projects==1.0.0
     # via -r requirements.in
-azure-core==1.35.0
+azure-core==1.38.0
     # via
     #   azure-ai-agents
     #   azure-ai-projects
@@ -76,11 +76,6 @@ charset-normalizer==3.4.3
 click==8.2.1
     # via
     #   black
-    #   uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
     #   uvicorn
 cryptography==45.0.6
     # via
@@ -338,8 +333,6 @@ python-multipart==0.0.20
     #   mcp
 pytz==2025.2
     # via pandas
-pywin32==311
-    # via mcp
 pyyaml==6.0.2
     # via
     #   pre-commit
@@ -363,9 +356,7 @@ rpds-py==0.27.0
 ruff==0.12.10
     # via -r requirements.in
 six==1.17.0
-    # via
-    #   azure-core
-    #   python-dateutil
+    # via python-dateutil
 sniffio==1.3.1
     # via
     #   anyio
@@ -408,6 +399,8 @@ uvicorn[standard]==0.35.0
     # via
     #   -r requirements.in
     #   mcp
+uvloop==0.22.1
+    # via uvicorn
 virtualenv==20.34.0
     # via pre-commit
 watchfiles==1.1.0
