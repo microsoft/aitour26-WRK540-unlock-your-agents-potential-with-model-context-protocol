@@ -91,7 +91,7 @@ faker==37.5.3
     # via -r requirements.in
 fastapi==0.115.14
     # via -r requirements.in
-filelock==3.18.0
+filelock==3.20.3
     # via virtualenv
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
@@ -403,7 +403,7 @@ uvicorn[standard]==0.35.0
     #   mcp
 uvloop==0.21.0
     # via uvicorn
-virtualenv==20.34.0
+virtualenv==20.36.1
     # via pre-commit
 watchfiles==1.1.0
     # via uvicorn
