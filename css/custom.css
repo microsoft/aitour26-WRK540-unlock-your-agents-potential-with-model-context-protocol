@@ -1,0 +1,36 @@
+.md-content img {
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.1);
+}
+
+.md-typeset h1 {
+    font-weight: 800;
+    /* Extra bold */
+}
+
+.md-typeset h2 {
+    font-weight: 800;
+}
+
+.md-typeset h3 {
+    font-weight: 600;
+}
+
+.md-typeset h4 {
+    font-weight: 600;
+}
+
+.md-typeset h5 {
+    font-weight: 600;
+}
+
+/* Make code text bold and larger for better visibility */
+.md-typeset code {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.md-typeset pre code {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
