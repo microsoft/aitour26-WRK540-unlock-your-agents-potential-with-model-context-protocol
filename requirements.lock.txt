@@ -295,7 +295,7 @@ propcache==0.3.2
     # via
     #   aiohttp
     #   yarl
-protobuf==6.31.1
+protobuf==6.33.5
     # via
     #   googleapis-common-protos
     #   opentelemetry-proto
