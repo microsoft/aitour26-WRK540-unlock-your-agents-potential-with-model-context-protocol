@@ -1,10 +1,9 @@
 using System.Data.Common;
 using Aspire.Hosting.Azure;
+using Aspire.Hosting.DevTunnels;
 using Aspire.Hosting.Python;
-using AspireDevTunnels.AppHost.Extensions;
-using AspireDevTunnels.AppHost.Resources;
-using McpAgentWorkshop.AppHost;
 using McpAgentWorkshop.AppHost.Integrations;
+using Microsoft.Identity.Client;
 
 namespace Aspire.Hosting;
 
@@ -15,101 +14,17 @@ public static class Extensions
         Path.Join(sourceFolder, "python", "workshop", ".venv") :
         "/usr/local";
 
-    public static IResourceBuilder<PythonAppResource> WithPostgres(this IResourceBuilder<PythonAppResource> builder, IResourceBuilder<IResourceWithConnectionString> db)
-    {
-        builder.WithEnvironment(async (ctx) =>
-        {
-            var connectionStringBuilder = new DbConnectionStringBuilder()
-            {
-                ConnectionString = await db.Resource.ConnectionStringExpression.GetValueAsync(ctx.CancellationToken)
-            };
-            ctx.EnvironmentVariables["POSTGRES_URL"] = $"postgresql://{connectionStringBuilder["Username"] ?? "postgres"}:{connectionStringBuilder["Password"]}@{connectionStringBuilder["Host"]}:{connectionStringBuilder["Port"]}/{db.Resource.Name}";
-        })
-        .WaitFor(db);
-
-        return builder;
-    }
-
-    public static IDistributedApplicationBuilder AddPythonWorkshop(
-        this IDistributedApplicationBuilder builder,
-        IResourceBuilder<IResourceWithConnectionString> storeManagerUser,
-        IResourceBuilder<DevTunnelResource> devtunnel,
-        IResourceBuilder<IResourceWithConnectionString> appInsights,
-        IResourceBuilder<ParameterResource> foundryEndpoint,
-        IResourceBuilder<ParameterResource> chatDeployment,
-        IResourceBuilder<ParameterResource> embeddingDeployment,
-        IResourceBuilder<ParameterResource> aoai)
-    {
-
-
-        var mcpServer = builder.AddPythonApp("python-mcp-server", Path.Combine(sourceFolder, "python", "mcp_server", "sales_analysis"), "sales_analysis.py", virtualEnvironmentPath: virtualEnvironmentPath)
-            .WithPostgres(storeManagerUser)
-            .WithHttpEndpoint(env: "PORT")
-            .WithOtlpExporter()
-            .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
-            .WithEnvironment("APPLICATIONINSIGHTS_CONNECTION_STRING", appInsights)
-            .WithDevTunnel(devtunnel);
-
-        var agentApp = builder.AddPythonApp("python-agent-app", Path.Combine(sourceFolder, "python", "workshop"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
-            .WithHttpEndpoint(env: "PORT")
-            .WithHttpHealthCheck("/health")
-            .WithEnvironment("PROJECT_ENDPOINT", foundryEndpoint)
-            .WithEnvironment("MODEL_DEPLOYMENT_NAME", chatDeployment)
-            .WithEnvironment("EMBEDDING_MODEL_DEPLOYMENT_NAME", embeddingDeployment)
-            .WithEnvironment("AZURE_OPENAI_ENDPOINT", aoai)
-            .WithEnvironment("APPLICATIONINSIGHTS_CONNECTION_STRING", appInsights)
-            .WithEnvironment("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true")
-            .WithPostgres(storeManagerUser)
-            .WithEnvironment("MAP_MCP_FUNCTIONS", "false")
-            .WithReference(mcpServer)
-            .WaitFor(mcpServer)
-            .WaitFor(devtunnel)
-            .WithOtlpExporter()
-            .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
-            .WithDevTunnelEnvironmentVariable(devtunnel, mcpServer);
-
-        builder.AddFrontend("python-chat-frontend")
-            .WithReference(agentApp)
-            .WaitFor(agentApp);
-
-        return builder;
-    }
-
     public static IResourceBuilder<PythonAppResource> AddFrontend(
         this IDistributedApplicationBuilder builder,
         string name)
     {
-        return builder.AddPythonApp(name, Path.Combine(sourceFolder, "shared", "webapp"), "app.py", virtualEnvironmentPath: virtualEnvironmentPath)
+        return builder.AddPythonApp(name, Path.Combine(sourceFolder, "shared", "webapp"), "app.py")
+            .WithVirtualEnvironment(virtualEnvironmentPath)
             .WithHttpEndpoint(env: "PORT")
-            .WithOtlpExporter()
-            .WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
             .WithUrlForEndpoint("http", annotations =>
             {
                 annotations.DisplayText = "Workshop Frontend";
             });
-    }
-
-    public static IResourceBuilder<T> WithDevTunnelEnvironmentVariable<T>(
-        this IResourceBuilder<T> builder,
-        IResourceBuilder<DevTunnelResource> devtunnel,
-        IResourceBuilder<IResourceWithEndpoints> mcpServer,
-        string variableName = "DEV_TUNNEL_URL")
-        where T : IResourceWithEnvironment
-    {
-        return builder.WithEnvironment(async (ctx) =>
-        {
-            var devTunnelInfo = await devtunnel.Resource.GetTunnelDetailsAsync();
-
-            if (devTunnelInfo is null) return;
-
-            if (!mcpServer.Resource.TryGetEndpoints(out var endpoints)) return;
-
-            var endpoint = endpoints.FirstOrDefault(e => e.Transport == "http") ?? throw new InvalidOperationException("MCP Server HTTP endpoint not found.");
-            var activePort = devTunnelInfo.Tunnel.Ports.FirstOrDefault(p => p.PortNumber == endpoint.Port) ?? throw new InvalidOperationException($"No active port found for MCP Server on port {endpoint.Port}.");
-
-            if (activePort.PortUri is not null)
-                ctx.EnvironmentVariables[variableName] = activePort.PortUri;
-        });
     }
 
     public static IResourceBuilder<PostgresAccountResource> AddPostgresAccount(this IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> builder, [ResourceName] string accountName, IResourceBuilder<ParameterResource> username, IResourceBuilder<ParameterResource> password)

@@ -1,28 +1,26 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AspireVersion>9.4.2</AspireVersion>
-    <AspireVersionPreviewSuffix>preview.1.25428.12</AspireVersionPreviewSuffix>
-    <CommunityToolkitVersion>9.7.2</CommunityToolkitVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Azure.PostgreSQL" Version="13.0.2" />
     <PackageVersion Include="Azure.AI.Agents.Persistent" Version="1.2.0-beta.2" />
     <PackageVersion Include="Azure.Identity" Version="1.15.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" />
-    <PackageVersion Include="Aspire.Azure.AI.OpenAI" Version="$(AspireVersion)-$(AspireVersionPreviewSuffix)" />
-    <PackageVersion Include="Aspire.Azure.Npgsql" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Azure.AI.OpenAI" Version="13.0.2-preview.1.25603.5" />
+    <PackageVersion Include="Aspire.Azure.Npgsql" Version="13.0.2" />
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.4" />
     <PackageVersion Include="Pgvector" Version="0.3.2" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="$(AspireVersion)" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AIFoundry" Version="$(AspireVersion)-$(AspireVersionPreviewSuffix)" />
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="$(AspireVersion)" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.Python.Extensions" Version="$(CommunityToolkitVersion)" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="$(CommunityToolkitVersion)" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.0.2" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AIFoundry" Version="13.0.2-preview.1.25603.5" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.0.2" />
+    <PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.0.2-preview.1.25603.5" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.0.2" />
+    <PackageVersion Include="Aspire.Hosting.Python" Version="13.0.2" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.0.1-beta.468" />
     <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="$(AspireVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.2" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />

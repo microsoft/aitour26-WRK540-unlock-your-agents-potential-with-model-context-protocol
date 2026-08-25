@@ -31,3 +31,5 @@ aitour26-WRK540-unlock-your-agents-potential-with-model-context-protocol.sln
 .vscode/settings.json
 src/python/workshop/dev_tunnel.log
 src/python/workshop/dev_tunnel.json
+
+node_modules

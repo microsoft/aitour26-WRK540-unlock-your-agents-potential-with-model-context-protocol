@@ -31,7 +31,8 @@
     },
     "extensions": {
         "recommendations": [
-            "ms-dotnettools.csharp"
+            "ms-dotnettools.csharp",
+            "microsoft-aspire.aspire-vscode"
         ]
     }
 }

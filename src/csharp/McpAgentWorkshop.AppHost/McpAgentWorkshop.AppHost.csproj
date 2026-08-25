@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="$(AspireVersion)" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.0.2" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -16,8 +16,9 @@
     <PackageReference Include="Aspire.Hosting.Azure.AIFoundry" />
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" />
     <PackageReference Include="Aspire.Hosting.Azure.PostgreSQL" />
+    <PackageReference Include="Aspire.Hosting.DevTunnels" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Python.Extensions" />
+    <PackageReference Include="Aspire.Hosting.Python" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" />
   </ItemGroup>
 

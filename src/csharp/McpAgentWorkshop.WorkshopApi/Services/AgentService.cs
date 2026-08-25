@@ -29,7 +29,7 @@ public partial class AgentService(
         using var reader = new StreamReader(stream);
         var instructionsContent = await reader.ReadToEndAsync();
 
-        string? devtunnelUrl = configuration.GetValue<string>("DEV_TUNNEL_URL");
+        string? devtunnelUrl = configuration.GetValue<string>("services:dotnet-mcp-server:http:0") ?? configuration.GetValue<string>("DEV_TUNNEL_URL");
 
         if (devtunnelUrl is null)
         {

@@ -1,5 +1,4 @@
 using Aspire.Hosting.Azure;
-using AspireDevTunnels.AppHost.Extensions;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -18,7 +17,7 @@ var foundry = builder.AddAzureAIFoundry("ai-foundry")
     .RunAsExisting(foundryResourceName, rg);
 
 var devtunnel = builder.AddDevTunnel($"mcp-devtunnel-{uniqueSuffix}")
-    .WithPublicAccess();
+    .WithAnonymousAccess();
 
 IResourceBuilder<IResourceWithConnectionString> storeManagerUser;
 IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource>? zava = null;
@@ -54,43 +53,36 @@ else
         builder.AddParameter("store-manager-password", "StoreManager123!"));
 }
 
-var dotnetMcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("dotnet-mcp-server")
+var mcpServer = builder.AddProject<Projects.McpAgentWorkshop_McpServer>("dotnet-mcp-server")
     .WithReference(storeManagerUser)
-    .WithDevTunnel(devtunnel)
     .WithReference(appInsights)
     .WithReference(foundry)
     .WaitFor(foundry);
+devtunnel.WithReference(mcpServer);
 
 if (zava is not null)
 {
-    dotnetMcpServer.WaitFor(zava);
+    mcpServer.WaitFor(zava);
 }
 
-var dotnetAgentApp = builder.AddProject<Projects.McpAgentWorkshop_WorkshopApi>("dotnet-agent-app")
-    .WithReference(dotnetMcpServer)
-    .WaitFor(dotnetMcpServer)
+var agentApp = builder.AddProject<Projects.McpAgentWorkshop_WorkshopApi>("dotnet-agent-app")
+    .WithReference(mcpServer)
+    .WaitFor(mcpServer)
     .WaitFor(devtunnel)
-    .WithDevTunnelEnvironmentVariable(devtunnel, dotnetMcpServer)
     .WithReference(appInsights)
     .WithReference(foundry)
     .WaitFor(foundry)
     .WithEnvironment("MODEL_DEPLOYMENT_NAME", chatDeployment)
     .WithEnvironment("EMBEDDING_MODEL_DEPLOYMENT_NAME", embeddingDeployment)
     .WithEnvironment("FoundryProjectName", foundryProjectName)
-    .WithEnvironment("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true");
+    .WithEnvironment("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true")
+    .WithReference(mcpServer, devtunnel);
 
 builder.AddFrontend("dotnet-chat-frontend")
-    .WithReference(dotnetAgentApp)
-    .WaitFor(dotnetAgentApp);
+    .WithReference(agentApp)
+    .WaitFor(agentApp);
 
 builder.AddMcpInspector("mcp-inspector")
-    .WithMcpServer(dotnetMcpServer, isDefault: true);
-
-if (args.Contains("--python"))
-{
-    var foundryEndpoint = builder.AddParameter("FoundryEndpoint");
-    var aoai = builder.AddParameter("AzureOpenAIEndpoint");
-    builder.AddPythonWorkshop(storeManagerUser, devtunnel, appInsights, foundryEndpoint, chatDeployment, embeddingDeployment, aoai);
-}
+    .WithMcpServer(mcpServer, isDefault: true);
 
 builder.Build().Run();

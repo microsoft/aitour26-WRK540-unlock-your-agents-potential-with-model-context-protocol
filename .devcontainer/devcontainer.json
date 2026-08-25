@@ -25,7 +25,8 @@
                 "mathematic.vscode-pdf",
                 "ms-ossdata.vscode-pgsql",
                 "charliermarsh.ruff",
-                "ms-azuretools.vscode-bicep"
+                "ms-azuretools.vscode-bicep",
+                "microsoft-aspire.aspire-vscode"
             ]
         }
     },
@@ -37,7 +38,9 @@
         "postgres_password": "postgres",
         "postgres_db": "zava"
     },
-    "forwardPorts": [8005],
+    "forwardPorts": [
+        8005
+    ],
     "portsAttributes": {
         "8005": {
             "label": "Web Chat App",
