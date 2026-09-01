@@ -316,7 +316,7 @@ pydantic-core==2.33.2
     # via pydantic
 pydantic-settings==2.10.1
     # via mcp
-pyjwt[crypto]==2.10.1
+pyjwt[crypto]==2.13.0
     # via
     #   msal
     #   pyjwt
