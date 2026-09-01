@@ -91,7 +91,7 @@ faker==37.5.3
     # via -r requirements.in
 fastapi==0.115.14
     # via -r requirements.in
-filelock==3.18.0
+filelock==3.20.3
     # via virtualenv
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter

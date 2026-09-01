@@ -77,11 +77,6 @@ click==8.2.1
     # via
     #   black
     #   uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
-    #   uvicorn
 cryptography==45.0.6
     # via
     #   azure-identity
@@ -96,7 +91,7 @@ faker==37.5.3
     # via -r requirements.in
 fastapi==0.115.14
     # via -r requirements.in
-filelock==3.19.1
+filelock==3.20.3
     # via virtualenv
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
@@ -338,8 +333,6 @@ python-multipart==0.0.20
     #   mcp
 pytz==2025.2
     # via pandas
-pywin32==311
-    # via mcp
 pyyaml==6.0.2
     # via
     #   pre-commit
@@ -408,6 +401,8 @@ uvicorn[standard]==0.35.0
     # via
     #   -r requirements.in
     #   mcp
+uvloop==0.22.1
+    # via uvicorn
 virtualenv==20.34.0
     # via pre-commit
 watchfiles==1.1.0
