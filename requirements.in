@@ -33,7 +33,7 @@ httpx>=0.28.1,<0.29.0
 aiohttp>=3.12.13,<4.0.0
 
 # File handling and multipart
-python-multipart>=0.0.20,<0.0.30
+python-multipart>=0.0.31,<0.0.32
 
 # Data processing and utilities
 pandas>=2.3.0,<3.0.0
