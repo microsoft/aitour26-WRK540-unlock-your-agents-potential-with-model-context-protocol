@@ -140,7 +140,7 @@ jsonschema==4.25.0
     # via mcp
 jsonschema-specifications==2025.4.1
     # via jsonschema
-mcp==1.12.4
+mcp==1.23.0
     # via -r requirements.in
 msal==1.33.0
     # via
@@ -318,8 +318,8 @@ pydantic-settings==2.10.1
     # via mcp
 pyjwt[crypto]==2.10.1
     # via
+    #   mcp
     #   msal
-    #   pyjwt
 python-dateutil==2.9.0.post0
     # via pandas
 python-dotenv==1.1.1
@@ -379,6 +379,7 @@ typing-extensions==4.14.1
     #   azure-identity
     #   azure-storage-blob
     #   fastapi
+    #   mcp
     #   openai
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -389,6 +390,7 @@ typing-extensions==4.14.1
     #   typing-inspection
 typing-inspection==0.4.1
     # via
+    #   mcp
     #   pydantic
     #   pydantic-settings
 tzdata==2025.2
